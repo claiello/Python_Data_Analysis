@@ -39,7 +39,7 @@ from tempfile import TemporaryFile
 ###############################################################################
 ###############################################################################
 ###############################################################################
-calc_blue = True
+calc_blue = False
 #Excitation is impulsive, 120ns per pulse,turn on at point no 80, off at point no 82
 
 #No_pixels = 250
@@ -82,10 +82,10 @@ if index is 1:
 
     print(index)
 
-    file1    = h5py.File('2016-08-16-2049_ImageSequence_SANP_36.957kX_3.000kV_30mu_8.hdf5', 'r')  
-    file2   = h5py.File('2016-08-16-2112_ImageSequence_SANP_36.957kX_3.000kV_30mu_9.hdf5', 'r') 
+    file1    = h5py.File('2016-08-16-2122_ImageSequence_SANP_35.259kX_3.200kV_30mu_13.hdf5', 'r')  
+    file2   = h5py.File('2016-08-16-2141_ImageSequence_SANP_35.259kX_3.200kV_30mu_14.hdf5', 'r') 
     #file3   = h5py.File('PentaZoom50expts.hdf5', 'r') 
-    titulo =  'Upconverting NPs (3kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
+    titulo =  'Upconverting NPs (3.2kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
     se1_dset   = file1['/data/Analog channel 1 : SE2/data'] #50 frames x250 x 250 pixels
     red1_dset  = file2['/data/Counter channel ' + channel[index] + ' : '+ pmt[index]+'/' + pmt[index] + ' time-resolved/data']#50 frames x 200 tr pts x250 x 250 pixels
     #red1_dset50  = file3['/data/Counter channel ' + channel[index] + ' : '+ pmt[index]+'/' + pmt[index] + ' time-resolved/data']#50 frames x 200 tr pts x250 x 250 pixels
@@ -216,18 +216,18 @@ if index is 1:
     del red1_dset_reg, red1_dset_reg_all, se1_dset_reg
     gc.collect()
     
-    mycode = 'tkvPentaSEchannel = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = 'ttkvPentaSEchannel = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez('tkvPentaSEchannel', data = se1_dset_cut)
+    np.savez('ttkvPentaSEchannel', data = se1_dset_cut)
 #    
-   # mycode = 'tkvPentaRedbright = tempfile.NamedTemporaryFile(delete=False)'
-    #exec(mycode)
-   # np.savez('tkvPentaRedbright', data = red1_dset_cut_all)
+    mycode = 'ttkvPentaRedbright = tempfile.NamedTemporaryFile(delete=False)'
+    exec(mycode)
+    np.savez('ttkvPentaRedbright', data = red1_dset_cut_all)
     
-    mycode = 'tkvPentaBluebright = tempfile.NamedTemporaryFile(delete=False)'
-    exec(mycode)
-    np.savez('tkvPentaBluebright', data = red1_dset_cut_all)
-#    
+#    mycode = 'ttkvPentaBluebright = tempfile.NamedTemporaryFile(delete=False)'
+#    exec(mycode)
+#    np.savez('ttkvPentaBluebright', data = red1_dset_cut_all)
+##    
 
         
     
@@ -347,9 +347,9 @@ if index is 1:
         gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct, means, covars, weights = gmmone_tr_in_masked_channel(se1_dset_cut, red1_dset_cut)     
         #gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct = thr_otsu_tr_in_masked_channel(se1_dset_cut, red1_dset_cut)     
 
-        mycode = 'tkvPentaSEchannelGMM = tempfile.NamedTemporaryFile(delete=False)'
+        mycode = 'ttkvPentaSEchannelGMM = tempfile.NamedTemporaryFile(delete=False)'
         exec(mycode)
-        np.savez('tkvPentaSEchannelGMM', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
+        np.savez('ttkvPentaSEchannelGMM', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
         
         #klklklk
                 
@@ -491,16 +491,16 @@ if index is 1:
 #        calcdecay_series(gmmse_red1_darkse_dset_for_4D[:,start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,nominal_time_on=nominal_time_on,fastfactor=fastfactor,other_dset1=red1_dset_cut_all[:,start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset_for_4D[:,start_of_transient::,:,:]/brightse_pct,init_guess=init_guess)    
 #        print('each')        
 #        calcdecay_each(gmmse_red1_darkse_dset_for_4D[:,start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,nominal_time_on=nominal_time_on,fastfactor=fastfactor,other_dset1=red1_dset_cut_all[:,start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset_for_4D[:,start_of_transient::,:,:]/brightse_pct,init_guess=init_guess)    
-
+#
 
     del gmmse_red1_darkse_dset_for_4D, gmmse_red1_brightse_dset_for_4D #last one is trying to delete later than line372
     gc.collect()
     
-    mycode = 'tkvZZZBlueDecay = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = 'ttkvZZZRedDecay = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez('tkvZZZBlueDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
+    np.savez('ttkvZZZRedDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
     
-    multipage('tkvZZZ.pdf',dpi=80)
+    multipage('ttkvZZZ.pdf',dpi=80)
     
     ###END FIG4
     
@@ -515,10 +515,10 @@ if index is 1:
 ##files below exist
     
 ### 593 dichroic
-se = np.load('tkvPentaSEchannel.npz') 
-segmm = np.load('tkvPentaSEchannelGMM.npz') 
-red = np.load('tkvPentaRedbright.npz') 
-blue = np.load('tkvPentaBluebright.npz') 
+se = np.load('ttkvPentaSEchannel.npz') 
+segmm = np.load('ttkvPentaSEchannelGMM.npz') 
+red = np.load('ttkvPentaRedbright.npz') 
+blue = np.load('ttkvPentaBluebright.npz') 
 
 fsizetit = 18 #22 #18
 fsizepl = 16 #20 #16
@@ -531,7 +531,7 @@ Pixel_size = 3.1e-9
 length_scalebar = 100.0 #in nm (1000nm == 1mum)
 scalebar_legend = '100 nm'
 length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size/1.0e-9))
-titulo =  '150nm upconverting NPs (3kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
+titulo =  '150nm upconverting NPs (3.2kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
 
 
 fig40= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
@@ -591,7 +591,7 @@ from skimage.feature import peak_local_max
 image =  np.abs(1-hlp)#hlp.astype(bool) #np.logical_or(mask_circle1, mask_circle2)
 from scipy import ndimage
 distance = ndimage.distance_transform_edt(image)
-local_maxi = peak_local_max(distance, num_peaks = 9, indices = False, footprint=np.ones((16,16)),labels=image) #footprint = min dist between maxima to find #footprint was 25,25
+local_maxi = peak_local_max(distance, num_peaks = 11, indices = False, footprint=np.ones((16,16)),labels=image) #footprint = min dist between maxima to find #footprint was 25,25
 markers = skimage.morphology.label(local_maxi)
 labels_ws = watershed(-distance, markers, mask=image)
 #plt.figure()
@@ -642,11 +642,13 @@ datared = datared[4:,:,:]
 datablue = datablue[4:,:,:]
 
 fastfactor = 1
-last_pt_offset = -5 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
-init_guess = [np.average(datared[0,:,:]), 0.05, np.average(datared[last_pt_offset,:,:]), np.average(datared[-30,:,:]), 0.005] #e init was 0.5
-#init_guess2 = [4.6, 0.01, 0.17, 0.08, 0.03]
+last_pt_offset = -10 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
+#init_guess = [np.average(datared[0,:,:]), 0.1, np.average(datared[last_pt_offset,:,:]), np.average(datared[-15,:,:]), 0.05] #e init was 0.5
+init_guess = [np.average(datared[-15,:,:]), 0.02, np.average(datared[last_pt_offset,:,:]), np.average(datared[0,:,:]), 0.05] #e init was 0.5
+
+#init_guess2 = [np.average(datablue[0,:,:]), 1.0, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-15,:,:]), 0.005] #e init was 0.5
 init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
-#init_guess2 = [np.average(datablue[0,:,:]), 1.0, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-30,:,:]), 0.005] #e init was 0.5
+
 b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
 plt.xlim([0,2])
 major_ticks0 = [1,2]
@@ -677,7 +679,7 @@ plt.xlim([nominal_time_on,nominal_time_on*50*fastfactor])
 
 
 
-multipage_longer('ZZZ-Penta_plot.pdf',dpi=80)
+multipage_longer('ZZZtt-Penta_plot.pdf',dpi=80)
 
 
 

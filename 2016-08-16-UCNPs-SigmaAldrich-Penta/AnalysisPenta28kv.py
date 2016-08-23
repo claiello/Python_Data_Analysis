@@ -39,7 +39,7 @@ from tempfile import TemporaryFile
 ###############################################################################
 ###############################################################################
 ###############################################################################
-calc_blue = True
+calc_blue = False
 #Excitation is impulsive, 120ns per pulse,turn on at point no 80, off at point no 82
 
 #No_pixels = 250
@@ -82,8 +82,8 @@ if index is 1:
 
     print(index)
 
-    file1    = h5py.File('2016-08-16-2049_ImageSequence_SANP_36.957kX_3.000kV_30mu_8.hdf5', 'r')  
-    file2   = h5py.File('2016-08-16-2112_ImageSequence_SANP_36.957kX_3.000kV_30mu_9.hdf5', 'r') 
+    file1    = h5py.File('2016-08-16-2148_ImageSequence_SANP_36.000kX_2.800kV_30mu_16.hdf5', 'r')  
+    file2   = h5py.File('2016-08-16-2208_ImageSequence_SANP_36.000kX_2.800kV_30mu_17.hdf5', 'r') 
     #file3   = h5py.File('PentaZoom50expts.hdf5', 'r') 
     titulo =  'Upconverting NPs (3kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
     se1_dset   = file1['/data/Analog channel 1 : SE2/data'] #50 frames x250 x 250 pixels
@@ -216,17 +216,17 @@ if index is 1:
     del red1_dset_reg, red1_dset_reg_all, se1_dset_reg
     gc.collect()
     
-    mycode = 'tkvPentaSEchannel = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = 'tekvPentaSEchannel = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez('tkvPentaSEchannel', data = se1_dset_cut)
+    np.savez('tekvPentaSEchannel', data = se1_dset_cut)
 #    
-   # mycode = 'tkvPentaRedbright = tempfile.NamedTemporaryFile(delete=False)'
-    #exec(mycode)
-   # np.savez('tkvPentaRedbright', data = red1_dset_cut_all)
-    
-    mycode = 'tkvPentaBluebright = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = 'tekvPentaRedbright = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez('tkvPentaBluebright', data = red1_dset_cut_all)
+    np.savez('tekvPentaRedbright', data = red1_dset_cut_all)
+    
+#    mycode = 'tekvPentaBluebright = tempfile.NamedTemporaryFile(delete=False)'
+#    exec(mycode)
+#    np.savez('tekvPentaBluebright', data = red1_dset_cut_all)
 #    
 
         
@@ -347,9 +347,9 @@ if index is 1:
         gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct, means, covars, weights = gmmone_tr_in_masked_channel(se1_dset_cut, red1_dset_cut)     
         #gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct = thr_otsu_tr_in_masked_channel(se1_dset_cut, red1_dset_cut)     
 
-        mycode = 'tkvPentaSEchannelGMM = tempfile.NamedTemporaryFile(delete=False)'
+        mycode = 'tekvPentaSEchannelGMM = tempfile.NamedTemporaryFile(delete=False)'
         exec(mycode)
-        np.savez('tkvPentaSEchannelGMM', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
+        np.savez('tekvPentaSEchannelGMM', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
         
         #klklklk
                 
@@ -471,7 +471,7 @@ if index is 1:
     #if do_gmmse_dset is False:
      #  brightse_pct = 0.01 #just so that I don't have a division by 0 in the function argument below!!!!
     #b,e,be,ee = calcdecay(gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset1=None ,other_dset2=None,init_guess=init_guess,unit='kHz')    
-    b,be, be, ee = calcdecay(gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, single exponential fit, \n ' + titulo ,single=False,other_dset1=red1_dset_cut[start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset[start_of_transient::,:,:]/brightse_pct,init_guess=init_guess,unit='kHz')
+    #b,be, be, ee = calcdecay(gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, single exponential fit, \n ' + titulo ,single=False,other_dset1=red1_dset_cut[start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset[start_of_transient::,:,:]/brightse_pct,init_guess=init_guess,unit='kHz')
     
 #    tau_single[index] = b
 #    tau_single_error[index] = be
@@ -496,9 +496,9 @@ if index is 1:
     del gmmse_red1_darkse_dset_for_4D, gmmse_red1_brightse_dset_for_4D #last one is trying to delete later than line372
     gc.collect()
     
-    mycode = 'tkvZZZBlueDecay = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = 'tekvZZZRedDecay = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez('tkvZZZBlueDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
+    np.savez('tekvZZZRedDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
     
     multipage('tkvZZZ.pdf',dpi=80)
     
@@ -515,10 +515,10 @@ if index is 1:
 ##files below exist
     
 ### 593 dichroic
-se = np.load('tkvPentaSEchannel.npz') 
-segmm = np.load('tkvPentaSEchannelGMM.npz') 
-red = np.load('tkvPentaRedbright.npz') 
-blue = np.load('tkvPentaBluebright.npz') 
+se = np.load('tekvPentaSEchannel.npz') 
+segmm = np.load('tekvPentaSEchannelGMM.npz') 
+red = np.load('tekvPentaRedbright.npz') 
+blue = np.load('tekvPentaBluebright.npz') 
 
 fsizetit = 18 #22 #18
 fsizepl = 16 #20 #16
@@ -531,7 +531,7 @@ Pixel_size = 3.1e-9
 length_scalebar = 100.0 #in nm (1000nm == 1mum)
 scalebar_legend = '100 nm'
 length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size/1.0e-9))
-titulo =  '150nm upconverting NPs (3kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
+titulo =  '150nm upconverting NPs (2.8kV, 30$\mu$m aperture, 40ns time bins, 36kX or 3.1nm pixels)'
 
 
 fig40= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
@@ -643,10 +643,9 @@ datablue = datablue[4:,:,:]
 
 fastfactor = 1
 last_pt_offset = -5 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
-init_guess = [np.average(datared[0,:,:]), 0.05, np.average(datared[last_pt_offset,:,:]), np.average(datared[-30,:,:]), 0.005] #e init was 0.5
-#init_guess2 = [4.6, 0.01, 0.17, 0.08, 0.03]
-init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
+init_guess = [np.average(datared[0,:,:]), 0.1, np.average(datared[last_pt_offset,:,:]), np.average(datared[-30,:,:]), 0.005] #e init was 0.5
 #init_guess2 = [np.average(datablue[0,:,:]), 1.0, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-30,:,:]), 0.005] #e init was 0.5
+init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
 b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
 plt.xlim([0,2])
 major_ticks0 = [1,2]
@@ -677,7 +676,7 @@ plt.xlim([nominal_time_on,nominal_time_on*50*fastfactor])
 
 
 
-multipage_longer('ZZZ-Penta_plot.pdf',dpi=80)
+multipage_longer('ZZZ28-Penta_plot.pdf',dpi=80)
 
 
 
