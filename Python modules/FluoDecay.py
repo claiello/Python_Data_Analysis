@@ -375,6 +375,74 @@ def calcdecay_subplot2(blue_dset,time_detail,titulo,single,other_dset2=None, oth
         return b,0.0,be,0.0 #e and ee dont exist
     else:
         return b,e,be,ee
+        
+def calcdecay_subplot3(blue_dset,time_detail,titulo,single,other_dset2=None, other_dset1=None, init_guess=None,unit='kHz',init_guess2=None): #blue_dset has the transient data only
+    #data sets are already averaged in axis 1,2
+   
+    No_specimen = 1
+    #No_decaypts = blue_dset.shape[0]
+   
+    x_array = np.arange(0,blue_dset.shape[0])*time_detail
+    
+    #plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+#    fig, ax = plt.subplots()#figsize=(sizex, sizey), dpi=dpi_no)
+#    plt.rc('text', usetex=True)
+#    plt.rc('font', family='serif')
+#    plt.rc('font', serif='Palatino')
+#    plt.suptitle(titulo, fontsize=fsizetit)
+    
+    plt.hold(True)
+    # for kkk in range(No_specimen):   
+      
+    # dofitting
+    # do fit, here with leastsq model
+    if single == False:
+        (a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,blue_dset/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=False)       
+    #e stands for "error"  
+        #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
+        plt.semilogy(x_array/1e-6,blue_dset/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a/d) )  ) 
+    else:
+        (a,b,c,ae,be,ce) = fitexp(x_array/1e-6,blue_dset/No_specimen,single=True, my_color='k',my_edgecolor='#ffff32',my_facecolor= '#ffff66',init_guess=init_guess[0::2],plot_error=True)     
+        plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',label='CL from all pixels: \n' +  r'$\tau $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.2f}".format(be)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
+
+    
+    #plt.hold(True)
+    if other_dset2 is not None:  #plotting background pixels  
+        if single == False:
+            
+            if init_guess2 is None:
+                init_guess2 = init_guess
+            
+            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,other_dset2/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2,plot_error=False) 
+            plt.semilogy(x_array/1e-6,np.average(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s  \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
+        else:
+            (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,other_dset2/No_specimen,single=True, my_color='b',my_edgecolor='#323232', my_facecolor='#666666',init_guess=init_guess[0::2],plot_error=True)  
+            plt.semilogy(x_array/1e-6,np.average(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 458nm): \n' + r'$\tau $ = ' + str("{0:.2f}".format(b2)) + ' $\pm$ ' + str("{0:.2f}".format(be2)) + '$\mu$s') 
+
+    #plt.hold(True)
+    if other_dset1 is not None: #plotting all pixels
+        if single == False:        
+            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1) = fitexp(x_array/1e-6,other_dset1/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=False) 
+            plt.semilogy(x_array/1e-6,np.average(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e1)) + ' $\pm$ ' + str("{0:.3f}".format(ee1)) + '$\mu$s') 
+        else:
+            (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,other_dset1/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=False)  
+            plt.semilogy(x_array/1e-6,np.average(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 458nm): \n' + r'$\tau $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s') 
+       
+#    ax1.spines['right'].set_visible(False)
+#    ax1.spines['top'].set_visible(False)
+#    ax1.xaxis.set_ticks_position('bottom')
+#    ax1.yaxis.set_ticks_position('left')
+    plt.xlim(xmax=4.7)
+
+    #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
+    plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
+    plt.ylabel(r'Average luminescence of each time bin (' + unit + ')',  fontsize=fsizepl)
+    plt.legend(loc='best')
+    
+    if single:
+        return b,0.0,be,0.0 #e and ee dont exist
+    else:
+        return b,e,be,ee
          
 def calcdecay_series(blue_dset,time_detail,titulo,single,nominal_time_on,fastfactor,other_dset1=None, other_dset2=None, init_guess=None): #blue_dset has the transient data only
     # this is to see how taus change as a function of number of experiments. No plotting.

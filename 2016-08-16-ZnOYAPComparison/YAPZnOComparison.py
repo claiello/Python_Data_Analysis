@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import h5py
 import numpy as np
-from BackgroundCorrection import *
+#from BackgroundCorrection import *
 import matplotlib.cm as cm
 import scipy.ndimage as ndimage
 #from matplotlib_scalebar.scalebar import ScaleBar #### Has issue with plotting using latex font. only import when needed, then unimport
