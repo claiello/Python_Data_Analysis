@@ -39,7 +39,7 @@ from tempfile import TemporaryFile
 ###############################################################################
 ###############################################################################
 ###############################################################################
-titulo =  'Eu 20$\%$ (3kV, 30$\mu$m, 40ns time bins, 36kX or 3.1nm pixels, blue/red $= </>$ 409nm)'
+titulo =  'Eu 10$\%$ (3kV, 30$\mu$m, 40ns time bins, 36kX or 3.1nm pixels, blue/red $= </>$ 409nm)'
 
 calc_blue = False
 #Excitation is impulsive, 120ns per pulse,turn on at point no 80, off at point no 82
@@ -49,8 +49,8 @@ Time_bin = 40 #in ns; 1/clock of 25MHz
 nominal_time_on = 0.12 #time during which e-beam nominally on, in mus
 totalpoints = 150 #total number of time-resolved points
 ### data
-name = ['2016-08-16-1819_ImageSequence_Eu20_35.628kX_3.000kV_30mu_2.hdf5']
-name_str = ['Eu20']
+#name = ['2016-08-16-1819_ImageSequence_Eu20_35.628kX_3.000kV_30mu_2.hdf5']
+#name_str = ['Eu20']
 na = ['2','2','20','20','40','40','40','40','80','80','00']
 nl = ['A','B','A','B','A','B','A','B','A','B','A']
 if calc_blue is False:
@@ -544,8 +544,8 @@ ax1.spines['top'].set_visible(False)
 ax1.xaxis.set_ticks_position('bottom')
 ax1.yaxis.set_ticks_position('left')
 
-#init_guess = [np.real(recoveredRed)[0], 0.5, np.real(recoveredRed)[last_pt_offset], np.real(recoveredRed)[middlept], 0.1] #e init was 0.5
-#init_guess2 = [np.real(recoveredBlue)[0], 0.5, np.real(recoveredBlue)[last_pt_offset], np.real(recoveredBlue)[middlept],0.1] #e init was 0.5
+init_guess = [np.real(recoveredRed)[0], 0.5, np.real(recoveredRed)[last_pt_offset], np.real(recoveredRed)[middlept], 0.1] #e init was 0.5
+init_guess2 = [np.real(recoveredBlue)[0], 0.5, np.real(recoveredBlue)[last_pt_offset], np.real(recoveredBlue)[middlept],0.1] #e init was 0.5
 
 b,e,be,ee = calcdecay_subplot3(np.real(recoveredRed), time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=np.real(recoveredBlue) ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
 plt.xlim([0,2])

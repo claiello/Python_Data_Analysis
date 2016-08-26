@@ -544,8 +544,8 @@ ax1.spines['top'].set_visible(False)
 ax1.xaxis.set_ticks_position('bottom')
 ax1.yaxis.set_ticks_position('left')
 
-#init_guess = [np.real(recoveredRed)[0], 0.5, np.real(recoveredRed)[last_pt_offset], np.real(recoveredRed)[middlept], 0.1] #e init was 0.5
-#init_guess2 = [np.real(recoveredBlue)[0], 0.5, np.real(recoveredBlue)[last_pt_offset], np.real(recoveredBlue)[middlept],0.1] #e init was 0.5
+init_guess = [np.real(recoveredRed)[0], 0.5, np.real(recoveredRed)[last_pt_offset], np.real(recoveredRed)[middlept], 0.1] #e init was 0.5
+init_guess2 = [np.real(recoveredBlue)[0], 0.5, np.real(recoveredBlue)[last_pt_offset], np.real(recoveredBlue)[middlept],0.1] #e init was 0.5
 
 b,e,be,ee = calcdecay_subplot3(np.real(recoveredRed), time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=np.real(recoveredBlue) ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
 plt.xlim([0,2])
