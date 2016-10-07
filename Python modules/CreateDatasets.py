@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from BackgroundCorrection import *
 from CorrCoeffs import *
 import scipy.ndimage as ndimage
-#from matplotlib_scalebar.scalebar import ScaleBar
+from matplotlib_scalebar.scalebar import ScaleBar
 from sklearn.mixture import GMM 
 import matplotlib.cm as cm
 from skimage.filters import threshold_otsu, threshold_adaptive 

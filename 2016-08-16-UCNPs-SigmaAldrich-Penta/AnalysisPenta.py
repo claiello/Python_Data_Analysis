@@ -643,9 +643,11 @@ datablue = datablue[4:,:,:]
 
 fastfactor = 1
 last_pt_offset = -5 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
-init_guess = [np.average(datared[0,:,:]), 0.05, np.average(datared[last_pt_offset,:,:]), np.average(datared[-30,:,:]), 0.005] #e init was 0.5
-#init_guess2 = [4.6, 0.01, 0.17, 0.08, 0.03]
-init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
+init_guess = [np.average(datared[0,:,:]), 0.01, np.average(datared[last_pt_offset,:,:]), np.average(datared[-30,:,:]), 0.005] #e init was 0.5
+#init_guess =  [0.35, 0.005, 0.02, 0.08, 0.0006]
+init_guess2 = [0.46, 0.1, 0.03, 12, 0.01]
+#init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
+
 #init_guess2 = [np.average(datablue[0,:,:]), 1.0, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-30,:,:]), 0.005] #e init was 0.5
 b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
 plt.xlim([0,2])
@@ -677,7 +679,7 @@ plt.xlim([nominal_time_on,nominal_time_on*50*fastfactor])
 
 
 
-multipage_longer('ZZZ-Penta_plot.pdf',dpi=80)
+multipage_longer('ZZZZ-Penta_plot.pdf',dpi=80)
 
 
 

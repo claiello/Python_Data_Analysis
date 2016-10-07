@@ -628,8 +628,12 @@ ax1.spines['right'].set_visible(False)
 ax1.spines['top'].set_visible(False)
 ax1.xaxis.set_ticks_position('bottom')
 ax1.yaxis.set_ticks_position('left')
-plt.plot(np.arange(0,76)*Time_bin/1e3,np.average(red['data'],axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
-plt.plot(np.arange(0,76)*Time_bin/1e3,np.average(blue['data'],axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
+hlp = segmm['bright']
+hlp[~np.isnan(hlp)] = 1.0
+plt.plot(np.arange(0,76)*Time_bin/1e3,np.nanmean(red['data']*hlp,axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
+plt.plot(np.arange(0,76)*Time_bin/1e3,np.nanmean(blue['data']*hlp,axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
+#plt.plot(np.arange(0,76)*Time_bin/1e3,np.average(red['data'],axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
+#plt.plot(np.arange(0,76)*Time_bin/1e3,np.average(blue['data'],axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
 ax1.axvspan(1,16, alpha=0.25, color='yellow')
 unit = 'kHz'
 plt.ylabel("Average luminescence \n of each time bin, per pixel (" + unit + ")",fontsize=fsizepl)
@@ -651,9 +655,9 @@ datared = np.average(red['data'], axis = (0))
 datablue = np.average(blue['data'], axis = (0))
 
 
-
-datared = datared[16:,:,:]
-datablue = datablue[16:,:,:]
+initbin = 16
+datared = datared[initbin:,:,:]
+datablue = datablue[initbin:,:,:]
 
 fastfactor = 1
 last_pt_offset = -10 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
@@ -662,10 +666,25 @@ init_guess = [np.average(datared[0,:,:]), 0.5, np.average(datared[last_pt_offset
 
 init_guess2 = [np.average(datablue[0,:,:]), 1.0, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-15,:,:]), 0.05] #e init was 0.5
 
+init_guess = [2,0.05,0.05,0.5,5.0]
+init_guess2 = [4,0.05,0.1,2.0,5.0]
+
 #init_guess = [0.5, 0.05, 0.05, 0.1, 0.5]
 #init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
 
-b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
+hlp = segmm['bright']
+hlp[~np.isnan(hlp)] = 1.0
+hlpred = np.nanmean(red['data'][:,initbin:,:,:]*hlp,axis = (2,3))
+hlpblue = np.nanmean(blue['data'][:,initbin:,:,:]*hlp,axis = (2,3))
+error_arrayr = np.nanstd(hlpred,axis = 0)
+error_arrayb = np.nanstd(hlpblue, axis = 0)
+error_arrayr[error_arrayr < 0.05 * np.max(hlpred)]  = 0.05 * np.max(hlpred) #arbitrary 5% of max
+error_arrayb[error_arrayb < 0.05 * np.max(hlpblue)]  = 0.05 * np.max(hlpblue)
+#b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
+b,e,be,ee = calcdecay_subplot_nan(datared*hlp, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue*hlp ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2,error_array=error_arrayr, error_array2=error_arrayb)    
+
+
+#b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
 #plt.xlim([0,2])
 #major_ticks0 = [1,2]
 #ax1.set_xticks(major_ticks0)

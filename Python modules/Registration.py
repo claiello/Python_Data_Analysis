@@ -24,7 +24,7 @@ def reg_images(images,toberegistered1=None,toberegistered2=None):
     for k in range(images.shape[0]-1):
     
         # pixel precision first
-        shift, error, diffphase = register_translation(image0, offset_images[k,:,:])
+        shift, error, diffphase = register_translation(image0, offset_images[k,:,:])#,space='fourier') #,100) #upsampling is (optional) last value
         shift_vec[k] = shift
         #determine max and min shifts; in order to know max padding needed
         if shift_vec[k][0] > oyp:

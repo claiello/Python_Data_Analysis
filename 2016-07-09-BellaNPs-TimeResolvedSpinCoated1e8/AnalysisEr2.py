@@ -66,10 +66,10 @@ tau_bi = np.zeros([len(name),2])
 tau_bi_error = np.zeros([len(name),2])
 
 #original
-for index in np.arange(12):
+#for index in np.arange(12):
 
-#index = 0
-#if index is 1:
+index = 0
+if index is 1:
     
 #for Er60 only: np.arange(9,12)
 #for index in np.arange(12,12):
@@ -432,6 +432,8 @@ for index in np.arange(12):
 mycode = 'TausFile' + str(index) + '= tempfile.NamedTemporaryFile(delete=False)'
 exec(mycode)
 np.savez('TausFile' + str(index),tau_single=tau_single, tau_single_error=tau_single_error, tau_bi=tau_bi, tau_bi_error=tau_bi_error)
+
+klklklkkl
   
 ######################################## Plot with dose for different apertures
 #files below exist

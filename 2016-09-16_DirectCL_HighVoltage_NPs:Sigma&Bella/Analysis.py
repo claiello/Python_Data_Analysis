@@ -39,37 +39,66 @@ from tempfile import TemporaryFile
 ###############################################################################
 ###############################################################################
 ###############################################################################
-calc_blue = True
+calc_blue = False
 #Excitation is impulsive, 120ns per pulse,turn on at point no 80, off at point no 82
 
 #No_pixels = 250
-Time_bin = 40 #in ns; 1/clock of 25MHz 
-nominal_time_on = 0.12 #time during which e-beam nominally on, in mus
-totalpoints = 150 #total number of time-resolved points
+Time_bin = 100 #in ns; 1/clock of 25MHz 
+nominal_time_on = 2.0 #time during which e-beam nominally on, in mus
+totalpoints = 100 #total number of time-resolved points
 ### data
-name = ['Double.hdf5', ]
-name_str = ['DoubleZoom.hdf5', 'DoubleZoomTR.hdf5']
-#na = ['2','2','20','20','40','40','40','40','80','80','00']
-#nl = ['A','B','A','B','A','B','A','B','A','B','A']
 if calc_blue is False:
-    pmt = ['PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red']
-    channel = ['1','1','1','1','1','1','1','1','1','1','1']
+    pmt = ['PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red','PMT red']
+    channel = ['1','1','1','1','1','1','1','1','1','1','1','1']
 else:
-    pmt = ['PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue']
-    channel = ['2','2','2','2','2','2','2','2','2','2','2']
-    name_str = [s + 'Blue' for s in name_str]
+    pmt = ['PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue','PMT blue']
+    channel = ['2','2','2','2','2','2','2','2','2','2','2','2']
+    
        
-ap = ['30']
-Pixel_size = [1.8e-09]
-Ps = [3.1] #pixel size in nm, the numbers above with round nm precision
+Pixel_size = [1.0e-08, 3.9e-09, 3.9e-09,1.1e-08, 6.2e-09, 2.6e-09, 2.7e-09, 1.9e-09,2.8e-09, 2.9e-09, 2.9e-09, 9.1e-09]
+Ps = [10.0, 3.9, 3.9, 11.0, 6.2, 2.6, 2.7, 1.9, 2.8, 2.9, 2.9, 9.1] #pixel size in nm, the numbers above with round nm precision
+No_experiments = [10,10,50,50,10,10,10,10,10,10,50,50]
+                  
+namese = ['2016-09-16-1416_ImageSequence_SigmaAldrich_10.805kX_3.000kV_30mu_5',
+'2016-09-16-1427_ImageSequence_SigmaAldrich_28.416kX_3.000kV_30mu_8',
+'2016-09-16-1445_ImageSequence_SigmaAldrich_28.416kX_3.000kV_30mu_10',
+'2016-09-16-1621_ImageSequence_Er2SiO2_10.401kX_3.000kV_30mu_4',
+'2016-09-16-1652_ImageSequence_Er2SiO2_18.046kX_10.000kV_30mu_8',
+'2016-09-16-1702_ImageSequence_Er2SiO2_43.220kX_10.000kV_30mu_11',
+'2016-09-16-1719_ImageSequence_Er2Si_40.607kX_10.000kV_30mu_2',
+'2016-09-16-1735_ImageSequence_Er2Si_59.865kX_10.000kV_30mu_6',
+'2016-09-16-1747_ImageSequence_Er2Si_40.041kX_10.000kV_30mu_8',
+'2016-09-16-1759_ImageSequence_Er2Si_38.013kX_10.000kV_30mu_12',
+'2016-09-16-1759_ImageSequence_Er2Si_38.013kX_10.000kV_30mu_12',
+'2016-09-16-1830_ImageSequence_Er2Si_12.239kX_10.000kV_30mu_17']    
 
-#no experiments to consider
-No_experiments = 50 #only "up" in luminescence curve
+nametr = ['2016-09-16-1422_ImageSequence_SigmaAldrich_10.805kX_3.000kV_30mu_6',
+'2016-09-16-1431_ImageSequence_SigmaAldrich_28.416kX_3.000kV_30mu_9',
+'2016-09-16-1458_ImageSequence_SigmaAldrich_28.416kX_3.000kV_30mu_11',
+'2016-09-16-1634_ImageSequence_Er2SiO2_10.401kX_3.000kV_30mu_5',
+'2016-09-16-1656_ImageSequence_Er2SiO2_18.046kX_10.000kV_30mu_9',
+'2016-09-16-1706_ImageSequence_Er2SiO2_43.220kX_10.000kV_30mu_12',
+'2016-09-16-1723_ImageSequence_Er2Si_40.607kX_10.000kV_30mu_3',
+'2016-09-16-1739_ImageSequence_Er2Si_59.865kX_10.000kV_30mu_7',
+'2016-09-16-1751_ImageSequence_Er2Si_40.041kX_10.000kV_30mu_9',
+'2016-09-16-1803_ImageSequence_Er2Si_38.013kX_10.000kV_30mu_13',
+'2016-09-16-1818_ImageSequence_Er2Si_38.013kX_10.000kV_30mu_14',
+'2016-09-16-1844_ImageSequence_Er2Si_12.239kX_10.000kV_30mu_18']      
 
-tau_single = np.zeros(len(name))
-tau_single_error = np.zeros(len(name))
-tau_bi = np.zeros([len(name),2])
-tau_bi_error = np.zeros([len(name),2])
+description = ['Sigma-Aldrich 150nm LiYF$_4$ on SiO$_2$','Sigma-Aldrich 150nm LiYF$_4$ on SiO$_2$','Sigma-Aldrich 150nm LiYF$_4$ on SiO$_2$',
+               'Bella 10nm NaYF$_4$ Er 2$\%$ CS on SiO$_2$', 'Bella 10nm NaYF$_4$ Er 2$\%$ CS on SiO$_2$', 'Bella 10nm NaYF$_4$ Er 2$\%$ CS on SiO$_2$',
+               'Bella 10nm NaYF$_4$ Er 2$\%$ CS on Si', 'Bella 10nm NaYF$_4$ Er 2$\%$ CS on Si',
+               'Bella 10nm NaYF$_4$ Er 10$\%$ CS on SiO$_2$', 'Bella 10nm NaYF$_4$ Er 10$\%$ CS on SiO$_2$', 'Bella 10nm NaYF$_4$ Er 10$\%$ CS on SiO$_2$',
+               'Bella 10nm NaYF$_4$ Er 2$\%$ C on Si']    
+               
+kv = [3,3,3,3,10,10,10,10,10,10,10,10]
+
+let = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'XIX', 'X', 'XI', 'XII']
+
+#tau_single = np.zeros(len(name))
+#tau_single_error = np.zeros(len(name))
+#tau_bi = np.zeros([len(name),2])
+#tau_bi_error = np.zeros([len(name),2])
 
 #original
 #for index in np.arange(11,11):   #11):
@@ -82,10 +111,10 @@ if index is 1:
 
     print(index)
 
-    file1    = h5py.File('SE-2016-09-05-1845_ImageSequence_Sigma-UC_63.288kX_10.000kV_30mu_7.hdf5', 'r')  ###SE
-    file2   = h5py.File('NImp-2016-09-05-1905_ImageSequence_Sigma-UC_63.288kX_10.000kV_30mu_8.hdf5', 'r')   ###Data
+    file1    = h5py.File(namese[index] + '.hdf5', 'r')  
+    file2   = h5py.File(nametr[index] + '.hdf5', 'r') 
     #file3   = h5py.File('PentaZoom50expts.hdf5', 'r') 
-    titulo =  'Upconverting NPs (10kV, 30$\mu$m aperture, 40ns time bins, 63kX or 1.8nm pixels)'
+    titulo =  'Upconverting NPs'
     se1_dset   = file1['/data/Analog channel 1 : SE2/data'] #50 frames x250 x 250 pixels
     red1_dset  = file2['/data/Counter channel ' + channel[index] + ' : '+ pmt[index]+'/' + pmt[index] + ' time-resolved/data']#50 frames x 200 tr pts x250 x 250 pixels
     #red1_dset50  = file3['/data/Counter channel ' + channel[index] + ' : '+ pmt[index]+'/' + pmt[index] + ' time-resolved/data']#50 frames x 200 tr pts x250 x 250 pixels
@@ -94,7 +123,7 @@ if index is 1:
     print(red1_dset.shape)
     
     #cut part of frames with ebeam off, here 25 first points
-    cut_at_beginning = 79
+    cut_at_beginning = 9
     red1_dset = red1_dset[:,cut_at_beginning::,:,:]
     
     #hack to go faster
@@ -104,7 +133,7 @@ if index is 1:
     
     #no experiments to consider
     #se1_dset = se1_dset[0:No_experiments[index]+1,:,:]
-    red1_dset = red1_dset[0:No_experiments+1,:,:,:]
+    red1_dset = red1_dset[0:No_experiments[index]+1,:,:,:]
     
     #convert to smaller data types
     se1_dset2 = np.array(se1_dset, dtype=np.float16)
@@ -167,16 +196,13 @@ if index is 1:
 #    ###MOCK REGISTRATION, QUICK FOR HACK ####################################!!!!!!!!!!!!!!!!!!!!
     #se1_dset_reg, sth = reg_images(se1_dset) 
     #del sth
+    se1_dset_reg = np.average(se1_dset,axis=0) #  #
     
-    #those are uncommented
-    se1_dset_reg = np.average(se1_dset,axis=0) #  # 
     red1_dset_reg = np.average(red1_dset, axis=0)
     red1_dset_reg_all = np.array(red1_dset)
     se1_dset_reg = np.array(se1_dset_reg, dtype=np.float16)
     red1_dset_reg = np.array(red1_dset_reg, dtype=np.float32)
     red1_dset_reg_all = np.array(red1_dset_reg_all, dtype=np.float32)
-   #end of those are uncommented    
-    
     #second step
     #center_cl_index = 3 # # this index is going to be used as reference, should be no 82 in original vector
 #    end_left_index = 0#not used for the time being
@@ -219,19 +245,17 @@ if index is 1:
     del red1_dset_reg, red1_dset_reg_all, se1_dset_reg
     gc.collect()
     
-    mycode = 'SingleSEchannel = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = str(let[index]) + 'SEchannel = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez('SingleSEchannel', data = se1_dset_cut)
+    np.savez(str(let[index]) + 'SEchannel', data = se1_dset_cut)
 #    
+    mycode = str(let[index]) + 'Redbright = tempfile.NamedTemporaryFile(delete=False)'
+    exec(mycode)
+    np.savez(str(let[index]) +'Redbright', data = red1_dset_cut_all)
     
-    if calc_blue is False: 
-        mycode = 'SingleRedbright = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('SingleRedbright', data = red1_dset_cut_all)
-    else:
-        mycode = 'SingleBluebright = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('SingleBluebright', data = red1_dset_cut_all)
+#    mycode = str(let[index]) + 'Bluebright = tempfile.NamedTemporaryFile(delete=False)'
+#    exec(mycode)
+#    np.savez(str(let[index]) +'Bluebright', data = red1_dset_cut_all)
 ##    
 
         
@@ -310,7 +334,7 @@ if index is 1:
     #do_avg_dset = False
     #do_median_dset = False
     #do_arb_thr_one = False
-    do_gmmse_dset = True
+    do_gmmse_dset = False
     #do_gmmboth_dset = False
     #do_threshold_adaptive = False
     #do_random_walker = False
@@ -352,9 +376,9 @@ if index is 1:
         gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct, means, covars, weights = gmmone_tr_in_masked_channel(se1_dset_cut, red1_dset_cut)     
         #gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct = thr_otsu_tr_in_masked_channel(se1_dset_cut, red1_dset_cut)     
 
-        mycode = 'SingleSEchannelGMM = tempfile.NamedTemporaryFile(delete=False)'
+        mycode = str(let[index]) +'SEchannelGMM = tempfile.NamedTemporaryFile(delete=False)'
         exec(mycode)
-        np.savez('SingleSEchannelGMM', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
+        np.savez(str(let[index]) +'SEchannelGMM', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
         
         #klklklk
                 
@@ -452,7 +476,7 @@ if index is 1:
     #two lines were uncommented; now trying to delete later
     #del gmmse_red1_brightse_dset_for_4D
     #gc.collect()
-    plot_expt_by_expt_behaviour(titulo + ', signal pixels', gmmse_red1_darkse_dset_for_4D/darkse_pct, Time_bin, nominal_time_on,fastfactor,'y',major_ticks,dark_dset=None, plot_dark=False,unit='kHz') #pass titulo as well
+   # plot_expt_by_expt_behaviour(titulo + ', signal pixels', gmmse_red1_darkse_dset_for_4D/darkse_pct, Time_bin, nominal_time_on,fastfactor,'y',major_ticks,dark_dset=None, plot_dark=False,unit='kHz') #pass titulo as well
     #del gmmse_red1_brightse_dset_for_4D
     
     #multipage('ZZZ' + name_str[index] + fig_no + '.pdf',dpi=80)
@@ -463,8 +487,8 @@ if index is 1:
     
     ###FIG4
     fig_no = '-3plots'
-    start_of_transient = 82- cut_at_beginning + 1 #time-bin 75 + 300ns/40ns = 75 + ~8 = 83
-    last_pt_offset = -10 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
+    start_of_transient = 33; #82- cut_at_beginning + 1 #time-bin 75 + 300ns/40ns = 75 + ~8 = 83
+    #last_pt_offset = -10 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
 #    if index == 7000:  ### 7 was a problem for red, added a thousand
 #        print('core only, sample B')
 #        init_guess = [np.average(gmmse_red1_darkse_dset[start_of_transient,:,:])/darkse_pct, 1.0, np.average(gmmse_red1_darkse_dset[last_pt_offset,:,:])/darkse_pct, np.average(gmmse_red1_darkse_dset[start_of_transient,:,:])/darkse_pct , 0.1] #e init was 0.5, d was zero before I made == a
@@ -472,12 +496,11 @@ if index is 1:
 #        print("oleic")
 #        init_guess = [np.average(gmmse_red1_darkse_dset[start_of_transient,:,:])/darkse_pct,0.05, np.average(gmmse_red1_darkse_dset[last_pt_offset,:,:])/darkse_pct, np.average(gmmse_red1_darkse_dset[start_of_transient,:,:])/darkse_pct, 0.25] #e init was 0.5
 #    else:
-    init_guess = [np.average(gmmse_red1_darkse_dset[start_of_transient,:,:])/darkse_pct, 1.0, np.average(gmmse_red1_darkse_dset[last_pt_offset,:,:])/darkse_pct, np.average(gmmse_red1_darkse_dset[start_of_transient+50,:,:])/darkse_pct, 0.1] #e init was 0.5
+#    init_guess = [np.average(gmmse_red1_darkse_dset[start_of_transient,:,:])/darkse_pct, 1.0, np.average(gmmse_red1_darkse_dset[last_pt_offset,:,:])/darkse_pct, np.average(gmmse_red1_darkse_dset[start_of_transient+50,:,:])/darkse_pct, 0.1] #e init was 0.5
     #if do_gmmse_dset is False:
      #  brightse_pct = 0.01 #just so that I don't have a division by 0 in the function argument below!!!!
     #b,e,be,ee = calcdecay(gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset1=None ,other_dset2=None,init_guess=init_guess,unit='kHz')    
-    
-    #b,be, be, ee = calcdecay(gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, single exponential fit, \n ' + titulo ,single=False,other_dset1=red1_dset_cut[start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset[start_of_transient::,:,:]/brightse_pct,init_guess=init_guess,unit='kHz')
+  #  b,be, be, ee = calcdecay(gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, single exponential fit, \n ' + titulo ,single=False,other_dset1=red1_dset_cut[start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset[start_of_transient::,:,:]/brightse_pct,init_guess=init_guess,unit='kHz')
     
 #    tau_single[index] = b
 #    tau_single_error[index] = be
@@ -497,21 +520,20 @@ if index is 1:
 #        calcdecay_series(gmmse_red1_darkse_dset_for_4D[:,start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,nominal_time_on=nominal_time_on,fastfactor=fastfactor,other_dset1=red1_dset_cut_all[:,start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset_for_4D[:,start_of_transient::,:,:]/brightse_pct,init_guess=init_guess)    
 #        print('each')        
 #        calcdecay_each(gmmse_red1_darkse_dset_for_4D[:,start_of_transient::,:,:]/darkse_pct, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,nominal_time_on=nominal_time_on,fastfactor=fastfactor,other_dset1=red1_dset_cut_all[:,start_of_transient::,:,:]/1.0 ,other_dset2=gmmse_red1_brightse_dset_for_4D[:,start_of_transient::,:,:]/brightse_pct,init_guess=init_guess)    
-#
+
 
     del gmmse_red1_darkse_dset_for_4D, gmmse_red1_brightse_dset_for_4D #last one is trying to delete later than line372
     gc.collect()
     
-    if calc_blue is False:
-        mycode = 'SingleZZZRedDecay = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('SingleZZZRedDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
-    else:
-        mycode = 'SingleZZZBlueDecay = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('SingleZZZBlueDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
+    #mycode = str(let[index]) +'ZZZBlueDecay = tempfile.NamedTemporaryFile(delete=False)'
+    #exec(mycode)
+    #np.savez(str(let[index]) +'ZZZBlueDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
     
-    multipage('SingleZZZ.pdf',dpi=80)
+    mycode = str(let[index]) +'ZZZRedDecay = tempfile.NamedTemporaryFile(delete=False)'
+    exec(mycode)
+    np.savez(str(let[index]) +'ZZZRedDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
+    
+    multipage(str(let[index]) +'RedZZZ.pdf',dpi=80)
     
     ###END FIG4
     
@@ -525,194 +547,268 @@ if index is 1:
 ######################################## Plot with dose for different apertures
 ##files below exist
     
-### 593 dichroic
-se = np.load('SingleSEchannel.npz') 
-segmm = np.load('SingleSEchannelGMM.npz') 
-red = np.load('SingleRedbright.npz') 
-blue = np.load('SingleBluebright.npz') 
+index = 7
 
-fsizetit = 18 #22 #18
-fsizepl = 16 #20 #16
-sizex = 8 #10 #8
-sizey = 6# 10 #6
-dpi_no = 80
-lw = 2
+listofindex = [11] #[0, 1, 2, 3, 4, 5, 6, 7, 8, 10,11]
+for index in listofindex:
 
-Pixel_size = 1.8e-9
-length_scalebar = 100.0 #in nm (1000nm == 1mum)
-scalebar_legend = '100 nm'
-length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size/1.0e-9))
-titulo =  '150nm upconverting NPs (10kV, 30$\mu$m aperture, 40ns time bins, 67kX or 1.8nm pixels)'
-
-
-fig40= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
-fig40.set_size_inches(1200./fig40.dpi,900./fig40.dpi)
-plt.rc('text', usetex=True)
-plt.rc('font', family='serif')
-plt.rc('font', serif='Palatino')    
-plt.suptitle("Registration and segmentation (model: 2-GMM) of cathodoluminescence signal using SE channel, \n" + titulo,fontsize=fsizetit)
-   
-gc.collect()
-
-ax1 = plt.subplot2grid((2,3), (0, 0), colspan=1)
-ax1.set_title('SE channel (0.5ms per pixel)',fontsize=fsizepl)
-plt.imshow(se['data'],cmap=cm.Greys_r)
-sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4)
-ax1.add_artist(sbar)
-plt.axis('off')
-
-gc.collect()
-ax1 = plt.subplot2grid((2,3), (0, 1), colspan=1)
-ax1.set_title('SE channel, signal pixels',fontsize=fsizepl)
-hlp = segmm['bright']
-hlp[~np.isnan(hlp)] = 0.0
-hlp[np.isnan(hlp)] = 1.0
-im = plt.imshow(hlp,cmap=cm.Greys) #or 'OrRd'
-sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4)
-ax1.add_artist(sbar)
-plt.axis('off')
-
-def make_gaussian(means, covars, weights, data, max_hist, no_pts=200):
+    ### 593 dichroic
+    se = np.load(str(let[index]) +'SEchannel.npz') 
+    segmm = np.load(str(let[index]) +'SEchannelGMM.npz') 
+    red = np.load(str(let[index]) +'Redbright.npz') 
+    blue = np.load(str(let[index]) +'Bluebright.npz') 
     
-    array_x = np.zeros([len(means), no_pts])
-    array_y = np.zeros([len(means), no_pts])
+    fsizetit = 18 #22 #18
+    fsizepl = 16 #20 #16
+    sizex = 8 #10 #8
+    sizey = 6# 10 #6
+    dpi_no = 80
+    lw = 2
     
-    for j in np.arange(0,len(means)):
-        array_x[j,:] = np.linspace(np.min(data),np.max(data),no_pts)
-        array_y[j,:] = weights[j] * max_hist * np.exp( -(array_x[j,:] - means[j])**2/(2*covars[j])  )
+    #Pixel_size = 3.1e-9
+    length_scalebar = 100.0 #in nm (1000nm == 1mum)
+    scalebar_legend = '100 nm'
+    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[index]/1.0e-9))
+    titulo =  description[index] + ' (' + str(kv[index]) + 'kV, 30$\mu$m aperture, 100ns time bins, ' + str(Ps[index])+ 'nm pixels, blue/red $= </>$ 593nm)'
+    
+    
+    fig40= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+    fig40.set_size_inches(1200./fig40.dpi,900./fig40.dpi)
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='serif')
+    plt.rc('font', serif='Palatino')    
+    plt.suptitle("Registration and segmentation (model: 2-GMM) of cathodoluminescence signal using SE channel, \n" + titulo,fontsize=fsizetit)
+       
+    gc.collect()
+    
+    ax1 = plt.subplot2grid((2,3), (0, 0), colspan=1)
+    ax1.set_title('SE channel (0.5ms per pixel)',fontsize=fsizepl) #as per accompanying txt files
+    plt.imshow(se['data'],cmap=cm.Greys_r)
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    gc.collect()
+    ax1 = plt.subplot2grid((2,3), (0, 1), colspan=1)
+    ax1.set_title('SE channel, signal pixels',fontsize=fsizepl)
+    hlp = segmm['bright']
+    hlp[~np.isnan(hlp)] = 0.0
+    hlp[np.isnan(hlp)] = 1.0
+    im = plt.imshow(hlp,cmap=cm.Greys) #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    def make_gaussian(means, covars, weights, data, max_hist, no_pts=200):
         
-    return array_x, array_y
-
-
-#box = ax1.get_position()
-#ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
-#axColor = plt.axes([box.x0, box.y0*1.1 , box.width,0.01*10 ])   
-#no_bins = 200 
-#n = axColor.hist(se['data'].flatten(),bins=no_bins)
-#
-#array_x, array_y = make_gaussian(segmm['means'][:,0], segmm['covars'][:,0],segmm['weights'], se['data'], np.max(n[0]), no_pts=200)
-#
-#axColor.plot(array_x[0],array_y[0])
-#axColor.plot(array_x[1],array_y[1])
-
-############
-import skimage.morphology
-from skimage.morphology import watershed
-from skimage.feature import peak_local_max
-image =  np.abs(1-hlp)#hlp.astype(bool) #np.logical_or(mask_circle1, mask_circle2)
-from scipy import ndimage
-distance = ndimage.distance_transform_edt(image)
-local_maxi = peak_local_max(distance, num_peaks = 5, indices = False, footprint=np.ones((5,5)),labels=image) #footprint = min dist between maxima to find #footprint was 25,25
-markers = skimage.morphology.label(local_maxi)
-labels_ws = watershed(-distance, markers, mask=image)
-#plt.figure()
-#ax1 = plt.subplot2grid((1,4), (0,0))
-#ax1.imshow(image)
-#ax2 = plt.subplot2grid((1,4), (0,1))
-#ax2.imshow(np.log(distance))
-#ax2 = plt.subplot2grid((1,4), (0,2))
-#ax2.imshow(markers)
-#ax2 = plt.subplot2grid((1,4), (0,3))
-#ax2.imshow(labels_ws)
-#plt.show()
-
-#ax1 = plt.subplot2grid((2,3), (0, 2), colspan=1)
-#ax1.set_title('Segmented NPs',fontsize=fsizepl)
-#im = plt.imshow(labels_ws,cmap=cm.Greys) #or 'OrRd'
-#sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
-#ax1.add_artist(sbar)
-#plt.axis('off')
-
-ax1 = plt.subplot2grid((2,3), (1, 0), colspan=1)
-ax1.spines['right'].set_visible(False)
-ax1.spines['top'].set_visible(False)
-ax1.xaxis.set_ticks_position('bottom')
-ax1.yaxis.set_ticks_position('left')
-hlp = segmm['bright']
-hlp[~np.isnan(hlp)] = 1.0
-plt.plot(np.arange(0,71)*Time_bin/1e3,np.nanmean(red['data']*hlp,axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
-plt.plot(np.arange(0,71)*Time_bin/1e3,np.nanmean(blue['data']*hlp,axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
-#plt.plot(np.arange(0,71)*Time_bin/1e3,np.average(red['data'],axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
-#plt.plot(np.arange(0,71)*Time_bin/1e3,np.average(blue['data'],axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
-ax1.axvspan(0.04, 0.16, alpha=0.25, color='yellow')
-unit = 'kHz'
-plt.ylabel("Average luminescence \n of each time bin, per pixel (" + unit + ")",fontsize=fsizepl)
-plt.xlabel("Behaviour of e-beam during each experiment: \n 0.12-ON + OFF ($\mu$s)",fontsize=fsizepl)
-plt.legend() 
-major_ticks0 = [1,2]
-ax1.set_xticks(major_ticks0) 
-#ax1.set_yticks([15,30,45]) 
-plt.xlim([0,2])
-
-ax1 = plt.subplot2grid((2,3), (1, 1), colspan=1)
-ax1.spines['right'].set_visible(False)
-ax1.spines['top'].set_visible(False)
-ax1.xaxis.set_ticks_position('bottom')
-ax1.yaxis.set_ticks_position('left')
-
-datared = np.average(red['data'], axis = (0))
-datablue = np.average(blue['data'], axis = (0))
-
-
-initbin = 4
-datared = datared[initbin:,:,:]
-datablue = datablue[initbin:,:,:]
-
-fastfactor = 1
-last_pt_offset = -10 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
-#init_guess = [np.average(datared[0,:,:]), 0.1, np.average(datared[last_pt_offset,:,:]), np.average(datared[-15,:,:]), 0.05] #e init was 0.5
-init_guess = [np.average(datared[0,:,:]), 0.02, np.average(datared[last_pt_offset,:,:]), np.average(datared[-15,:,:]), 0.05] #e init was 0.5
-init_guess = [np.average(datared[0,:,:]), 0.02, np.average(datared[last_pt_offset,:,:]), 0.01, 0.05] #e init was 0.5
-
-init_guess2 = [np.average(datablue[0,:,:]), 0.25, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-15,:,:]), 0.005] #e init was 0.5
-init_guess2 = [np.average(datablue[0,:,:]), 0.25, 0.01, np.average(datablue[-15,:,:]), 0.005] #e init was 0.5
-
-#init_guess = [0.5, 0.74, 0.05, 0.1, 0.01]
-#init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
-
-hlp = segmm['bright']
-hlp[~np.isnan(hlp)] = 1.0
-hlpred = np.nanmean(red['data'][:,initbin:,:,:]*hlp,axis = (2,3))
-hlpblue = np.nanmean(blue['data'][:,initbin:,:,:]*hlp,axis = (2,3))
-error_arrayr = np.nanstd(hlpred,axis = 0)
-error_arrayb = np.nanstd(hlpblue, axis = 0)
-error_arrayr[error_arrayr < 0.05 * np.max(hlpred)]  = 0.05 * np.max(hlpred) #arbitrary 5% of max
-error_arrayb[error_arrayb < 0.05 * np.max(hlpblue)]  = 0.05 * np.max(hlpblue)
-#b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
-b,e,be,ee = calcdecay_subplot_nan(datared*hlp, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue*hlp ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2,error_array=error_arrayr, error_array2=error_arrayb)    
-
-
-#b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
-plt.xlim([0,2])
-major_ticks0 = [1,2]
-plt.ylabel("Average luminescence \n of each time bin, per pixel (" + unit + ")",fontsize=fsizepl)
-plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
-
-ax1.set_xticks(major_ticks0)
-
-ax1 = plt.subplot2grid((2,3), (1, 2), colspan=1)
-ax1.spines['right'].set_visible(False)
-ax1.spines['top'].set_visible(False)
-ax1.xaxis.set_ticks_position('bottom')
-ax1.yaxis.set_ticks_position('left')
-
-dataALLred = red['data'][:,0:5,:,:]
-dataALLblue = blue['data'][:,0:5,:,:]
-nominal_time_on = 0.12
-
-plt.plot(np.arange(1,51)*nominal_time_on*fastfactor,np.average(dataALLblue,axis=(1,2,3)),c='b', label='From blue photons ($<$ 593nm)',linestyle='None', marker='o',markersize=4) #in mus, in MHz
-plt.plot(np.arange(1,51)*nominal_time_on*fastfactor,np.average(dataALLred,axis=(1,2,3)),c='r', label='From red photons ($>$ 593nm)',linestyle='None', marker='o',markersize=4) #in mus, in MHz
-plt.ylabel("Average luminescence \n for each experiment, per pixel  (kHz)",fontsize=fsizepl)
-plt.xlabel("Cumulative e-beam exposure time \n per pixel (nominal, $\mu$s)",fontsize=fsizepl)
-#major_ticks = [25,50,75,nominal_time_on*dset.shape[0]*fastfactor]
-major_ticks = [2,4,6]
-ax1.set_xticks(major_ticks) 
-#plt.legend()
-plt.xlim([nominal_time_on,nominal_time_on*50*fastfactor])
-
-
-
-multipage_longer('ZZZtt-Penta_plot.pdf',dpi=80)
+        array_x = np.zeros([len(means), no_pts])
+        array_y = np.zeros([len(means), no_pts])
+        
+        for j in np.arange(0,len(means)):
+            array_x[j,:] = np.linspace(np.min(data),np.max(data),no_pts)
+            array_y[j,:] = weights[j] * max_hist * np.exp( -(array_x[j,:] - means[j])**2/(2*covars[j])  )
+            
+        return array_x, array_y
+    
+    
+    #box = ax1.get_position()
+    #ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
+    #axColor = plt.axes([box.x0, box.y0*1.1 , box.width,0.01*10 ])   
+    #no_bins = 200 
+    #n = axColor.hist(se['data'].flatten(),bins=no_bins)
+    #
+    #array_x, array_y = make_gaussian(segmm['means'][:,0], segmm['covars'][:,0],segmm['weights'], se['data'], np.max(n[0]), no_pts=200)
+    #
+    #axColor.plot(array_x[0],array_y[0])
+    #axColor.plot(array_x[1],array_y[1])
+    
+    ############
+    import skimage.morphology
+    from skimage.morphology import watershed
+    from skimage.feature import peak_local_max
+    image =  np.abs(1-hlp)#hlp.astype(bool) #np.logical_or(mask_circle1, mask_circle2)
+    from scipy import ndimage
+    distance = ndimage.distance_transform_edt(image)
+    local_maxi = peak_local_max(distance, num_peaks = 9, indices = False, footprint=np.ones((16,16)),labels=image) #footprint = min dist between maxima to find #footprint was 25,25
+    markers = skimage.morphology.label(local_maxi)
+    labels_ws = watershed(-distance, markers, mask=image)
+    #plt.figure()
+    #ax1 = plt.subplot2grid((1,4), (0,0))
+    #ax1.imshow(image)
+    #ax2 = plt.subplot2grid((1,4), (0,1))
+    #ax2.imshow(np.log(distance))
+    #ax2 = plt.subplot2grid((1,4), (0,2))
+    #ax2.imshow(markers)
+    #ax2 = plt.subplot2grid((1,4), (0,3))
+    #ax2.imshow(labels_ws)
+    #plt.show()
+    
+    ax1 = plt.subplot2grid((2,3), (0, 2), colspan=1)
+    ax1.set_title('Segmented NPs',fontsize=fsizepl)
+    im = plt.imshow(labels_ws,cmap=cm.Greys) #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    ax1 = plt.subplot2grid((2,3), (1, 0), colspan=1)
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.xaxis.set_ticks_position('bottom')
+    ax1.yaxis.set_ticks_position('left')
+    
+    #TEST
+    hlp = segmm['bright']
+    hlp[~np.isnan(hlp)] = 1.0
+    #redn = np.average(red['data'],axis = 0)
+    #bluen = np.average(blue['data'],axis = 0)
+    #for jj in np.arange(0,redn.shape[0]):
+    #    print(jj)
+    #    redn[jj,:,:] = redn[jj,:,:] * hlp
+    #    bluen[jj,:,:] = bluen[jj,:,:] * hlp
+    #    
+    #plt.plot(np.arange(0,91)*Time_bin/1e3,np.nanmean(redn,axis = (1,2)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
+    #plt.plot(np.arange(0,91)*Time_bin/1e3,np.nanmean(bluen,axis = (1,2)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
+    plt.plot(np.arange(0,91)*Time_bin/1e3,np.nanmean(red['data']*hlp,axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
+    plt.plot(np.arange(0,91)*Time_bin/1e3,np.nanmean(blue['data']*hlp,axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
+    
+    #plt.plot(np.arange(0,91)*Time_bin/1e3,np.average(red['data'],axis = (0,2,3)),c='r',label='Red photons ($>$ 593nm)',lw=3) #in mus, in MHz
+    #plt.plot(np.arange(0,91)*Time_bin/1e3,np.average(blue['data'],axis = (0,2,3)),c='b',label='Blue photons ($<$ 593nm)',lw=3) #in mus, in MHz
+    ax1.axvspan(0.5, 2.5, alpha=0.25, color='yellow')
+    unit = 'kHz'
+    plt.ylabel("Average luminescence \n of each time bin, per pixel (" + unit + ")",fontsize=fsizepl)
+    plt.xlabel("Behaviour of e-beam during each experiment: \n 2-ON + 7-OFF ($\mu$s)",fontsize=fsizepl)
+    plt.legend() 
+    major_ticks0 = [0.5,2.5,5,7,9]
+    ax1.set_xticks(major_ticks0) 
+    #ax1.set_yticks([15,30,45]) 
+    plt.xlim([0,9])
+    
+    ax1 = plt.subplot2grid((2,3), (1, 1), colspan=1)
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.xaxis.set_ticks_position('bottom')
+    ax1.yaxis.set_ticks_position('left')
+    
+    datared = np.average(red['data'], axis = (0))
+    datablue = np.average(blue['data'], axis = (0))
+    
+    if True is False:
+        pass
+    else:
+        initbin = 24
+        datared = datared[initbin:,:,:]
+        datablue = datablue[initbin:,:,:]
+    
+    
+    
+    fastfactor = 1
+    last_pt_offset = -5 #sometimes use -1, last point, but sometimes this gives 0. -10 seems to work
+    init_guess = [np.average(datared[0,:,:]), 0.01, np.average(datared[last_pt_offset,:,:]), np.average(datared[-30,:,:]), 0.005] #e init was 0.5
+    #init_guess =  [0.35, 0.005, 0.02, 0.08, 0.0006]
+    #init_guess2 = [0.46, 0.1, 0.03, 12, 0.01]
+    #init_guess2 = [ 0.08, 0.03, 0.17, 4.6, 0.01]
+    
+    init_guess2 = [np.average(datablue[0,:,:]), 1.0, np.average(datablue[last_pt_offset,:,:]), np.average(datablue[-30,:,:]), 0.005] #e init was 0.5
+    init_guess2 = [np.average(datablue[0,:,:]), 1.0, 0.01, np.average(datablue[-30,:,:]), 0.005] #e init was 0.5
+    
+    if index is 0: #needs to be reworked out
+        init_guess = [7.0, 0.5, 0.02, 0.04, 1.0 ]
+        init_guess2 = [6.5, 0.1, 0.02,0.04, 1.0 ]
+        init_guess = [7.0, 0.86, 0.02, 0.04, 9.53 ]
+        init_guess2 = [6.5, 0.86, 0.02,0.04, 9.53 ]
+    
+    if index is 1:
+        init_guess = [3.0, 0.5, 0.02, 0.04, 1.0 ]
+        init_guess2 = [2.0, 0.1, 0.02,0.04, 1.0 ]
+        init_guess = [3.0, 0.86, 0.02, 0.04, 9.53]
+        init_guess2 = [2.0, 0.86, 0.02,0.04, 9.53]
+        
+    if index is 2:
+        init_guess = [3.0, 0.08, 0.02, 0.04, 3.0 ]
+        init_guess2 = [2.0, 0.1, 0.02,0.04, 1.0 ]
+        init_guess = [3.0, 0.12, 0.02, 0.04, 1.17]
+        init_guess2 = [2.0, 0.12, 0.02,0.04, 1.17 ]
+        
+    if index is 4:
+       # init_guess = [100.0, 1.0, 6.0, 10.0, 10.0 ]
+        #init_guess2 = [500.0,0.2, 10.5,13.0, 5.0 ]
+        init_guess = [100.0, 0.04, 6.0, 10.0, 0.98 ]
+        init_guess2 = [500.0,0.09, 10.5,13.0, 1.12]
+        
+    if index is 5:
+        init_guess = [10.0, 1.0, 6.0, 10.0, 9.0 ]
+        init_guess2 = [20.0,0.2, 10.5,13.0, 9.0 ]
+        
+    if index is 6:
+        init_guess = [5.0,0.1, 0.2,0.5, 15.0 ]
+        init_guess2 = [5.0,0.1, 1.5,2.0, 5.0 ]
+    
+    if index is 7:
+        init_guess = [10.0,0.1, 0.2,0.5, 15.0 ]
+        init_guess2 = [15.0,0.1, 0.5,0.8, 5.0 ]
+        
+    if index is 8:
+        init_guess = [20.0,0.1, 0.5,1.0, 15.0 ]
+        init_guess2 = [40.0,0.1, 2.0,5.0, 5.0 ]
+        
+    if index is 10:
+        #init_guess = [5.0,0.1,3.0,5.0, 15.0 ]
+        #init_guess2 = [200.0,0.1, 8.0,10.0, 5.0 ]
+        init_guess = [5.0,0.04,3.0,5.0, 0.98 ]
+        init_guess2 = [200.0,0.09, 8.0,10.0, 1.12 ]
+        
+    if index is 11:
+        #init_guess = [1.5,0.1,0.2,0.5, 1.0 ]
+        #init_guess2 = [20.0,0.1,3.0,5.0, 5.0 ]
+        init_guess = [1.5,0.1,0.2,0.5, 3.0 ]
+        init_guess2 = [20.0,0.1,3.0,5.0, 5.0 ]
+        
+    hlpred = np.nanmean(red['data'][:,initbin:,:,:]*hlp,axis = (2,3))
+    hlpblue = np.nanmean(blue['data'][:,initbin:,:,:]*hlp,axis = (2,3))
+    
+    error_arrayr = np.nanstd(hlpred,axis = 0)
+    error_arrayb = np.nanstd(hlpblue, axis = 0)
+    error_arrayr[error_arrayr < 0.05 * np.max(hlpred)]  = 0.05 * np.max(hlpred) #arbitrary 5% of max
+    error_arrayb[error_arrayb < 0.05 * np.max(hlpblue)]  = 0.05 * np.max(hlpblue)
+    #b,e,be,ee = calcdecay_subplot2(datared, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2)    
+    b,e,be,ee = calcdecay_subplot_nan(datared*hlp, time_detail= Time_bin*1e-9*fastfactor,titulo='Cathodoluminescence rate decay, bi-exponential fit, \n ' + titulo ,single=False,other_dset2=datablue*hlp ,other_dset1=None,init_guess=init_guess,unit='kHz',init_guess2=init_guess2,error_array=error_arrayr, error_array2=error_arrayb)    
+    
+    plt.xlim([0,7])
+    major_ticks0 = [3,5,7]
+    plt.ylabel("Average luminescence \n of each time bin, per pixel (" + unit + ")",fontsize=fsizepl)
+    plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
+    
+    ax1.set_xticks(major_ticks0)
+    
+    ax1 = plt.subplot2grid((2,3), (1, 2), colspan=1)
+    ax1.spines['left'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.xaxis.set_ticks_position('bottom')
+    ax1.yaxis.set_ticks_position('right')
+    ax1.yaxis.set_label_position("right")
+    
+    dataALLred = red['data'][:,:,:,:]
+    dataALLblue = blue['data'][:,:,:,:]
+    nominal_time_on = 2.0
+    
+    plt.plot(np.arange(1,No_experiments[index]+1)*nominal_time_on*fastfactor,np.average(dataALLblue,axis=(1,2,3)),c='b', label='From blue photons ($<$ 593nm)',linestyle='None', marker='o',markersize=4) #in mus, in MHz
+    plt.plot(np.arange(1,No_experiments[index]+1)*nominal_time_on*fastfactor,np.average(dataALLred,axis=(1,2,3)),c='r', label='From red photons ($>$ 593nm)',linestyle='None', marker='o',markersize=4) #in mus, in MHz
+    plt.plot(np.arange(1,No_experiments[index]+1)*nominal_time_on*fastfactor,np.average(dataALLblue,axis=(0,1,2,3))*np.ones([No_experiments[index]]),c='b', linewidth= lw) #in mus, in MHz
+    plt.plot(np.arange(1,No_experiments[index]+1)*nominal_time_on*fastfactor,np.average(dataALLred,axis=(0,1,2,3))*np.ones([No_experiments[index]]),c='r',  linewidth= lw) #in mus, in MHz
+    
+    
+    plt.ylabel("Average luminescence \n for each experiment, per pixel  (kHz)",fontsize=fsizepl)
+    plt.xlabel("Cumulative e-beam exposure time \n per pixel (nominal, $\mu$s)",fontsize=fsizepl)
+    
+    #major_ticks = [25,50,75,nominal_time_on*dset.shape[0]*fastfactor]
+    major_ticks = [5,10,15,20]
+    #ax1.set_xticks(major_ticks) 
+    #plt.legend()
+    plt.xlim([nominal_time_on - 1.0,nominal_time_on*No_experiments[index]*fastfactor +1.0])
+    
+    
+    
+    multipage_longer('ZZZZ-'+ let[index] + '.pdf',dpi=80)
 
 
 

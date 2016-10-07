@@ -642,3 +642,265 @@ def plot_3_channels(se, blue, red, Pixel_size, title, scinti_channel, sample_cha
         sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
         ax1.add_artist(sbar)
         plt.axis('off')
+        
+def plot_3_channels_stretch(se, blue, red, Pixel_size, title, scinti_channel, sample_channel, length_scalebar, scalebar_legend,unit):
+    
+    fsizepl = 10
+    #size of scalebar
+    #length_scalebar = 2000.0 #in nm (1000nm == 1mum) IN NANOMETER
+    #scalebar_legend = '2 $\mu$m' #IN MICRON
+    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size/1.0e-9)) #length_scalebar in pixel size (nm), rounded up for fairness
+    
+    fig40= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+    fig40.set_size_inches(1200./fig40.dpi,900./fig40.dpi)
+    plt.rc('text.latex', preamble=r'\usepackage{xcolor}') #not working
+    plt.rc('text', usetex=True)
+    plt.rc('text.latex', preamble=r'\usepackage{xcolor}')  #not working
+    plt.rcParams['text.latex.preamble']=[r"\usepackage{xcolor}"]  #not working
+    plt.rc('font', family='serif')
+    plt.rc('font', serif='Palatino')     
+    plt.suptitle(title,fontsize=fsizetit)
+   
+    gc.collect()
+    ax1 = plt.subplot2grid((4,3), (0, 0), colspan=1)
+    ax1.set_title('SE channel',fontsize=fsizepl)
+    plt.imshow(se,cmap=cm.Greys_r)
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+
+    gc.collect()
+    ax1 = plt.subplot2grid((4,3), (0, 1), colspan=1)
+    ax1.set_title('Scintillator channel, ' + scinti_channel,fontsize=fsizepl)
+    im = plt.imshow(blue,cmap='Blues') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+#    box = ax1.get_position()
+#    ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
+#    axColor = plt.axes([box.x0, box.y0*1.025 , box.width,0.01 ])    
+#    cb1 = plt.colorbar(im, cax = axColor, orientation="horizontal",label='Photon counts ' + unit,ticks=[0,np.max(blue/2.0),np.max(blue)])
+    #cb1.ax.set_xticklabels(['0',  str("{0:.1f}".format(np.max(blue/2.0))),str("{0:.1f}".format(np.max(blue)))])
+  
+    gc.collect()
+    ax1 = plt.subplot2grid((4,3), (0,2), colspan=1)
+    ax1.set_title('Sample channel, ' + sample_channel,fontsize=fsizepl)
+    imbright = ax1.imshow(red,cmap='Reds')#,vmin=0.0, vmax=np.max(red))
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+#    box = ax1.get_position()
+#    ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
+#    axColor = plt.axes([box.x0, box.y0*1.025 , box.width,0.01 ])    
+#    cb1 = plt.colorbar(imbright, cax = axColor, orientation="horizontal",label='Photon counts ' + unit,ticks=[0,np.max(red/2.0),np.max(red)])
+    #cb1.ax.set_xticklabels(['0',  str("{0:.1f}".format(np.max(red/2.0))),str("{0:.1f}".format(np.max(red)))])
+    
+    #plt.show()
+    
+        
+    import skimage
+    from skimage import data, exposure
+    
+    
+    # Work SE
+    nred = (se-np.min(se))/(np.max(se)-np.min(se))
+    redg = (nred*(255.0-0.0)) + 0.0
+    img =   np.array(redg,dtype=np.uint8)
+    # Contrast stretching
+    p2, p98 = np.percentile(img, (2, 98))
+    img_rescale =  exposure.rescale_intensity(img, in_range=(p2, p98))
+    # Equalization
+    img_eq =  exposure.equalize_hist(img)
+    # Adaptive Equalization
+    img_adapteq =  exposure.equalize_adapthist(img, clip_limit=0.03)
+    ax1 = plt.subplot2grid((4,3), (1, 0), colspan=1)
+    ax1.set_title('Greyscale SE channel, \n contrast stretching' ,fontsize=fsizepl)
+    im = plt.imshow(img_rescale,cmap='Greys') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    ax1 = plt.subplot2grid((4,3), (1, 1), colspan=1)
+    ax1.set_title('Greyscale SE channel, \n hist. equalization' ,fontsize=fsizepl)
+    im = plt.imshow(img_eq,cmap='Greys') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    ax1 = plt.subplot2grid((4,3), (1, 2), colspan=1)
+    ax1.set_title('Greyscale SE channel, \n adapt. hist. equalization' ,fontsize=fsizepl)
+    im = plt.imshow(img_adapteq,cmap='Greys') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    # Work BLUE
+    nred = (blue-np.min(blue))/(np.max(blue)-np.min(blue))
+    redg = (nred*(255.0-0.0)) + 0.0
+    img =   np.array(redg,dtype=np.uint8)
+    # Contrast stretching
+    p2, p98 = np.percentile(img, (2, 98))
+    img_rescale =  exposure.rescale_intensity(img, in_range=(p2, p98))
+    # Equalization
+    img_eq =  exposure.equalize_hist(img)
+    # Adaptive Equalization
+    img_adapteq =  exposure.equalize_adapthist(img, clip_limit=0.03)
+    ax1 = plt.subplot2grid((4,3), (2, 0), colspan=1)
+    ax1.set_title('Greyscale scintillator channel, \n contrast stretching' ,fontsize=fsizepl)
+    im = plt.imshow(img_rescale,cmap='Blues') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    ax1 = plt.subplot2grid((4,3), (2, 1), colspan=1)
+    ax1.set_title('Greyscale scintillator channel, \n hist. equalization' ,fontsize=fsizepl)
+    im = plt.imshow(img_eq,cmap='Blues') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    ax1 = plt.subplot2grid((4,3), (2, 2), colspan=1)
+    ax1.set_title('Greyscale scintillator channel, \n adapt. hist. equalization' ,fontsize=fsizepl)
+    im = plt.imshow(img_adapteq,cmap='Blues') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    # Work RED
+    nred = (red-np.min(red))/(np.max(red)-np.min(red))
+    redg = (nred*(255.0-0.0)) + 0.0
+    img =   np.array(redg,dtype=np.uint8)
+    # Contrast stretching
+    p2, p98 = np.percentile(img, (2, 98))
+    img_rescale =  exposure.rescale_intensity(img, in_range=(p2, p98))
+    # Equalization
+    img_eq =  exposure.equalize_hist(img)
+    # Adaptive Equalization
+    img_adapteq =  exposure.equalize_adapthist(img, clip_limit=0.03)
+    ax1 = plt.subplot2grid((4,3), (3, 0), colspan=1)
+    ax1.set_title('Greyscale sample channel, \n contrast stretching' ,fontsize=fsizepl)
+    im = plt.imshow(img_rescale,cmap='Reds') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    ax1 = plt.subplot2grid((4,3), (3, 1), colspan=1)
+    ax1.set_title('Greyscale sample channel, \n hist. equalization' ,fontsize=fsizepl)
+    im = plt.imshow(img_eq,cmap='Reds') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    ax1 = plt.subplot2grid((4,3), (3, 2), colspan=1)
+    ax1.set_title('Greyscale sample channel, \n adapt. hist. equalization' ,fontsize=fsizepl)
+    im = plt.imshow(img_adapteq,cmap='Reds') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+def plot_2_channels_divide(se, blue, red, Pixel_size, title, scinti_channel, sample_channel, length_scalebar, scalebar_legend,unit, work_red_channel=False):
+    
+    #size of scalebar
+    #length_scalebar = 2000.0 #in nm (1000nm == 1mum) IN NANOMETER
+    #scalebar_legend = '2 $\mu$m' #IN MICRON
+    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size/1.0e-9)) #length_scalebar in pixel size (nm), rounded up for fairness
+    
+    fig40= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+    fig40.set_size_inches(1200./fig40.dpi,900./fig40.dpi)
+    plt.rc('text.latex', preamble=r'\usepackage{xcolor}') #not working
+    plt.rc('text', usetex=True)
+    plt.rc('text.latex', preamble=r'\usepackage{xcolor}')  #not working
+    plt.rcParams['text.latex.preamble']=[r"\usepackage{xcolor}"]  #not working
+    plt.rc('font', family='serif')
+    plt.rc('font', serif='Palatino')     
+    plt.suptitle(title,fontsize=fsizetit)
+   
+    gc.collect()
+    ax1 = plt.subplot2grid((2,3), (0, 0), colspan=1)
+    ax1.set_title('Scintillator/Sample counts',fontsize=fsizepl)
+    im = plt.imshow(blue/red) #,cmap=cm.Greys_r)
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    box = ax1.get_position()
+    ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
+    axColor = plt.axes([box.x0, box.y0*1.025 , box.width,0.01 ])    
+    cb1 = plt.colorbar(im, cax = axColor, orientation="horizontal") #,ticks=[0,50,100,150,200])#[0,np.max(blue/red/2.0),np.max(blue/red)])
+    #plt.clim([0,200])
+
+    gc.collect()
+    ax1 = plt.subplot2grid((2,3), (0, 1), colspan=1)
+    ax1.set_title('Scintillator channel, ' + scinti_channel,fontsize=fsizepl)
+    im = plt.imshow(blue,cmap='Blues') #or 'OrRd'
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    box = ax1.get_position()
+    ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
+    axColor = plt.axes([box.x0, box.y0*1.025 , box.width,0.01 ])    
+    cb1 = plt.colorbar(im, cax = axColor, orientation="horizontal",label='Photon counts ' + unit,ticks=[0,np.max(blue/2.0),np.max(blue)])
+    #cb1.ax.set_xticklabels(['0',  str("{0:.1f}".format(np.max(blue/2.0))),str("{0:.1f}".format(np.max(blue)))])
+  
+    gc.collect()
+    ax1 = plt.subplot2grid((2,3), (0,2), colspan=1)
+    ax1.set_title('Sample channel, ' + sample_channel,fontsize=fsizepl)
+    imbright = ax1.imshow(red,cmap='Reds')#,vmin=0.0, vmax=np.max(red))
+    sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+    ax1.add_artist(sbar)
+    plt.axis('off')
+    
+    box = ax1.get_position()
+    ax1.set_position([box.x0, box.y0*1.00, box.width, box.height])
+    axColor = plt.axes([box.x0, box.y0*1.025 , box.width,0.01 ])    
+    cb1 = plt.colorbar(imbright, cax = axColor, orientation="horizontal",label='Photon counts ' + unit,ticks=[0,np.max(red/2.0),np.max(red)])
+    #cb1.ax.set_xticklabels(['0',  str("{0:.1f}".format(np.max(red/2.0))),str("{0:.1f}".format(np.max(red)))])
+    
+    #plt.show()
+    
+    if work_red_channel:
+        
+        import skimage
+        from skimage import data, exposure
+        
+        #for complete code with histogram, see
+        #http://scikit-image.org/docs/dev/auto_examples/plot_equalize.html
+        # Load an example image
+    
+        # Make a greyscale out of it
+        #normalize to [0,1]
+        nred = (red-np.min(red))/(np.max(red)-np.min(red))
+        #scale a to [x,y] [0,255]
+        #range2 = y - x;
+        #a = (a*range2) + x;
+        redg = (nred*(255.0-0.0)) + 0.0
+        
+        img =   np.array(redg,dtype=np.uint8) #data.moon() will work
+        #print(img.dtype)
+        
+        # Contrast stretching
+        p2, p98 = np.percentile(img, (2, 98))
+        img_rescale =  exposure.rescale_intensity(img, in_range=(p2, p98))
+        
+        # Equalization
+        img_eq =  exposure.equalize_hist(img)
+        
+        # Adaptive Equalization
+        img_adapteq =  exposure.equalize_adapthist(img, clip_limit=0.03)
+        
+        ax1 = plt.subplot2grid((2,3), (1, 0), colspan=1)
+        ax1.set_title('Greyscale sample channel, \n contrast stretching' ,fontsize=fsizepl)
+        im = plt.imshow(img_rescale,cmap='Reds') #or 'OrRd'
+        sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+        ax1.add_artist(sbar)
+        plt.axis('off')
+        
+        ax1 = plt.subplot2grid((2,3), (1, 1), colspan=1)
+        ax1.set_title('Greyscale sample channel, \n hist. equalization' ,fontsize=fsizepl)
+        im = plt.imshow(img_eq,cmap='Reds') #or 'OrRd'
+        sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+        ax1.add_artist(sbar)
+        plt.axis('off')
+        
+        ax1 = plt.subplot2grid((2,3), (1, 2), colspan=1)
+        ax1.set_title('Greyscale sample channel, \n adapt. hist. equalization' ,fontsize=fsizepl)
+        im = plt.imshow(img_adapteq,cmap='Reds') #or 'OrRd'
+        sbar = sb.AnchoredScaleBar(ax1.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4)
+        ax1.add_artist(sbar)
+        plt.axis('off')
