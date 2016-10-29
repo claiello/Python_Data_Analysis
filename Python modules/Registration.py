@@ -137,6 +137,7 @@ def reg_images(images,toberegistered1=None,toberegistered2=None):
        
     else: 
         #plt.show() 
+        print('returning here')
         return np.average(offset_images_corr, axis=0), offset_images_corr
         
 #time resolved image saved as
