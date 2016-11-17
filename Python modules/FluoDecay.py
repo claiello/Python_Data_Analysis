@@ -102,7 +102,7 @@ def fitexp(x,y,single,my_color,my_edgecolor,my_facecolor,init_guess=None,plot_er
         params.add('c', value= init_guess[2], min=init_guess[2]/10.0,max=init_guess[2]*10.0, vary = True) # dont vary c for the moment
         if single == False:
             print('HERE')
-            params.add('d', init_guess[3], min=init_guess[3]/10.0,max=init_guess[3]*10.0)
+            params.add('d', init_guess[3], min=init_guess[3]/10.0,max=init_guess[3]*10.0, vary = True)
             params.add('e', init_guess[4], min=init_guess[4]/10.0,max=init_guess[4]*10.0) 
     else:
         params.add('a', value= 3700.0, min=25.0,max=4500.0)
@@ -427,8 +427,8 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
         #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',label='CL from all pixels: \n' +  r'$\tau $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.2f}".format(be)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
 
         #single use  
-        (a,b,c,ae,be,ce) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=True,my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess[0::2],plot_error=False, error_array=error_array)       
-        plt.semilogy(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,'bo',markersize=4,label='CL photons $>$ 715nm: \n' +r' $\tau_1 <$ 40ns; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s' ) 
+        (a,b,c,ae,be,ce) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=True,my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0:3],plot_error=True, error_array=error_array)       
+        plt.semilogy(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r'$\tau $ = ' + str("{0:.3f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s' ) 
     
     
     #plt.hold(True)
@@ -441,8 +441,8 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
             (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2,plot_error=False, error_array=error_array2) 
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s  \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
         else:
-            (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=True, my_color='b',my_edgecolor='#323232', my_facecolor='#666666',init_guess=init_guess[0::2],plot_error=True, error_array=error_array2)  
-            plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 458nm): \n' + r'$\tau $ = ' + str("{0:.2f}".format(b2)) + ' $\pm$ ' + str("{0:.2f}".format(be2)) + '$\mu$s') 
+            (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=True, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2[0:3],plot_error=True, error_array=error_array2)  
+            plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 593nm): \n' + r'$\tau $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s') 
 
     #plt.hold(True)
     if other_dset1 is not None: #plotting all pixels
@@ -450,14 +450,14 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
             (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=False, error_array=error_array1) 
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e1)) + ' $\pm$ ' + str("{0:.3f}".format(ee1)) + '$\mu$s') 
         else:
-            (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=False, error_array=error_array1)  
+            (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=True, error_array=error_array1)  
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 458nm): \n' + r'$\tau $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s') 
        
 #    ax1.spines['right'].set_visible(False)
 #    ax1.spines['top'].set_visible(False)
 #    ax1.xaxis.set_ticks_position('bottom')
 #    ax1.yaxis.set_ticks_position('left')
-    plt.xlim(xmax=60)
+    plt.xlim(xmax=1000)
 
     #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
     plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
@@ -465,7 +465,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
     plt.legend(loc='best')
     
     if single:
-        return b,0.0,be,0.0 #e and ee dont exist
+        return b,0.0,be,0.0,b2,0.0,be2,0.0 #e and ee dont exist
     else:
         return b,e,be,ee,b2,e2,be2,ee2
         
