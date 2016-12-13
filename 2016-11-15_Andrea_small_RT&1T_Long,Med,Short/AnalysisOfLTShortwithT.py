@@ -59,7 +59,7 @@ else:
     pmt = ['PMT blue']
     channel = ['2']
     
-No_experiments = [1,1,1,1,1,1]
+No_experiments = [1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 
 #room temperature: first 10 entries below                  
 nametr = ['2016-11-15-1449_ImageSequence_AndreaSmallRT_150.000kX_10.000kV_30mu_9',
@@ -611,10 +611,10 @@ cumu_red = np.zeros([10,1])
 il_data = np.zeros([10,1])
 
 listofindex =np.arange(0,10) # #[0,1,2]  [5] 
-#index = 2
-#if index is 0:
+index = 2
+if index is 0:
 
-for index in listofindex:
+#for index in listofindex:
     
     redt = np.zeros([1,250,512,512])
     bluet = np.zeros([1,250,512,512])
@@ -918,8 +918,8 @@ for index in listofindex:
     ax1.yaxis.set_ticks_position('right')
     ax1.yaxis.set_label_position("right")
     
-    dataALLred = red['data'][:,:,:,:]
-    dataALLblue = blue['data'][:,:,:,:]
+    dataALLred = redt[:,:,:,:] #red['data'][:,:,:,:]
+    dataALLblue = bluet[:,:,:,:] #blue['data'][:,:,:,:]
     nominal_time_on = 1.8
     
     plt.plot(np.arange(1,No_experiments[index]+1)*nominal_time_on*fastfactor,np.nanmean(dataALLblue*hlp,axis=(1,2,3)),c='b', label='From blue photons ($<$ 650nm)',linestyle='None', marker='o',markersize=4) #in mus, in MHz
@@ -931,7 +931,7 @@ for index in listofindex:
     blue_int_array[index] = np.nanmean(dataALLblue*hlp,axis=(0,1,2,3))
     cumu_red[index,:] =  np.nanmean(dataALLred*hlp,axis=(1,2,3))
     cumu_blue[index,:] =  np.nanmean(dataALLblue*hlp,axis=(1,2,3))
-    il_data[index,:] = np.average(il['data'], axis = (1,2)) #take average per frame
+    il_data[index,:] = np.average(ilt, axis = (1,2)) #take average per frame
     
     plt.ylabel("Average luminescence \n for each experiment, per pixel  (kHz)",fontsize=fsizepl)
     plt.xlabel("Cumulative e-beam exposure time \n per pixel (nominal, $\mu$s)",fontsize=fsizepl)
@@ -1055,16 +1055,20 @@ ax2.yaxis.set_ticks_position('left')
 
 #######################ACHTUNG!!!!!!!
 
-x_vec = KThermocouplerconversion(il_data) #(6,10)
+x_vec = np.arange(1,len(b_array_red)+1) #KThermocouplerconversion(il_data) #(6,10)
+ax1.errorbar(x_vec, b_array_red, yerr=be_array_red, fmt='ro',markersize=5)
+ax2.errorbar(x_vec, e_array_red, yerr=ee_array_red, fmt='ro', markersize=10)
+ax1.errorbar(x_vec, b_array_blue, yerr=be_array_blue, fmt='bo',markersize=5)
+ax2.errorbar(x_vec, e_array_blue, yerr=ee_array_blue, fmt='bo', markersize=10)
 
 #ax1.errorbar(np.average(x_vec, axis = 1), b_array_red, yerr=be_array_red, fmt='ro',markersize=5)
 #ax2.errorbar(np.average(x_vec, axis = 1), e_array_red, yerr=ee_array_red, fmt='ro', markersize=10)
-ax1.errorbar(np.average(x_vec, axis = 1), b_array_blue, yerr=be_array_blue, fmt='bo',markersize=5)
-ax2.errorbar(np.average(x_vec, axis = 1), e_array_blue, yerr=ee_array_blue, fmt='bo', markersize=10)
+#ax1.errorbar(np.average(x_vec, axis = 1), b_array_blue, yerr=be_array_blue, fmt='bo',markersize=5)
+#ax2.errorbar(np.average(x_vec, axis = 1), e_array_blue, yerr=ee_array_blue, fmt='bo', markersize=10)
 ax1.set_ylabel('Shorter time constant ($\mu$s)',fontsize=fsizepl)
 ax2.set_ylabel('Longer time constant ($\mu$s)',fontsize=fsizepl)
-ax2.set_ylim([0,4])
-ax1.set_ylim([0,0.2])
+#ax2.set_ylim([0,4])
+#ax1.set_ylim([0,0.2])
 #plt.xlim([10,30])
 #ax2.legend(fontsize=fsizepl)
 ax1.set_xlabel('Temperature (C)',fontsize=fsizepl)
@@ -1074,8 +1078,8 @@ plt.sca(ax1)
 plt.setp(ax2.get_xticklabels(), visible=False)
 
 ax3 = plt.subplot2grid((2,2), (0,1), colspan=1, rowspan=1)
-plt.plot(np.arange(1,4+1)*nominal_time_on*fastfactor,cumu_blue.flatten(),c='b', label='From blue photons ($<$ 593nm)',linestyle='None', marker='o',markersize=5)
-plt.plot(np.arange(1,4+1)*nominal_time_on*fastfactor,cumu_red.flatten(),c='r', label='From red photons ($>$ 593nm)',linestyle='None', marker='o',markersize=5)
+plt.plot(np.arange(1,10+1)*nominal_time_on*fastfactor,cumu_blue.flatten(),c='b', label='From blue photons ($<$ 593nm)',linestyle='None', marker='o',markersize=5)
+plt.plot(np.arange(1,10+1)*nominal_time_on*fastfactor,cumu_red.flatten(),c='r', label='From red photons ($>$ 593nm)',linestyle='None', marker='o',markersize=5)
 plt.xlabel("Cumulative e-beam exposure time \n per pixel (nominal, $\mu$s)",fontsize=fsizepl)
 plt.ylabel("Average luminescence \n for each frame, per pixel (KHz)",fontsize=fsizepl)
 ##plt.xlim([150,650])
@@ -1100,9 +1104,15 @@ ax3.text(2.5, 3.5, 'stage temperature increases', fontsize=15)
 #ax2.set_xticklabels(['7','8','99'])
 
 ax5 = plt.subplot2grid((2,2), (1,1), colspan=1, rowspan=1)
-plt.plot(np.average(x_vec, axis = 1),blue_int_array,c='b', label='From blue photons ($<$ 650nm)',linestyle='None', marker='o',markersize=10)
-plt.plot(np.average(x_vec, axis = 1),red_int_array,c='r', label='From red photons ($>$ 700nm)',linestyle='None', marker='o',markersize=10)
-plt.plot(np.average(x_vec, axis = 1),blue_int_array/red_int_array,c='k', label='Ratio blue/red photons',linestyle='None', marker='o',markersize=10)
+plt.plot(x_vec,blue_int_array,c='b', label='From blue photons ($<$ 650nm)',linestyle='None', marker='o',markersize=10)
+plt.plot(x_vec,red_int_array,c='r', label='From red photons ($>$ 700nm)',linestyle='None', marker='o',markersize=10)
+plt.plot(x_vec,blue_int_array/red_int_array,c='k', label='Ratio blue/red photons',linestyle='None', marker='o',markersize=10)
+
+
+#plt.plot(np.average(x_vec, axis = 1),blue_int_array,c='b', label='From blue photons ($<$ 650nm)',linestyle='None', marker='o',markersize=10)
+#plt.plot(np.average(x_vec, axis = 1),red_int_array,c='r', label='From red photons ($>$ 700nm)',linestyle='None', marker='o',markersize=10)
+#plt.plot(np.average(x_vec, axis = 1),blue_int_array/red_int_array,c='k', label='Ratio blue/red photons',linestyle='None', marker='o',markersize=10)
+
 plt.legend(loc='best')
 plt.ylabel("Average luminescence \n for each experiment, per pixel (KHz)",fontsize=fsizepl)
 ax5.spines['right'].set_visible(False)

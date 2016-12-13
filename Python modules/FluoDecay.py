@@ -457,7 +457,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
 #    ax1.spines['top'].set_visible(False)
 #    ax1.xaxis.set_ticks_position('bottom')
 #    ax1.yaxis.set_ticks_position('left')
-    plt.xlim(xmax=1000)
+    plt.xlim(xmax=2000)
 
     #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
     plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
