@@ -412,7 +412,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
     # dofitting
     # do fit, here with leastsq model
     if single == False:
-        (a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=False, error_array=error_array)       
+        (a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array)       
         #single use        
         #(a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess,plot_error=False)       
     #e stands for "error"  
@@ -438,7 +438,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
             if init_guess2 is None:
                 init_guess2 = init_guess
             
-            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2,plot_error=False, error_array=error_array2) 
+            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2,plot_error=True, error_array=error_array2) 
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s  \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
         else:
             (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=True, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2[0:3],plot_error=True, error_array=error_array2)  
@@ -447,7 +447,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
     #plt.hold(True)
     if other_dset1 is not None: #plotting all pixels
         if single == False:        
-            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=False, error_array=error_array1) 
+            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array1) 
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e1)) + ' $\pm$ ' + str("{0:.3f}".format(ee1)) + '$\mu$s') 
         else:
             (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=True, error_array=error_array1)  
@@ -457,7 +457,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
 #    ax1.spines['top'].set_visible(False)
 #    ax1.xaxis.set_ticks_position('bottom')
 #    ax1.yaxis.set_ticks_position('left')
-    plt.xlim(xmax=2000)
+    plt.xlim(xmax=1500)
 
     #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
     plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
