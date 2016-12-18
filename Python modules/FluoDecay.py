@@ -393,7 +393,16 @@ def calcdecay_subplot2(blue_dset,time_detail,titulo,single,other_dset2=None, oth
         return b,e,be,ee
         
 def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, other_dset1=None, init_guess=None,unit='kHz',init_guess2=None, error_array=None, error_array1=None, error_array2=None): #blue_dset has the transient data only
-    #### Deals with datasets containing nans    
+    b = 0.0
+    e = 0.0
+    be = 0.0
+    ee = 0.0
+    b2 = 0.0
+    e2 = 0.0
+    be2 = 0.0
+    ee2 = 0.0
+   
+   #### Deals with datasets containing nans    
     No_specimen = 1
     #No_decaypts = blue_dset.shape[0]
    
@@ -417,7 +426,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
         #(a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess,plot_error=False)       
     #e stands for "error"  
         #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
-        plt.semilogy(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a/d) )  )         
+        plt.semilogy(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 509nm): \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a/d) )  )         
         
         #single use        
         #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'bo',markersize=4,label='CL photons $<$ 593nm: \n' +r' $\tau_1 $ < 40ns; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a/d) )  ) 
@@ -457,7 +466,7 @@ def calcdecay_subplot_nan(blue_dset,time_detail,titulo,single,other_dset2=None, 
 #    ax1.spines['top'].set_visible(False)
 #    ax1.xaxis.set_ticks_position('bottom')
 #    ax1.yaxis.set_ticks_position('left')
-    plt.xlim(xmax=1500)
+    plt.xlim(xmax=1.3)
 
     #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
     plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)

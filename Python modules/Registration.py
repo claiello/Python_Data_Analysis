@@ -461,7 +461,6 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
         #plt.show() 
         return np.average(offset_images_corr, axis=0)
         
-
 def reg_images_middle_cl(images,middle_index,end_left_index,end_right_index,toberegistered1=None,toberegistered2=None):
     #gives back vectros of same size
     #right now, end_left and end_right indices are not used; those are the indices where registration should stop, and should use registration deltas of last index at that side
