@@ -430,11 +430,64 @@ def gmmone_tr_in_masked_channel(imagemask, imagemasked,imagemasked_is_4D=False):
         fac1 = (binary_img)*np.isfinite(imagemask)*1
         fac2 = (1-binary_img)*np.isfinite(imagemask)*1 
         
-        brightother =  imagemasked * fac1 
-        darkother =  imagemasked * fac2        
+        #brightother =  imagemasked * fac1 
+        #darkother =  imagemasked * fac2        
            
         gc.collect()
+        return imagemasked * fac2 , imagemasked * fac1 , darkone, brightone, np.sum(fac1)/imagemasked.shape[1]/imagemasked.shape[2], np.sum(fac2)/imagemasked.shape[1]/imagemasked.shape[2], classif.means_, classif.covars_, classif.weights_ 
+
         return darkother, brightother, darkone, brightone, np.sum(fac1)/imagemasked.shape[1]/imagemasked.shape[2], np.sum(fac2)/imagemasked.shape[1]/imagemasked.shape[2], classif.means_, classif.covars_, classif.weights_ 
+        #last factors are area of dark and bright regions, in percentage of whole picture area
+        
+    else:
+        
+        brightother = (np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2],imagemasked.shape[3]]))
+        darkother = (np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2],imagemasked.shape[3]]))
+
+        fac1 = (binary_img)* np.isfinite(imagemask)*1
+        fac2 = (1-binary_img)* np.isfinite(imagemask)*1
+        
+        brightother =  imagemasked * fac1 
+        darkother =  imagemasked * fac2    
+        
+        gc.collect()
+        return darkother, brightother, darkone, brightone, np.sum(fac1)/imagemasked.shape[2]/imagemasked.shape[3], np.sum(fac2)/imagemasked.shape[2]/imagemasked.shape[3]
+        
+def gmmone_tr_in_masked_channel_modif_memory_issue(imagemask, imagemasked,imagemasked_is_4D=False):
+    
+    img = np.copy(imagemask)
+    classif = GMM(n_components=2, covariance_type='diag')
+    hlp = img.flatten()[np.where(np.isnan(img.flatten()) == False)]
+    hlp = hlp.reshape((hlp.size,1))
+    classif.fit(hlp)
+    hlp2 = classif.means_
+    threshold1 = np.mean(hlp2[0:2])
+    binary_img = img > (threshold1)
+    
+    # Mask applied in both channels to regions having been recognized as red foreground
+    brightone = (binary_img)*imagemask
+    brightone[np.where(brightone == 0)] = np.nan
+
+    darkone = (1-binary_img)*imagemask
+    darkone[np.where(darkone == 0)] = np.nan
+    
+    # need to multiply with the binary image where the red channel is finite since the mask of the red is smaller than the mask of the blue
+    
+    if not imagemasked_is_4D:
+    
+        brightother = np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2]])
+        darkother = np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2]])
+        
+        fac1 = (binary_img)*np.isfinite(imagemask)*1
+        fac2 = (1-binary_img)*np.isfinite(imagemask)*1 
+        
+        #brightother =  imagemasked * fac1 
+        #darkother =  imagemasked * fac2        
+           
+        gc.collect()
+        return brightone, classif.means_, classif.covars_, classif.weights_ 
+
+        #return darkother, brightother, darkone, brightone, np.sum(fac1)/imagemasked.shape[1]/imagemasked.shape[2], np.sum(fac2)/imagemasked.shape[1]/imagemasked.shape[2], classif.means_, classif.covars_, classif.weights_ 
         #last factors are area of dark and bright regions, in percentage of whole picture area
         
     else:

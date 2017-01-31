@@ -1,0 +1,259 @@
+import os
+import sys
+sys.path.append("/usr/bin") # necessary for the tex fonts
+sys.path.append("../Python modules/") # necessary for the tex fonts
+import scipy as sp
+import scipy.misc
+import matplotlib
+import matplotlib.pyplot as plt
+import h5py
+import numpy as np
+from BackgroundCorrection import *
+from TConversionThermocoupler import *
+import matplotlib.cm as cm
+import scipy.ndimage as ndimage
+#from matplotlib_scalebar.scalebar import ScaleBar #### Has issue with plotting using latex font. only import when needed, then unimport
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.backends.backend_pdf import PdfPages
+from MakePdf import *
+from matplotlib.pyplot import cm #to plot following colors of rainbow
+from matplotlib import rc
+from CreateDatasets import *
+import warnings
+warnings.simplefilter(action = "ignore", category = RuntimeWarning)
+warnings.simplefilter(action = "ignore", category = DeprecationWarning)
+warnings.simplefilter(action = "ignore", category = FutureWarning)
+warnings.simplefilter(action = "ignore", category = PendingDeprecationWarning)
+from Registration import * 
+from tifffile import *
+from sklearn.mixture import GMM 
+import matplotlib.cm as cm
+from FluoDecay import *
+from PlottingFcts import *
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import scipy.misc
+import matplotlib.animation as animation
+import gc
+import tempfile
+from tempfile import TemporaryFile
+
+import skimage
+from skimage import exposure
+
+#PARAMS THAT NEED TO BE CHANGED
+###############################################################################
+###############################################################################
+###############################################################################
+
+backgdinit = 50
+initbin = (150+50+3)-1
+
+val_norm = 15.0
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+nametr = ['2017-01-13-1730_ImageSequence__150.000kX_10.000kV_30mu_15',
+      '2017-01-13-1810_ImageSequence__150.000kX_10.000kV_30mu_17',
+      '2017-01-13-1935_ImageSequence__150.000kX_10.000kV_30mu_3',
+      '2017-01-13-2011_ImageSequence__150.000kX_10.000kV_30mu_4',
+      '2017-01-13-2050_ImageSequence__150.000kX_10.000kV_30mu_7',
+      '2017-01-13-2132_ImageSequence__150.000kX_10.000kV_30mu_8',
+      '2017-01-13-2213_ImageSequence__150.000kX_10.000kV_30mu_9',
+      '2017-01-13-2251_ImageSequence__150.000kX_10.000kV_30mu_10']
+
+let = ['N60pt6', 'N48pt5', 'N39pt8', 'N31pt2']
+Varying_variable = [60.6, 48.5, 39.8, 31.2]
+Label_varying_variable = 'Temperature (C)' 
+
+listofindex = [0,1,2,3]
+#corr_index = [4,5,6,7] #correction of index
+
+loadprefix = 'fixCsametaudouble'
+    
+###############################################################################
+###############################################################################
+###############################################################################
+    
+Time_bin = 1000.0 #in ns
+
+fig1, ax1 = plt.subplots()
+fig2, ax2 = plt.subplots()
+fig3, ax3 = plt.subplots()
+fig4, ax4 = plt.subplots()
+fig5, ax5 = plt.subplots()
+
+#fig10, ax10 = plt.subplots()
+fig20, ax20 = plt.subplots()
+fig200, ax200 = plt.subplots()
+fig2000, ax2000 = plt.subplots()
+fig30, ax30 = plt.subplots()
+
+fig40, ax40 = plt.subplots()
+fig400, ax400 = plt.subplots()
+
+my_marker = ['s']
+
+def plot_things(prefix, my_color, my_marker):
+
+    for index in listofindex: 
+        
+        print(index)
+        
+        print('bef loading')
+        redd = np.load(loadprefix + let[index] + prefix + '1D.npz',mmap_mode='r') 
+        red = redd['data'][initbin:]
+        
+        if index == 0:
+            median_tau_red = np.empty(len(listofindex))
+            one_over_e_tau_red = np.empty(len(listofindex))
+            mean_int_median_before = np.empty(len(listofindex))
+            mean_int_median_after = np.empty(len(listofindex))
+            mean_int_one_over_e_before = np.empty(len(listofindex))
+            mean_int_one_over_e_after = np.empty(len(listofindex))
+            aux_vec = np.empty([len(listofindex),len(red)])
+            aux_vec_cumu = np.empty([len(listofindex),len(red)])
+        
+        #median tau
+        comparison = 10000000
+        indexrecorded = 10000000
+        for jj in np.arange(0,len(red)):
+            first_part = np.sum(red[0:jj])
+            second_part = np.sum(red[jj:])
+            difference = np.abs(first_part - second_part) 
+            if difference < comparison:
+                comparison = difference
+                indexrecorded = jj
+        median_tau_red[index] = indexrecorded
+        mean_int_median_before[index] = np.average(red[0:indexrecorded]) 
+        mean_int_median_after[index] = np.average(red[indexrecorded:]) 
+      
+        #1/e tau
+        comparisone = 10000000
+        indexrecordede = 10000000
+        for jj in np.arange(0,len(red)):
+            first_part = red[0]/np.exp(1)
+            second_part = red[jj]
+            difference = np.abs(first_part - second_part) 
+            if difference < comparisone:
+                comparisone = difference
+                indexrecordede = jj
+        one_over_e_tau_red[index] = indexrecordede
+        mean_int_one_over_e_before[index] = np.average(red[0:indexrecordede]) 
+        mean_int_one_over_e_after[index] = np.average(red[indexrecordede:]) 
+        
+        
+        for jj in np.arange(0,len(red)):
+            aux_vec[index,jj] = np.sum(red[0:jj])/np.sum(red[jj:])
+            aux_vec_cumu[index,jj]= np.sum(red[0:jj])
+            
+        ax1.semilogy( aux_vec[index,:], np.arange(0,len(red)),lw=Varying_variable[index]/val_norm,color=my_color)
+        ax1.set_xlabel('ratio (sum 0-tau)/(sum tau-1500)')
+        ax1.set_ylabel('decay length tau ($\mu$s)')
+        ax1.set_ylim(ymax=1500)
+        ax1.set_xlim([0,10])
+        ax1.set_title('Lw $\propto$' +Label_varying_variable)
+        
+        ax2.plot(np.arange(0,len(red)), aux_vec_cumu[index,:],lw=Varying_variable[index]/val_norm,color=my_color)
+        ax2.set_xlabel('tau')
+        ax2.set_ylabel('cumu counts')
+        ax2.set_xlim(xmax=1500)
+        #plt.xlim([0,20])
+        ax2.set_title('Lw $\propto$' +Label_varying_variable)
+        
+        if index == listofindex[-1]:
+            print('last one')
+            ax3.plot(Varying_variable, median_tau_red,label='median',color=my_color,ls='--',marker=my_marker)
+            ax3.plot(Varying_variable, one_over_e_tau_red,label='1/e',color=my_color,ls='dotted',marker=my_marker)
+            ax3.set_xlabel(Label_varying_variable)
+            ax3.set_ylabel('tau ($\mu$s)')
+            ax3.legend(loc='best')
+            
+            ax4.plot(Varying_variable, mean_int_median_before/mean_int_median_after,label='bef/aft median', color=my_color, ls='-',marker=my_marker)
+            ax5.plot(Varying_variable, (mean_int_median_before-mean_int_median_after)/(mean_int_median_before+mean_int_median_after),label='bef/aft median', color=my_color, ls='--',marker=my_marker)
+            ax4.plot(Varying_variable, mean_int_one_over_e_before/mean_int_one_over_e_after,label='bef/aft 1/e', color=my_color, ls='dotted',marker=my_marker)
+            ax5.plot(Varying_variable, (mean_int_one_over_e_before-mean_int_one_over_e_after)/(mean_int_one_over_e_before+mean_int_one_over_e_after),label='bef/aft 1/e', color=my_color, ls='-.',marker=my_marker)
+            ax4.set_xlabel(Label_varying_variable)
+            ax4.set_ylabel('intensity ratio')
+            ax4.legend(loc='best')
+            ax5.set_xlabel(Label_varying_variable)
+            ax5.set_ylabel('visibility of intensity')
+            ax5.legend(loc='best')
+
+            return aux_vec, aux_vec_cumu, median_tau_red, one_over_e_tau_red,  mean_int_median_before, mean_int_median_after,  mean_int_one_over_e_before, mean_int_one_over_e_after
+
+aux_vec_red, aux_vec_cumu_red, median_tau_red, one_over_e_tau_red,  mean_int_median_before_red, mean_int_median_after_red,  mean_int_one_over_e_before_red, mean_int_one_over_e_after_red = plot_things('RED', 'r','s')
+aux_vec_blue, aux_vec_cumu_blue, median_tau_blue, one_over_e_tau_blue,  mean_int_median_before_blue, mean_int_median_after_blue,  mean_int_one_over_e_before_blue, mean_int_one_over_e_after_blue = plot_things('BLUE', 'g','s')
+    
+my_marker = 's'    
+#Relationships between taus
+ax30.plot(Varying_variable, median_tau_red/median_tau_blue,label='median ratio',color='k',ls='-',marker=my_marker)
+ax30.plot(Varying_variable, (median_tau_red-median_tau_blue)/(median_tau_red+median_tau_blue),label='median visib',color='k',ls='--',marker=my_marker)
+ax30.plot(Varying_variable, one_over_e_tau_red/one_over_e_tau_blue,label='1/e ratio',color='k',ls='dotted',marker=my_marker)
+ax30.plot(Varying_variable, (one_over_e_tau_red-one_over_e_tau_blue)/(one_over_e_tau_red+one_over_e_tau_blue),label='1/e visib',color='k',ls='-.',marker=my_marker)
+ax30.set_xlabel(Label_varying_variable)
+ax30.set_ylabel('intensity red/green')
+ax30.legend(loc='best')
+
+for index in np.arange(0,len(listofindex)):
+#    ax10.semilogy( aux_vec_red[index,:] - aux_vec_blue[index,:], np.arange(0,aux_vec_red.shape[1]),lw=len(listofindex)-index,color='k',label='minus',ls='-')
+#    ax10.semilogy( aux_vec_red[index,:]/aux_vec_blue[index,:], np.arange(0,aux_vec_red.shape[1]),lw=len(listofindex)-index,color='k',label='ratio',ls='dotted')
+#    ax10.semilogy( (aux_vec_red[index,:]-aux_vec_blue[index,:])/(aux_vec_red[index,:]+aux_vec_blue[index,:]), np.arange(0,aux_vec_red.shape[1]),lw=len(listofindex)-index,color='k',label='visib',ls='--')
+#    ax10.set_xlabel('functions')
+#    ax10.set_ylabel('decay length tau ($\mu$s)')
+#    ax10.set_ylim(ymax=1500)
+#    ax10.set_xlim([0,10])
+#    ax10.legend(loc='best')
+#    ax10.set_title('Lw $\propto$ pixel size; this plot not yet making sense')
+    
+    ax20.plot(np.arange(0,aux_vec_red.shape[1]), aux_vec_cumu_red[index,:]-aux_vec_cumu_blue[index,:],lw=Varying_variable[index]/val_norm,color='k',label='minus',ls='-')
+    ax200.plot(np.arange(0,aux_vec_red.shape[1]), aux_vec_cumu_red[index,:]/aux_vec_cumu_blue[index,:],lw=Varying_variable[index]/val_norm,color='k',label='ratio',ls='dotted')
+    ax2000.plot(np.arange(0,aux_vec_red.shape[1]), (aux_vec_cumu_red[index,:]-aux_vec_cumu_blue[index,:])/(aux_vec_cumu_red[index,:]+aux_vec_cumu_blue[index,:]),lw=Varying_variable[index]/val_norm,color='k',label='visi',ls='--')
+    ax20.set_xlabel('tau')
+    ax20.set_ylabel('cumu counts')
+    ax20.set_xlim(xmax=1500)
+    ax20.set_title('Red MINUS Green')
+    #ax20.legend(loc='best')
+    ax20.set_title('Lw $\propto$' +Label_varying_variable)
+    ax200.set_xlabel('tau')
+    ax200.set_ylabel('cumu counts')
+    ax200.set_xlim(xmax=1500)
+    ax200.set_title('Ratio Red/Green')
+    #ax200.legend(loc='best')
+    ax200.set_title('Lw $\propto$' +Label_varying_variable)
+    ax2000.set_xlabel('tau')
+    ax2000.set_ylabel('cumu counts')
+    ax2000.set_xlim(xmax=1500)
+    ax200.set_title('Visibility Red/Green')
+    #ax2000.legend(loc='best')
+    ax2000.set_title('Lw $\propto$' +Label_varying_variable)
+    
+ax40.plot(Varying_variable, (mean_int_median_before_red/mean_int_median_after_red)/(mean_int_median_before_blue/mean_int_median_after_blue),label='bef/aft median ratio red/green', color='k', ls='dotted', marker = my_marker)
+ax40.plot(Varying_variable, ((mean_int_median_before_red-mean_int_median_after_red)/(mean_int_median_before_red+mean_int_median_after_red))/((mean_int_median_before_blue-mean_int_median_after_blue)/(mean_int_median_before_blue+mean_int_median_after_blue)),label='vis bef/aft median ratio red/green', color='k', ls='--', marker = my_marker)
+ax40.plot(Varying_variable, mean_int_median_before_red/mean_int_median_before_blue, label='bef ratio red/green', color='k', ls='-', marker = my_marker)
+ax40.plot(Varying_variable, mean_int_median_after_red/mean_int_median_after_blue,label='aft median ratio red/green', color='k', ls='-.', marker = my_marker)
+ax40.set_xlabel(Label_varying_variable)
+ax40.set_ylabel('intensity ratio')
+ax40.legend(loc='best')
+ax40.set_xlabel(Label_varying_variable)
+ax40.set_ylabel('visibility of intensity')
+ax40.legend(loc='best')
+
+ax400.plot(Varying_variable, (mean_int_one_over_e_before_red/mean_int_one_over_e_after_red)/(mean_int_one_over_e_before_blue/mean_int_one_over_e_after_blue),label='bef/aft one_over_e ratio red/green', color='k', ls='dotted', marker = my_marker)
+ax400.plot(Varying_variable, ((mean_int_one_over_e_before_red-mean_int_one_over_e_after_red)/(mean_int_one_over_e_before_red+mean_int_one_over_e_after_red))/((mean_int_one_over_e_before_blue-mean_int_one_over_e_after_blue)/(mean_int_one_over_e_before_blue+mean_int_one_over_e_after_blue)),label='vis bef/aft one_over_e ratio red/green', color='k', ls='--', marker = my_marker)
+ax400.plot(Varying_variable, mean_int_one_over_e_before_red/mean_int_one_over_e_before_blue, label='bef ratio red/green', color='k', ls='-', marker = my_marker)
+ax400.plot(Varying_variable, mean_int_one_over_e_after_red/mean_int_one_over_e_after_blue,label='aft one_over_e ratio red/green',color='k', ls='-.', marker = my_marker)
+ax400.set_xlabel(Label_varying_variable)
+ax400.set_ylabel('intensity ratio')
+ax400.legend(loc='best')
+ax400.set_xlabel(Label_varying_variable)
+ax400.set_ylabel('visibility of intensity')
+ax400.legend(loc='best')
+   
+
+plt.show()
+klklklk
+    
+
+    

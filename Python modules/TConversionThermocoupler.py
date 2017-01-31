@@ -27,7 +27,7 @@ def KThermocouplerconversion(V):
     c0 = 0.0
     c1 = 2.508355*1.0e-2
     c2 = 7.860106*1.0e-8
-    c3 = -2/503131*1.0e-10
+    c3 = -2.503131*1.0e-10
     c4 = 8.315270*1.0e-14
     c5 = -1.228034*1.0e-17
     c6 = 9.804036*1.0e-22
@@ -38,3 +38,4 @@ def KThermocouplerconversion(V):
     t = c0 + c1*muV + c2*np.power(muV,2) + c3*np.power(muV,3) + c4*np.power(muV,4) + c5*np.power(muV,5) + c6*np.power(muV,6) + c7*np.power(muV,7) + c8*np.power(muV,8) + c9*np.power(muV,9)
     
     return t
+    

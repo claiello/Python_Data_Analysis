@@ -45,9 +45,9 @@ calc_blue = True
 #Excitation is impulsive, 120ns per pulse,turn on at point no 80, off at point no 82
 
 #No_pixels = 250
-Time_bin = 40#in ns; 1/clock of 25MHz 
-nominal_time_on = 1.8 #time during which e-beam nominally on, in mus
-totalpoints = 200 #total number of time-resolved points
+#Time_bin = 40#in ns; 1/clock of 25MHz 
+#nominal_time_on = 1.8 #time during which e-beam nominally on, in mus
+#totalpoints = 200 #total number of time-resolved points
 ### data
 if calc_blue is False:
     pmt = ['PMT red']
@@ -56,18 +56,19 @@ else:
     pmt = ['PMT blue']
     channel = ['2']
     
-No_experiments = [10,10,10,10,10,10]
+No_experiments = [1,1,1,1,1]
                   
-nametr = ['2016-10-27-1847_ImageSequence__61.966kX_10.000kV_30mu_10',
-          '2016-10-27-1808_ImageSequence__61.966kX_10.000kV_30mu_5',
-          '2016-10-27-1833_ImageSequence__61.966kX_10.000kV_30mu_8',
-          '2016-10-27-1844_ImageSequence__61.966kX_10.000kV_30mu_9']
+nametr = ['2016-10-27-1739_ImageSequence_Andrea_63.930kX_10.000kV_30mu_4',
+          '2016-10-27-1754_ImageSequence__61.966kX_10.000kV_30mu_1',
+          '2016-10-27-1757_ImageSequence__61.966kX_10.000kV_30mu_2',
+          '2016-10-27-1800_ImageSequence__61.966kX_10.000kV_30mu_3',
+          '2016-10-27-1804_ImageSequence__61.966kX_10.000kV_30mu_4']
 
 description = ['Andrea NaYF4:Er'] # (20kV, 30$\mu$m, ' + str(Ps[index]) + 'nm pixels, ' + str(No_experiments[index]) + 'expts., InLens registered)'] #, \n' #+ obs[index] ']    
                
 kv = [10]
 
-let = ['I','II','III','IV','V','VI']
+let = ['I','II','III','IV','V']
 
 #tau_single = np.zeros(len(name))
 #tau_single_error = np.zeros(len(name))
@@ -81,7 +82,7 @@ let = ['I','II','III','IV','V','VI']
 #if index is 0:
     
 #for Er60 only: np.arange(9,12)
-for index in [2]: #np.arange(0,4):
+for index in np.arange(0,5):
 
     print(index)
 
@@ -89,9 +90,9 @@ for index in [2]: #np.arange(0,4):
     titulo =  'Upconverting NPs'
     #il1_dset   = file2['/data/Analog channel 2 : InLens/data'] #10 Scany points X 10 frames X 250 x 250 pixels
     se1_dset   = file2['/data/Analog channel 1 : SE2/data'] #10 Scany points X 10 frames X 250 x 250 pixels
-    #red1_dset  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
+    red1_dset  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
     #blue0_dset  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scany points X 10 frames x 150 tr pts x250 x 250 pixels
-    red1_dset  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scany points X 10 frames x 150 tr pts x250 x 250 pixels
+    #red1_dset  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scany points X 10 frames x 150 tr pts x250 x 250 pixels
 
     #red1_dset50  = file3['/data/Counter channel ' + channel[index] + ' : '+ pmt[index]+'/' + pmt[index] + ' time-resolved/data']#50 frames x 200 tr pts x250 x 250 pixels
     #red1_dset = np.append(red1_dset , red1_dset50, axis = 0)
@@ -262,13 +263,13 @@ for index in [2]: #np.arange(0,4):
     exec(mycode)
     np.savez(str(let[index]) + 'SEchannel', data =  np.average(se1_dset2, axis=0))
 #    
-#    mycode = str(let[index]) + 'Redbright = tempfile.NamedTemporaryFile(delete=False)'
-#    exec(mycode)
-#    np.savez(str(let[index]) +'Redbright', data = np.average(red1_dset, axis=0))
-    
-    mycode = str(let[index]) + 'Bluebright = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = str(let[index]) + 'Redbright = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez(str(let[index]) +'Bluebright', data = np.average(red1_dset, axis=0))
+    np.savez(str(let[index]) +'Redbright', data = np.average(red1_dset, axis=0))
+    
+#    mycode = str(let[index]) + 'Bluebright = tempfile.NamedTemporaryFile(delete=False)'
+#    exec(mycode)
+#    np.savez(str(let[index]) +'Bluebright', data = np.average(red1_dset, axis=0))
     
 #    mycode = str(let[index]) + 'ILchannel = tempfile.NamedTemporaryFile(delete=False)'
 #    exec(mycode)
@@ -565,13 +566,13 @@ for index in [2]: #np.arange(0,4):
 
     start_of_transient = 0    
 #    
-    mycode = str(let[index]) +'ZZZBlueDecay = tempfile.NamedTemporaryFile(delete=False)'
-    exec(mycode)
-    np.savez(str(let[index]) +'ZZZBlueDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
-    
-#    mycode = str(let[index]) +'ZZZRedDecay = tempfile.NamedTemporaryFile(delete=False)'
+#    mycode = str(let[index]) +'ZZZBlueDecay = tempfile.NamedTemporaryFile(delete=False)'
 #    exec(mycode)
-#    np.savez(str(let[index]) +'ZZZRedDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
+#    np.savez(str(let[index]) +'ZZZBlueDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
+#    
+    mycode = str(let[index]) +'ZZZRedDecay = tempfile.NamedTemporaryFile(delete=False)'
+    exec(mycode)
+    np.savez(str(let[index]) +'ZZZRedDecay', data = gmmse_red1_darkse_dset[start_of_transient::,:,:]/darkse_pct)
     
     #multipage(str(let[index]) +'RedZZZ.pdf',dpi=80)
     

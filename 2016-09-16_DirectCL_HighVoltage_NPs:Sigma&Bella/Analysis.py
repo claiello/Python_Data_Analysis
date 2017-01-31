@@ -56,6 +56,7 @@ else:
     
        
 Pixel_size = [1.0e-08, 3.9e-09, 3.9e-09,1.1e-08, 6.2e-09, 2.6e-09, 2.7e-09, 1.9e-09,2.8e-09, 2.9e-09, 2.9e-09, 9.1e-09]
+
 Ps = [10.0, 3.9, 3.9, 11.0, 6.2, 2.6, 2.7, 1.9, 2.8, 2.9, 2.9, 9.1] #pixel size in nm, the numbers above with round nm precision
 No_experiments = [10,10,50,50,10,10,10,10,10,10,50,50]
                   

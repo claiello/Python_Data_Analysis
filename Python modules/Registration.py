@@ -406,7 +406,8 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
             #anim.save('RegistrationTimeResolved.mp4', writer=mywriter,fps=30, extra_args=['-vcodec', 'libx264'])                  
     
             #plt.show() 
-            
+            del image0, offset_images, shift_vec
+            gc.collect()
             return np.average(offset_images_corr, axis=0), np.average(offset_images_corr2, axis=0), offset_images_corr2 #2nd to last vector will be 1x no tr pts x pixels x pixels
                         
         else: #update in the future for aligning 2 time resolved channels to se; right now wont work!!!
