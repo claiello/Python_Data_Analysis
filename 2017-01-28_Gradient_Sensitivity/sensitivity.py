@@ -119,8 +119,11 @@ def signal_rho_visibility(counts_red, error_red, counts_blue, error_blue):
             except:
                 rho_red[j,jj] = np.nan
                 rho_blue[j,jj] = np.nan
-            
-    return (rho_red[:,1:-1]-rho_blue[:,1:-1])/(rho_red[:,1:-1]+rho_blue[:,1:-1])
+        
+    try:
+        return (rho_red[:,1:-1]-rho_blue[:,1:-1])/(rho_red[:,1:-1]+rho_blue[:,1:-1])
+    except:
+        return np.nan
     
 
 ###############################################################################
@@ -146,7 +149,7 @@ lst = ['-.','--','dotted','-','-','-']
 #
 lab = ['Aperture','Current','Pixel','Temperature medium zoom','Temperature large zoom','Temperature small zoom']
 ######### RATIOS RED AND GREEN
-for index in [2,3]: #[0,1,2,3]:
+for index in [3]: #[0,1,2,3]:
     
     if index == 0:
         do_cumu = True

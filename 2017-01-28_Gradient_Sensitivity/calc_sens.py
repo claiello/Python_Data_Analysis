@@ -45,7 +45,10 @@ def get_sens(S, Q, t, rho = None):
         (a,b,result) = linear_fit_with_error(x, y, y_err)
 
         grad_Q_rho = np.append(grad_Q_rho, a)
-        grad_Q_rho_err = np.append(grad_Q_rho_err, result.covar[0,0]**0.5)
+        try:
+            grad_Q_rho_err = np.append(grad_Q_rho_err, result.covar[0,0]**0.5)
+        except:
+            grad_Q_rho_err = np.append(grad_Q_rho_err, np.nan)
         grad_Q_rho_err_of_sig = np.append(grad_Q_rho_err_of_sig, unumpy.std_devs(np.mean(S[:,t_ind])))
 
         #plt.errorbar(x, y, yerr = y_err, color = 'r', marker = 'o', ls = None)
