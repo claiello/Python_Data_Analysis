@@ -39,8 +39,8 @@ import gc
 import tempfile
 from tempfile import TemporaryFile
 
-import warnings
-warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
+#import warnings
+#warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
 
 import my_fits
 
@@ -1079,6 +1079,106 @@ for index in np.arange(0,Multiplication_factor.shape[0]):
     ax3.yaxis.set_label_position("right")
 
     ax3.set_xlabel('Temperature at heater ($^{\circ}$C)',fontsize=fsizepl)
+    
+    plt.setp(ax2.get_xticklabels(), visible=False)
+    plt.setp(ax4.get_xticklabels(), visible=False)
+    
+    ##################################################### PAGE 5
+
+    fig42= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+    fig42.set_size_inches(1200./fig42.dpi,900./fig42.dpi)
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='serif')
+    plt.rc('font', serif='Palatino')    
+    
+    titulo = 'NaYF$_4$:Yb,Er UC NPs (sample by Andrea Pickel)\n (10 kV, 30 $\mu$m aperture, 1 $\mu$s time bins, 1.4 ms transient, cathodoluminescence green/red: $</>$ 593 nm) $\Rightarrow$ ' + description[index]
+    plt.suptitle(titulo,fontsize=fsizetit)
+    
+    ax2 = plt.subplot2grid((2,4), (0,0), colspan=2, rowspan=1)
+    ax1 = plt.subplot2grid((2,4), (1,0), colspan=2, sharex=ax2)
+    
+    ax2.spines['right'].set_visible(False)
+    ax2.spines['top'].set_visible(False)
+    ax2.xaxis.set_ticks_position('bottom')
+    ax2.yaxis.set_ticks_position('left')
+    
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
+    ax1.xaxis.set_ticks_position('bottom')
+    ax1.yaxis.set_ticks_position('left')
+
+    ax2.errorbar(1.0/(x_vec+273.15), np.log((blue_int_array/red_int_array))*Multiplication_factor[index,0], fmt='ko',markersize=10,ls=None)
+    ax2.errorbar(1.0/(x_vec2+273.15), np.log((blue_int_array2/red_int_array2))*Multiplication_factor[index,1], fmt='k^',markersize=10,ls=None)
+    ax2.errorbar(1.0/(x_vec3+273.15), np.log((blue_int_array3/red_int_array3))*Multiplication_factor[index,2], fmt='ks',markersize=10,ls=None)
+    
+    label1 = my_fits.fit_with_plot_small(ax2, 1.0/(x_vec[1:]+273.15),  np.log((blue_int_array[1:]/red_int_array[1:]))*Multiplication_factor[index,0]  , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '-')
+    label2 = my_fits.fit_with_plot_small(ax2, 1.0/(x_vec2+273.15), np.log( (blue_int_array2/red_int_array2))*Multiplication_factor[index,1]   , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = 'dotted')
+    label3 = my_fits.fit_with_plot_small(ax2, 1.0/(x_vec3+273.15), np.log((blue_int_array3/red_int_array3))*Multiplication_factor[index,2]   , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '--')
+    
+    legend1 = ax2.legend([label1,label2,label3], loc=legendloc)
+    ax2.add_artist(legend1) 
+    
+    ax1.errorbar(1.0/(x_vec+273.15), np.log((blue_int_array/red_int_array)/(blue_int_array[RTindex[0]]/red_int_array[RTindex[0]]))*Multiplication_factor[index,0], fmt='ko',markersize=10,ls=None)
+    ax1.errorbar(1.0/(x_vec2+273.15), np.log((blue_int_array2/red_int_array2)/(blue_int_array2[RTindex[1]]/red_int_array2[RTindex[1]]))*Multiplication_factor[index,1], fmt='k^',markersize=10,ls=None)
+    ax1.errorbar(1.0/(x_vec3+273.15), np.log((blue_int_array3/red_int_array3)/(blue_int_array3[RTindex[2]]/red_int_array3[RTindex[2]]))*Multiplication_factor[index,2], fmt='ks',markersize=10,ls=None)
+    
+    label1 = my_fits.fit_with_plot_small(ax1, 1.0/(x_vec[1:]+273.15), np.log((blue_int_array[1:]/red_int_array[1:])/(blue_int_array[RTindex[0]]/red_int_array[RTindex[0]]))*Multiplication_factor[index,0]  , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '-')
+    label2 = my_fits.fit_with_plot_small(ax1, 1.0/(x_vec2+273.15),    np.log((blue_int_array2/red_int_array2)/(blue_int_array2[RTindex[1]]/red_int_array2[RTindex[1]]))*Multiplication_factor[index,1] , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = 'dotted')
+    label3 = my_fits.fit_with_plot_small(ax1, 1.0/(x_vec3+273.15),   np.log( (blue_int_array3/red_int_array3)/(blue_int_array3[RTindex[2]]/red_int_array3[RTindex[2]]))*Multiplication_factor[index,2] , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '--')
+    
+    legend1 = ax1.legend([label1,label2,label3], loc=legendloc)
+    ax1.add_artist(legend1) 
+
+    ax2.set_ylabel('Log Intensity ratio green to red NO SENSE',fontsize=fsizepl)
+    ax2.tick_params(labelsize=fsizenb)
+    ax1.set_ylabel('Log Intensity ratio green to red, norm. RT',fontsize=fsizepl)
+    ax1.tick_params(labelsize=fsizenb)
+
+    ax1.set_xlabel('1/Temperature at heater (1/K)',fontsize=fsizepl)
+    
+    ax4 = plt.subplot2grid((2,4), (0,2), colspan=2, rowspan=1)
+    ax3 = plt.subplot2grid((2,4), (1,2), colspan=2, sharex=ax2)
+    
+    ax4.spines['left'].set_visible(False)
+    ax4.spines['top'].set_visible(False)
+    ax4.xaxis.set_ticks_position('bottom')
+    ax4.yaxis.set_ticks_position('right')
+    
+    ax3.spines['left'].set_visible(False)
+    ax3.spines['top'].set_visible(False)
+    ax3.xaxis.set_ticks_position('bottom')
+    ax3.yaxis.set_ticks_position('right')
+
+    ax4.errorbar(1.0/(x_vec+273.15), np.log( (blue_int_array-red_int_array)/(red_int_array+blue_int_array))*Multiplication_factor[index,0], fmt='ko',markersize=10,ls=None)
+    ax4.errorbar(1.0/(x_vec2+273.15),np.log( (blue_int_array2-red_int_array2)/(red_int_array2+blue_int_array2))*Multiplication_factor[index,1], fmt='k^',markersize=10,ls=None)
+    ax4.errorbar(1.0/(x_vec3+273.15),np.log((blue_int_array3-red_int_array3)/(red_int_array3+blue_int_array3))*Multiplication_factor[index,2], fmt='ks',markersize=10,ls=None)
+    
+    label1 = my_fits.fit_with_plot_small(ax4, 1.0/(x_vec[1:]+273.15), np.log( (blue_int_array[1:]-red_int_array[1:])/(red_int_array[1:]+blue_int_array[1:]))*Multiplication_factor[index,0]  , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '-')
+    label2 = my_fits.fit_with_plot_small(ax4, 1.0/(x_vec2+273.15),   np.log(  (blue_int_array2-red_int_array2)/(red_int_array2+blue_int_array2))*Multiplication_factor[index,1]  , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = 'dotted')
+    label3 = my_fits.fit_with_plot_small(ax4, 1.0/(x_vec3+273.15),  np.log(  np.abs( (blue_int_array3-red_int_array3))/(red_int_array3+blue_int_array3))*Multiplication_factor[index,2]  , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '--')
+    
+    legend1 = ax4.legend([label1,label2,label3], loc=legendloc)
+    ax4.add_artist(legend1) 
+    
+    ax3.errorbar( 1.0/(x_vec+273.15), np.log( ((blue_int_array-red_int_array)/(red_int_array+blue_int_array))/((blue_int_array[RTindex[0]]-red_int_array[RTindex[0]])/(red_int_array[RTindex[0]]+blue_int_array[RTindex[0]])))*Multiplication_factor[index,0], fmt='ko',markersize=10,ls=None)
+    ax3.errorbar( 1.0/(x_vec2+273.15),np.log( ((blue_int_array2-red_int_array2)/(red_int_array2+blue_int_array2))/ ((blue_int_array2[RTindex[1]]-red_int_array2[RTindex[1]])/(red_int_array2[RTindex[1]]+blue_int_array2[RTindex[1]])))*Multiplication_factor[index,1], fmt='k^',markersize=10,ls=None)
+    ax3.errorbar( 1.0/(x_vec3+273.15), np.log(((blue_int_array3-red_int_array3)/(red_int_array3+blue_int_array3))/((blue_int_array3[RTindex[2]]-red_int_array3[RTindex[2]])/(red_int_array3[RTindex[2]]+blue_int_array3[RTindex[2]])))*Multiplication_factor[index,2], fmt='ks',markersize=10,ls=None)
+
+    label1 = my_fits.fit_with_plot_small_ratio_visib_improved(ax3, 1.0/(x_vec[1:]+273.15), np.log(((blue_int_array[1:]-red_int_array[1:])/(red_int_array[1:]+blue_int_array[1:]))/((blue_int_array[RTindex[0]]-red_int_array[RTindex[0]])/(red_int_array[RTindex[0]]+blue_int_array[RTindex[0]])))*Multiplication_factor[index,0]   , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '-')
+    label2 = my_fits.fit_with_plot_small_ratio_visib_improved(ax3, 1.0/(x_vec2+273.15),   np.log( ((blue_int_array2-red_int_array2)/(red_int_array2+blue_int_array2))/ ((blue_int_array2[RTindex[1]]-red_int_array2[RTindex[1]])/(red_int_array2[RTindex[1]]+blue_int_array2[RTindex[1]])))*Multiplication_factor[index,1]  , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = 'dotted')
+    label3 = my_fits.fit_with_plot_small_ratio_visib_improved(ax3, 1.0/(x_vec3+273.15), np.log(   (np.abs((blue_int_array3-red_int_array3))/(red_int_array3+blue_int_array3))/(np.abs((blue_int_array3[RTindex[2]]-red_int_array3[RTindex[2]]))/(red_int_array3[RTindex[2]]+blue_int_array3[RTindex[2]])))*Multiplication_factor[index,2] , yerr = None, my_color = 'k', my_edgecolor=None, my_facecolor=None, my_linestyle = '--')
+    
+    legend1 = ax3.legend([label1,label2,label3], loc=legendloc)
+    ax3.add_artist(legend1) 
+
+    ax4.set_ylabel('Log Visibility green to red NO SENSE',fontsize=fsizepl)
+    ax4.tick_params(labelsize=fsizenb)
+    ax4.yaxis.set_label_position("right")
+    ax3.set_ylabel('Log Visibility green to red, norm. RT [model log visib wrong]',fontsize=fsizepl)
+    ax3.tick_params(labelsize=fsizenb)
+    ax3.yaxis.set_label_position("right")
+
+    ax3.set_xlabel('1/Temperature at heater (1/K)',fontsize=fsizepl)
     
     plt.setp(ax2.get_xticklabels(), visible=False)
     plt.setp(ax4.get_xticklabels(), visible=False)

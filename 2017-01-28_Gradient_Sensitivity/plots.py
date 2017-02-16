@@ -45,10 +45,126 @@ import pickle
 from uncertainties import unumpy
 from calc_sens import *
 
-prefix = 'CUMU'
-#prefix = 'RHO'
-
 lab = ['Aperture','Current','Pixel','Temperature medium zoom','Temperature large zoom','Temperature small zoom']
+
+#prefix = 'CUMU'
+##prefix = 'RHO'
+#
+
+#
+#for ct in np.arange(0,len(lab)):
+#
+#    data = pickle.load( open(lab[ct] + prefix + '.p', "rb" ) )
+#    
+#    plt.figure()
+#    plt.suptitle(lab[ct] + ' ' + prefix,fontsize=24)
+#    
+#    plt.subplot(4,1,1)
+#    plt.plot(data['ts'], data['eta_rho_sig_r'],color='r',ls='-')
+#    plt.plot(data['ts'], data['eta_rho_sig_b'],color='g',ls='-')
+#    plt.xlabel('Time',fontsize=24)
+#    plt.ylabel('Sensitivity \n sig error',fontsize=24)
+#    ind = 1000
+#    plt.xlim(xmax=ind)
+#    plt.ylim(ymax=max(np.max(data['eta_rho_sig_r'][:ind]),np.max(data['eta_rho_sig_b'][:ind])))
+#    
+#    plt.subplot(4,1,2)
+#    plt.plot(data['ts'], data['eta_rho_r'],color='r',ls='-')
+#    plt.plot(data['ts'], data['eta_rho_b'],color='g',ls='-')
+#    plt.xlabel('Time',fontsize=24)
+#    plt.ylabel('Sensitivity \n fit error',fontsize=24)
+#    ind = 1000
+#    plt.xlim(xmax=ind)
+#    plt.ylim(ymax=max(np.max(data['eta_rho_r'][:ind]),np.max(data['eta_rho_b'][:ind])))
+#        
+#    plt.subplot(4,1,3)
+#    plt.plot(data['rhos'][1:], data['eta_time_sig_r'][1:],color='r',ls='-')
+#    plt.plot(data['rhos'][1:], data['eta_time_sig_b'][1:],color='g',ls='-')
+#    plt.xlabel('Signal',fontsize=24)
+#    plt.ylabel('Sensitivity \n sig error',fontsize=24)
+#    
+#    plt.subplot(4,1,4)
+#    plt.plot(data['rhos'], data['eta_time_r'],color='r',ls='-')
+#    plt.plot(data['rhos'], data['eta_time_b'],color='g',ls='-')
+#    plt.xlabel('Signal',fontsize=24)
+#    plt.ylabel('Sensitivity \n fit error',fontsize=24)
+#   
+#    multipage_longer(lab[ct] + prefix +'.pdf',dpi=80)    
+#    
+#klklkl 
+   
+#prefix = 'CUMURATIO'
+##prefix = 'RHORATIO' 
+#
+##prefix = 'CUMUVISIBILITY'
+##prefix = 'RHOVISIBILITY'
+#
+#for ct in np.arange(0,len(lab)):
+#    
+#    data = pickle.load( open(lab[ct] + prefix + '.p', "rb" ) )
+#
+#    plt.figure()
+#    plt.suptitle(lab[ct] + ' ' + prefix,fontsize=24)
+#    
+#    plt.subplot(4,1,1)
+#    plt.plot(data['ts'], data['eta_rho_sig_b'],color='k',ls='-')
+#    plt.xlabel('Time',fontsize=24)
+#    plt.ylabel('Sensitivity \n sig error',fontsize=24)
+#    ind = 1000
+#    #plt.xlim(xmax=ind)
+#    #plt.ylim(ymax=np.max(data['eta_rho_sig_b'][:ind]))
+#    
+#    plt.subplot(4,1,2)
+#    plt.plot(data['ts'], data['eta_rho_b'],color='k',ls='-')
+#    plt.xlabel('Time',fontsize=24)
+#    plt.ylabel('Sensitivity \n fit error',fontsize=24)
+#    ind = 1000
+#    #plt.xlim(xmax=ind)
+#    #plt.ylim(ymax=np.max(data['eta_rho_b'][:ind]))
+#    
+#    plt.subplot(4,1,3)
+#    plt.plot(data['rhos'][1:], data['eta_time_sig_b'][1:],color='k',ls='-')
+#    plt.xlabel('Signal',fontsize=24)
+#    plt.ylabel('Sensitivity \n sig error',fontsize=24)
+#    
+#    plt.subplot(4,1,4)
+#    plt.plot(data['rhos'], data['eta_time_b'],color='k',ls='-')
+#    plt.xlabel('Signal',fontsize=24)
+#    plt.ylabel('Sensitivity \n fit error',fontsize=24)
+#    
+# 
+#multipage_longer(prefix +'.pdf',dpi=80)    
+
+##My choice of graph
+#prefix = 'CUMUVISIBILITY'
+#
+#lab = ['Temperature medium zoom','Temperature large zoom','Temperature small zoom']
+#ax0 = plt.figure()
+#ct = 0
+#for ct in np.arange(0,len(lab)):
+#    
+#    data = pickle.load( open(lab[ct] + prefix + '.p', "rb" ) )
+#
+#    ax0.plot(data['ts'], data['eta_rho_sig_b'],color='k',ls='-')
+#    ax0.set_xlabel('Time',fontsize=24)
+#    ax0.set_ylabel('Sensitivity \n sig error',fontsize=24)
+#    ind = 1000
+#    #plt.xlim(xmax=ind)
+#    #plt.ylim(ymax=np.max(data['eta_rho_sig_b'][:ind]))
+#    ax0.tick_params(labelsize=fsizenb)
+#
+#    
+#    
+#    
+# 
+#multipage_longer(prefix +'.pdf',dpi=80)    
+
+
+
+
+
+#my choice of plot
+prefix = 'CUMU'
 
 for ct in np.arange(0,len(lab)):
 
@@ -66,68 +182,6 @@ for ct in np.arange(0,len(lab)):
     plt.xlim(xmax=ind)
     plt.ylim(ymax=max(np.max(data['eta_rho_sig_r'][:ind]),np.max(data['eta_rho_sig_b'][:ind])))
     
-    plt.subplot(4,1,2)
-    plt.plot(data['ts'], data['eta_rho_r'],color='r',ls='-')
-    plt.plot(data['ts'], data['eta_rho_b'],color='g',ls='-')
-    plt.xlabel('Time',fontsize=24)
-    plt.ylabel('Sensitivity \n fit error',fontsize=24)
-    ind = 1000
-    plt.xlim(xmax=ind)
-    plt.ylim(ymax=max(np.max(data['eta_rho_r'][:ind]),np.max(data['eta_rho_b'][:ind])))
-        
-    plt.subplot(4,1,3)
-    plt.plot(data['rhos'][1:], data['eta_time_sig_r'][1:],color='r',ls='-')
-    plt.plot(data['rhos'][1:], data['eta_time_sig_b'][1:],color='g',ls='-')
-    plt.xlabel('Signal',fontsize=24)
-    plt.ylabel('Sensitivity \n sig error',fontsize=24)
-    
-    plt.subplot(4,1,4)
-    plt.plot(data['rhos'], data['eta_time_r'],color='r',ls='-')
-    plt.plot(data['rhos'], data['eta_time_b'],color='g',ls='-')
-    plt.xlabel('Signal',fontsize=24)
-    plt.ylabel('Sensitivity \n fit error',fontsize=24)
    
-    multipage_longer(lab[ct] + prefix +'.pdf',dpi=80)    
+multipage_longer( prefix +'.pdf',dpi=80)    
     
-klklkl    
-prefix = 'CUMURATIO'
-prefix = 'RHORATIO' 
-
-prefix = 'CUMUVISIBILITY'
-prefix = 'RHOVISIBILITY'
-
-for ct in np.range(0,len(lab)):
-    
-    data = pickle.load( open(lab[ct] + prefix + '.p', "rb" ) )
-
-    plt.figure()
-    plt.suptitle(lab[ct] + ' ' + prefix,fontsize=24)
-    
-    plt.subplot(4,1,1)
-    plt.plot(ts_b, eta_rho_sig_b,color='k',ls='-')
-    plt.xlabel('Time',fontsize=24)
-    plt.ylabel('Sensitivity \n sig error',fontsize=24)
-    ind = 1000
-    plt.xlim(xmax=ind)
-    plt.ylim(ymax=np.max(data['eta_rho_sig_b'][:ind]))
-    
-    plt.subplot(4,1,2)
-    plt.plot(ts_b, eta_rho_b,color='k',ls='-')
-    plt.xlabel('Time',fontsize=24)
-    plt.ylabel('Sensitivity \n fit error',fontsize=24)
-    ind = 1000
-    plt.xlim(xmax=ind)
-    plt.ylim(ymax=np.max(data['eta_rho_b'][:ind]))
-    
-    plt.subplot(4,1,3)
-    plt.plot(data['rhos'][1:], data['eta_time_sig_b'][1:],color='g',ls='-')
-    plt.xlabel('Signal',fontsize=24)
-    plt.ylabel('Sensitivity \n sig error',fontsize=24)
-    
-    plt.subplot(4,1,4)
-    plt.plot(data['rhos'], data['eta_time_b'],color='g',ls='-')
-    plt.xlabel('Signal',fontsize=24)
-    plt.ylabel('Sensitivity \n fit error',fontsize=24)
-    
- 
-    multipage_longer(lab[ct] + prefix +'.pdf',dpi=80)    

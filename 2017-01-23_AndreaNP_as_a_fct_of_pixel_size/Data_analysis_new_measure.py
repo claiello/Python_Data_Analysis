@@ -170,6 +170,7 @@ def plot_things(prefix, my_color):
         
         ax2.plot(np.arange(0,len(red)), aux_vec_cumu[index,:],lw=len(listofindex)-index,color=my_color )
         
+        print('index=' + str(index))
         print(np.sum(np.isnan(aux_vec_cumu[index,:])))
         tau, A, tau2, A2, c, reso = poly_fit(np.arange(0,len(red)), aux_vec_cumu[index,:])
         print_result(reso)

@@ -43,26 +43,19 @@ import scalebars as sb
 ###############################################################################
 ###############################################################################
     
-No_experiments = [4,4,4,4,4,4,4,4]
+No_experiments = [5]
                   
-nametr = ['2017-01-13-1730_ImageSequence__150.000kX_10.000kV_30mu_15',
-          '2017-01-13-1810_ImageSequence__150.000kX_10.000kV_30mu_17',
-          '2017-01-13-1935_ImageSequence__150.000kX_10.000kV_30mu_3',
-          '2017-01-13-2011_ImageSequence__150.000kX_10.000kV_30mu_4',
-          '2017-01-13-2050_ImageSequence__150.000kX_10.000kV_30mu_7',
-          '2017-01-13-2132_ImageSequence__150.000kX_10.000kV_30mu_8',
-          '2017-01-13-2213_ImageSequence__150.000kX_10.000kV_30mu_9',
-          '2017-01-13-2251_ImageSequence__150.000kX_10.000kV_30mu_10']
+nametr = [ '2017-01-05-1557_ImageSequence__250.000kX_10.000kV_30mu_15']
 
 description = ['Andrea small NaYF4:Er'] # (20kV, 30$\mu$m, ' + str(Ps[index]) + 'nm pixels, ' + str(No_experiments[index]) + 'expts., InLens registered)'] #, \n' #+ obs[index] ']    
                
 kv = [10]
 
-let = ['N102pt5', 'N92pt9', 'N66pt4', 'N72pt8', 'N60pt6', 'N48pt5', 'N39pt8', 'N31pt2']
+let = ['V0']
 
 prefix = ''
 
-for index in [7]: #np.arange(0,len(nametr)):
+for index in [0]: #np.arange(0,len(nametr)):
 
     print(index)
 
@@ -74,8 +67,8 @@ for index in [7]: #np.arange(0,len(nametr)):
    # del se1_dset0
     #gc.collect()
     
-    #red1_dset0  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
-    red1_dset0  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scany points X 10 frames x 150 tr pts x250 x 250 pixels
+    red1_dset0  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
+    #red1_dset0  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scany points X 10 frames x 150 tr pts x250 x 250 pixels
     
     print(red1_dset0.shape)
     
@@ -103,25 +96,25 @@ for index in [7]: #np.arange(0,len(nametr)):
     gc.collect()
     
     
-    mycode = str(let[index]) + 'SEchannelA = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = str(let[index]) + 'SEchannelB = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez(str(let[index]) + 'SEchannelA', data = se1_dset_reg)
+    np.savez(str(let[index]) + 'SEchannelB', data = se1_dset_reg)
     
-#    mycode = str(let[index]) + 'RedbrightA = tempfile.NamedTemporaryFile(delete=False)'
-#    exec(mycode)
-#    np.savez(str(let[index]) +'RedbrightA', data = red1_dset_reg_all)
+    mycode = str(let[index]) + 'RedbrightB = tempfile.NamedTemporaryFile(delete=False)'
+    exec(mycode)
+    np.savez(str(let[index]) +'RedbrightB', data = red1_dset_reg_all)
+    
+    mycode = prefix + str(let[index]) + 'RED1DB = tempfile.NamedTemporaryFile(delete=False)'
+    exec(mycode)
+    np.savez(prefix + str(let[index]) +'RED1DB', data = np.nanmean(red1_dset,axis = (0,2,3)))
 #    
-#    mycode = prefix + str(let[index]) + 'RED1DA = tempfile.NamedTemporaryFile(delete=False)'
+#    mycode = str(let[index]) + 'BluebrightB = tempfile.NamedTemporaryFile(delete=False)'
 #    exec(mycode)
-#    np.savez(prefix + str(let[index]) +'RED1DA', data = np.nanmean(red1_dset,axis = (0,2,3)))
-##    
-    mycode = str(let[index]) + 'BluebrightA = tempfile.NamedTemporaryFile(delete=False)'
-    exec(mycode)
-    np.savez(str(let[index]) +'BluebrightA', data = red1_dset_reg_all)
-    
-    mycode =str(prefix + let[index]) + 'BLUE1DA = tempfile.NamedTemporaryFile(delete=False)'
-    exec(mycode)
-    np.savez(prefix + str(let[index]) +'BLUE1DA', data = np.nanmean(red1_dset,axis = (0,2,3)))
+#    np.savez(str(let[index]) +'BluebrightB', data = red1_dset_reg_all)
+#    
+#    mycode =str(prefix + let[index]) + 'BLUE1DB = tempfile.NamedTemporaryFile(delete=False)'
+#    exec(mycode)
+#    np.savez(prefix + str(let[index]) +'BLUE1DB', data = np.nanmean(red1_dset,axis = (0,2,3)))
 #    
     ###############################################################################
     ###############################################################################
@@ -136,9 +129,9 @@ for index in [7]: #np.arange(0,len(nametr)):
         gc.collect()
         gmmse_red1_darkse_dset, gmmse_red1_brightse_dset, gmmse_se1_dark_dset, gmmse_se1_bright_dset, darkse_pct, brightse_pct, means, covars, weights = gmmone_tr_in_masked_channel(se1_dset_reg, red1_dset_reg)     
 
-        mycode = str(let[index]) +'SEchannelGMMA = tempfile.NamedTemporaryFile(delete=False)'
+        mycode = str(let[index]) +'SEchannelGMMB = tempfile.NamedTemporaryFile(delete=False)'
         exec(mycode)
-        np.savez(str(let[index]) +'SEchannelGMMA', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
+        np.savez(str(let[index]) +'SEchannelGMMB', bright = gmmse_se1_bright_dset, means = means, covars = covars, weights = weights)
         
         del red1_dset_reg, gmmse_red1_darkse_dset
         gc.collect()

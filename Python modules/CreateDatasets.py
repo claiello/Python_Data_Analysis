@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from BackgroundCorrection import *
-from CorrCoeffs import *
+#from BackgroundCorrection import *
+#from CorrCoeffs import *
 import scipy.ndimage as ndimage
 from matplotlib_scalebar.scalebar import ScaleBar
 from sklearn.mixture import GMM 
@@ -233,7 +233,7 @@ def gmmone(imagemask, imagemasked):
     darkother = (1-binary_img)*imagemasked * np.isfinite(imagemask)
     darkother[np.where(darkother == 0)] = np.nan
 
-    return darkother, brightother, darkone, brightone
+    return np.array(darkother), np.array(brightother), np.array(darkone), np.array(brightone)
     
 def gmmboth(image1, image2):
     # image 1 is usually red
@@ -270,7 +270,7 @@ def gmmboth(image1, image2):
     darkother = (1-binary_img)*image2
     darkother[np.where(darkother == 0)] = np.nan
  
-    return darkother, brightother, darkone, brightone
+    return np.array(darkother), np.array(brightother), np.array(darkone), np.array(brightone)
 
 def threshold_adaptive_dset(image1, image2, blocksize, myoffset):
     # image 1 is usually red

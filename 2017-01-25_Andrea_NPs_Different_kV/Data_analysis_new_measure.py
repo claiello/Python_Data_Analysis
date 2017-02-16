@@ -40,6 +40,8 @@ from tempfile import TemporaryFile
 import skimage
 from skimage import exposure
 
+from my_fits import *
+
 #PARAMS THAT NEED TO BE CHANGED
 ###############################################################################
 ###############################################################################
@@ -157,7 +159,7 @@ def plot_things(prefix, my_color):
         for jj in np.arange(0,len(red)):
             aux_vec[index,jj] = np.sum(red[0:jj])/np.sum(red[jj:])
             aux_vec_cumu[index,jj]= np.sum(red[0:jj])
-            
+             
         ax1.semilogy( aux_vec[index,:], np.arange(0,len(red)),lw=index+1,color=my_color)
         ax1.set_xlabel('ratio (sum 0-tau)/(sum tau-1500)')
         ax1.set_ylabel('decay length tau ($\mu$s)')
@@ -171,6 +173,23 @@ def plot_things(prefix, my_color):
         ax2.set_xlim(xmax=1500)
         #plt.xlim([0,20])
         ax2.set_title('Lw $\propto$' +Label_varying_variable)
+        
+        #######################################################################
+        print('index=' + str(index))
+        print(np.sum(np.isnan(aux_vec_cumu[index,:])))
+        #normal
+        #tau, A, tau2, A2, c, reso = poly_fit(np.arange(0,len(red)), aux_vec_cumu[index,:])
+        #tau, A, tau2, A2, c, reso = poly_fit(np.arange(100,500), aux_vec_cumu[index,100:500])        
+        #poisson
+        tau, A, tau2, A2, c, reso = poly_fit(np.arange(0,len(red)-1), aux_vec_cumu[index,1:])
+        #print_result(reso)
+                
+        x = np.arange(0,len(red))
+        #y = c*x + tau*A*(1- np.exp(-tx/tau)) + tau2*A2*(1- np.exp(-x/tau2))
+        y = func_poly(x, reso.params)
+        ax2.plot(x, y, lw=len(listofindex)-index,color='k')   
+        
+        #######################################################################
         
         if index == len(listofindex)-1:
             ax3.plot(Varying_variable, median_tau_red,label='median',color=my_color,ls='--')

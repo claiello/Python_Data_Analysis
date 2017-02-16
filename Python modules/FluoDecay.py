@@ -618,7 +618,7 @@ def calcdecay_subplot(blue_dset,time_detail,titulo,single,other_dset1=None, othe
     # dofitting
     # do fit, here with leastsq model
     if single == False:
-        (a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='k',my_edgecolor='#323232', my_facecolor='#666666',init_guess=init_guess,plot_error=True, error_array=error_array)       
+        (a,b,c,d,e,ae,be,ce,de,ee,chisq) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='k',my_edgecolor='#323232', my_facecolor='#666666',init_guess=init_guess,plot_error=True, error_array=error_array, minimizepoisson_here=False)       
     #e stands for "error"  
         plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ko',label='CL from all pixels: \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.4f}".format(ee)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
     else:
@@ -629,7 +629,7 @@ def calcdecay_subplot(blue_dset,time_detail,titulo,single,other_dset1=None, othe
     #plt.hold(True)
     if other_dset2 is not None:  #plotting background pixels  
         if single == False:        
-            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,np.average(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess,plot_error=True, error_array=error_array2) 
+            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2,chisq) = fitexp(x_array/1e-6,np.average(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess,plot_error=True, error_array=error_array2, minimizepoisson_here=False) 
             plt.semilogy(x_array/1e-6,np.average(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 458nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b2)) + ' $\pm$ ' + str("{0:.2f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s') 
         else:
             (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,np.average(other_dset2,axis=(1,2))/No_specimen,single=True, my_color='b',my_edgecolor='#323232', my_facecolor='#666666',init_guess=init_guess[0::2],plot_error=True, error_array=error_array2)  
@@ -638,7 +638,7 @@ def calcdecay_subplot(blue_dset,time_detail,titulo,single,other_dset1=None, othe
     #plt.hold(True)
     if other_dset1 is not None: #plotting all pixels
         if single == False:        
-            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1) = fitexp(x_array/1e-6,np.average(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array1) 
+            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1,chisq) = fitexp(x_array/1e-6,np.average(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array1, minimizepoisson_here=False) 
             plt.semilogy(x_array/1e-6,np.average(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 458nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e1)) + ' $\pm$ ' + str("{0:.3f}".format(ee1)) + '$\mu$s') 
         else:
             (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,np.average(other_dset1,axis=(1,2))/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=False, error_array=error_array1)  
@@ -648,12 +648,12 @@ def calcdecay_subplot(blue_dset,time_detail,titulo,single,other_dset1=None, othe
 #    ax1.spines['top'].set_visible(False)
 #    ax1.xaxis.set_ticks_position('bottom')
 #    ax1.yaxis.set_ticks_position('left')
-    plt.xlim(xmax=2.7)
+    #plt.xlim(xmax=2.7)
 
     #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
-    plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
-    plt.ylabel(r'Average luminescence of each time bin (' + unit + ')',  fontsize=fsizepl)
-    plt.legend(loc='best')
+   # plt.xlabel(r'Time after blanking the electron beam ($\mu$s)',  fontsize=fsizepl)
+   # plt.ylabel(r'Average luminescence of each time bin (' + unit + ')',  fontsize=fsizepl)
+   # plt.legend(loc='best')
     
     if single:
         return b,0.0,be,0.0 #e and ee dont exist
@@ -759,6 +759,8 @@ def calcdecay_subplot_nan(
     e2 = 0.0
     be2 = 0.0
     ee2 = 0.0
+    chisquared = np.nan
+    chisquared2 = np.nan
    
    #### Deals with datasets containing nans    
     No_specimen = 1
@@ -779,7 +781,7 @@ def calcdecay_subplot_nan(
     # dofitting
     # do fit, here with leastsq model
     if single == False:
-        (a,b,c,d,e,ae,be,ce,de,ee,chisquared) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array)       
+        (a,b,c,d,e,ae,be,ce,de,ee,chisquared) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array,minimizepoisson_here=True)       
         #single use        
         #(a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess,plot_error=False)       
     #e stands for "error"  
@@ -808,7 +810,7 @@ def calcdecay_subplot_nan(
            # (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2,plot_error=True, error_array=error_array2) 
            #plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='Transient from green photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s  \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
 
-            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2,chisquared2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='g',my_edgecolor='#74C365', my_facecolor='#74C365',init_guess=init_guess2,plot_error=True, error_array=error_array2) 
+            (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2,chisquared2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='g',my_edgecolor='#74C365', my_facecolor='#74C365',init_guess=init_guess2,plot_error=True, error_array=error_array2,minimizepoisson_here=True) 
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'go',markersize=4, label ='Transient from green photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s', zorder=2) # \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
         else:
             (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=True, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2[0:3],plot_error=True, error_array=error_array2)  
@@ -817,7 +819,7 @@ def calcdecay_subplot_nan(
     #plt.hold(True)
     if other_dset1 is not None: #plotting all pixels
         if single == False:        
-            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1,chisquared) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array1) 
+            (a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1,chisquared) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array1,minimizepoisson_here=True) 
             plt.semilogy(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e1)) + ' $\pm$ ' + str("{0:.3f}".format(ee1)) + '$\mu$s', zorder=3) 
         else:
             (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=True, error_array=error_array1)  
@@ -839,6 +841,113 @@ def calcdecay_subplot_nan(
     if single:
         return b,0.0,be,0.0,b2,0.0,be2,0.0 #e and ee dont exist
     else:
+        return b,e,be,ee,b2,e2,be2,ee2,chisquared, chisquared2
+        
+def calcdecay_subplot_nan_nofit(
+        blue_dset,
+        time_detail,
+        titulo,
+        single,
+        other_dset2=None, 
+        other_dset1=None, 
+        init_guess=None,
+        unit='kHz',
+        init_guess2=None, 
+        error_array=None, 
+        error_array1=None, 
+        error_array2=None
+        ): #blue_dset has the transient data only
+    
+    b = 0.0
+    e = 0.0
+    be = 0.0
+    ee = 0.0
+    b2 = 0.0
+    e2 = 0.0
+    be2 = 0.0
+    ee2 = 0.0
+   
+   #### Deals with datasets containing nans    
+    No_specimen = 1
+    #No_decaypts = blue_dset.shape[0]
+   
+    x_array = np.arange(0,blue_dset.shape[0])*time_detail
+    
+    #plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+#    fig, ax = plt.subplots()#figsize=(sizex, sizey), dpi=dpi_no)
+#    plt.rc('text', usetex=True)
+#    plt.rc('font', family='serif')
+#    plt.rc('font', serif='Palatino')
+#    plt.suptitle(titulo, fontsize=fsizetit)
+    
+    plt.hold(True)
+    # for kkk in range(No_specimen):   
+      
+    # dofitting
+    # do fit, here with leastsq model
+    if single == False:
+        #(a,b,c,d,e,ae,be,ce,de,ee,chisquared) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array,minimizepoisson_here=True)       
+        #single use        
+        #(a,b,c,d,e,ae,be,ce,de,ee) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess,plot_error=False)       
+    #e stands for "error"  
+        #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r' $\tau_1 $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
+        plt.semilogy(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='Transient from red photons ($>$ 593nm): \n' +r' $\tau_1 $ = ' + str("{0:.3f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s', zorder=1) # \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a/d) )  )         
+        
+        #single use        
+        #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'bo',markersize=4,label='CL photons $<$ 593nm: \n' +r' $\tau_1 $ < 40ns; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e)) + ' $\pm$ ' + str("{0:.3f}".format(ee)) + '$\mu$s \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a/d) )  ) 
+    
+    else:
+        #(a,b,c,ae,be,ce) = fitexp(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,single=True, my_color='k',my_edgecolor='#ffff32',my_facecolor= '#ffff66',init_guess=init_guess[0::2],plot_error=True)     
+        #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',label='CL from all pixels: \n' +  r'$\tau $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.2f}".format(be)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
+
+        #single use  
+       # (a,b,c,ae,be,ce) = fitexp(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,single=True,my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0:3],plot_error=False, error_array=error_array)       
+        plt.semilogy(x_array/1e-6,np.nanmean(blue_dset,axis=(1,2))/No_specimen,'ro',markersize=4,label='CL from red photons ($>$ 593nm): \n' +r'$\tau $ = ' + str("{0:.3f}".format(b)) + ' $\pm$ ' + str("{0:.3f}".format(be)) + '$\mu$s' ) 
+    
+    
+    #plt.hold(True)
+    if other_dset2 is not None:  #plotting background pixels  
+        if single == False:
+            
+            if init_guess2 is None:
+                init_guess2 = init_guess
+            
+           # (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2,plot_error=True, error_array=error_array2) 
+           #plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='Transient from green photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s  \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
+
+          #  (a2,b2,c2,d2,e2,ae2,be2,ce2,de2,ee2,chisquared2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=False, my_color='g',my_edgecolor='#74C365', my_facecolor='#74C365',init_guess=init_guess2,plot_error=True, error_array=error_array2,minimizepoisson_here=True) 
+            plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'go',markersize=4, label ='Transient from green photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s', zorder=2) # \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
+        else:
+            (a2,b2,c2,ae2,be2,ce2) = fitexp(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2))/No_specimen,single=True, my_color='b',my_edgecolor='#397bff', my_facecolor='#79a6ff',init_guess=init_guess2[0:3],plot_error=True, error_array=error_array2)  
+            plt.semilogy(x_array/1e-6,np.nanmean(other_dset2,axis=(1,2)),'bo',markersize=4, label ='CL from blue photons ($<$ 593nm): \n' + r'$\tau $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s') 
+
+    #plt.hold(True)
+    if other_dset1 is not None: #plotting all pixels
+        if single == False:        
+            #(a1,b1,c1,d1,e1,ae1,be1,ce1,de1,ee1,chisquared) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=False, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array1,minimizepoisson_here=True) 
+            plt.semilogy(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s; ' + r'$\tau_2 $ = ' + str("{0:.3f}".format(e1)) + ' $\pm$ ' + str("{0:.3f}".format(ee1)) + '$\mu$s', zorder=3) 
+        else:
+           # (a1,b1,c1,ae1,be1,ce1) = fitexp(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2))/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess[0::2],plot_error=True, error_array=error_array1)  
+            plt.semilogy(x_array/1e-6,np.nanmean(other_dset1,axis=(1,2)),'ro',markersize=4, label ='CL from red photons ($>$ 458nm): \n' + r'$\tau $ = ' + str("{0:.2f}".format(b1)) + ' $\pm$ ' + str("{0:.2f}".format(be1)) + '$\mu$s') 
+       
+#    ax1.spines['right'].set_visible(False)
+#    ax1.spines['top'].set_visible(False)
+#    ax1.xaxis.set_ticks_position('bottom')
+#    ax1.yaxis.set_ticks_position('left')
+    plt.xlim(xmax=4)
+
+    #plt.semilogx(x_array[:-1]*time_detail,sum_grana_blue[1:]/1000.0/No_specimen,'bo',label='Average decay, $\\tau$ = ' + str("{0:.2f}".format(1.0/b)) + '$\mu$s',markersize=(kkk+1)+2)     
+    plt.xlabel(r'Transient cathodoluminescence \n acquisition time  ($\mu$s)',  fontsize=fsizepl)
+    #plt.ylabel(r'Average luminescence of each time bin (' + unit + ')',  fontsize=fsizepl)
+    #plt.legend(loc='best')
+    #plt.legend(loc='lower left')
+    
+    
+    if single:
+        return b,0.0,be,0.0,b2,0.0,be2,0.0 #e and ee dont exist
+    else:
+        chisquared = 0
+        chisquared2 = 0
         return b,e,be,ee,b2,e2,be2,ee2,chisquared, chisquared2
         
 def calcdecay_subplot_nan_1D(
@@ -1727,6 +1836,7 @@ def calc_double_fit(
     # first, init guess for long fit
     init_guess = [fit_second_part[0], init_tau_long, fit_second_part[-1]] #a,b,c
     
+    print(init_guess[2])
     if np.abs(init_guess[2]) < 1.0e-8:
         init_guess[2] = init_guess[2] + 1.0e-5
    

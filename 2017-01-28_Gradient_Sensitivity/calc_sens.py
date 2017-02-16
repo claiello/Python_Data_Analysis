@@ -41,13 +41,19 @@ def get_sens(S, Q, t, rho = None):
         #print(x)
         #print(y)
         #print(y_err)
-
-        (a,b,result) = linear_fit_with_error(x, y, y_err)
+        try:
+            (a,b,result) = linear_fit_with_error(x, y, y_err)
+        except:
+            print('fit did not converge')
+            a = np.nan
+            b = np.nan
+            
 
         grad_Q_rho = np.append(grad_Q_rho, a)
         try:
             grad_Q_rho_err = np.append(grad_Q_rho_err, result.covar[0,0]**0.5)
         except:
+            print('fit did not converge')
             grad_Q_rho_err = np.append(grad_Q_rho_err, np.nan)
         grad_Q_rho_err_of_sig = np.append(grad_Q_rho_err_of_sig, unumpy.std_devs(np.mean(S[:,t_ind])))
 
@@ -84,7 +90,12 @@ def get_sens(S, Q, t, rho = None):
                 y = np.append(y, t[idx])
                 y_err = np.append(y_err, hlp_err[ind_Q, idx])
     
-            (a,b,result) = linear_fit_with_error(x, y, y_err)
+            try:
+                (a,b,result) = linear_fit_with_error(x, y, y_err)
+            except:
+                print('fit did not converge')
+                a = np.nan
+                b = np.nan
     
             #plt.errorbar(x, y, yerr = y_err, color = 'r', marker = 'o', ls = None)
             #plt.plot(x, a.value*x+b.value, 'r--')
@@ -93,6 +104,7 @@ def get_sens(S, Q, t, rho = None):
             try:
                 grad_Q_time_err = np.append(grad_Q_time_err, result.covar[0,0]**0.5)
             except:
+                print('fit did not converge')
                 grad_Q_time_err = np.append(grad_Q_time_err, np.inf)
               
             hlp = unumpy.uarray(y,y_err)
@@ -179,3 +191,4 @@ def plot_S(S, Q, t):
 #plt.show()
 #
 #
+

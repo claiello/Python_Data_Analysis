@@ -149,7 +149,7 @@ lst = ['-.','--','dotted','-','-','-']
 #
 lab = ['Aperture','Current','Pixel','Temperature medium zoom','Temperature large zoom','Temperature small zoom']
 ######### RATIOS RED AND GREEN
-for index in [3]: #[0,1,2,3]:
+for index in [3]: #[0,1,2,3]: #####missing rhovisibility
     
     if index == 0:
         do_cumu = True
@@ -178,7 +178,7 @@ for index in [3]: #[0,1,2,3]:
                 prefix = 'CUMUVISIBILITY'
             
         else: #do rho
-            notocut = 10
+            notocut = 400
             if do_ratio:
                 black = signal_rho_ratio(data['red1D'][:,:-notocut], np.sqrt(data['red1D'][:,:-notocut]),data['blue1D'][:,:-notocut], np.sqrt(data['blue1D'][:,:-notocut]))
                 ts_b = np.arange(0,data['red1D'].shape[1]-notocut-2)
@@ -245,7 +245,7 @@ for data in [d_ap, d_kv, d_pixel, d_temp,d_temp_large_zoom, d_temp_small_zoom]:
         prefix = 'CUMU'
     else:
         ### rho
-        notocut = 10 
+        notocut = 10
         red = signal_rho(data['red1D'][:,:-notocut], np.sqrt(data['red1D'][:,:-notocut]))
         blue = signal_rho(data['blue1D'][:,:-notocut], np.sqrt(data['blue1D'][:,:-notocut]))
         ts_r = np.arange(0,data['red1D'].shape[1]-notocut-2)
