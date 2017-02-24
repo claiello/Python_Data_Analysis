@@ -318,7 +318,10 @@ if do_fig_sens:
         ucounts_blue = unumpy.uarray(counts_blue, error_blue)
         
         def helper(arrayx):
-             return np.cumsum(arrayx*np.arange(1,counts_red.shape[1]+1), axis = 1)/np.cumsum(arrayx, axis = 1)
+            return np.cumsum(arrayx*np.arange(1,counts_red.shape[1]+1), axis = 1)/np.cumsum(arrayx, axis = 1)
+            ###TEST
+             #arrayx[arrayx < 1e-8] = 1e-8   #so that no division by zero     
+             #return np.cumsum(arrayx*np.arange(1,counts_red.shape[1]+1), axis = 1)/np.cumsum(arrayx, axis = 1)
         
         return helper(ucounts_red),helper(ucounts_blue)
     
@@ -342,7 +345,17 @@ if do_fig_sens:
             my_ind.xaxis.set_ticks_position('bottom')
             my_ind.yaxis.set_ticks_position('left')
             
-        (taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D']),data['blue1D'], np.sqrt(data['blue1D']))
+        Notr = np.zeros([4,data['red1D'].shape[1]])
+        Notr[0,:] = 3.0*308.0*311.0 * np.ones(data['red1D'].shape[1])
+        Notr[1,:] = 3.0*315.0*324.0 * np.ones(data['red1D'].shape[1])
+        Notr[2,:] = 3.0*316.0*338.0 * np.ones(data['red1D'].shape[1])
+        Notr[3,:] = 3.0*307.0*325.0 * np.ones(data['red1D'].shape[1])
+        #vector which is 4 long, starting at 60C  #np.sum(hlp)*reda[:,initbin:,:,:].shape[0]
+        #shape numbers gotten from file "get_init_background"
+        (taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D'])/np.sqrt(Notr),data['blue1D'], np.sqrt(data['blue1D'])/np.sqrt(Notr))    
+        
+        #wrong way of computing 
+        #(taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D']),data['blue1D'], np.sqrt(data['blue1D']))
         ts_b = np.arange(0,data['red1D'].shape[1])
         
         aa = np.empty([taured.shape[1]])    
@@ -371,23 +384,25 @@ if do_fig_sens:
         hlp3 = (taured-taublue)/(taured+taublue)
         
         # visibility of cumu counts
-        red = unumpy.uarray(data['red1D'],np.sqrt(data['red1D']))
-        blue = unumpy.uarray(data['blue1D'],np.sqrt(data['blue1D']))
+        red = unumpy.uarray(data['red1D'],np.sqrt(data['red1D'])/np.sqrt(Notr))
+        blue = unumpy.uarray(data['blue1D'],np.sqrt(data['blue1D'])/np.sqrt(Notr))
         viscumucts = (np.cumsum(red,axis=1)-np.cumsum(blue,axis=1))/       \
                      (np.cumsum(red,axis=1)+np.cumsum(blue,axis=1))
                          
         sys.path.append("../2017-01-28_Gradient_Sensitivity/") # necessary for the tex fonts
-        from calc_sens import get_sens, get_sens_Tminus  
+        from calc_sens import get_sens #,get_sens_Tminus  
         (xxx, eta_hlp1)  = get_sens(taured, xvec,np.arange(1,red.shape[1]+1))
         (xxx, eta_hlp2)  = get_sens(taublue, xvec,np.arange(1,red.shape[1]+1))
         (xxx, eta_hlp3)  = get_sens(hlp3, xvec,np.arange(1,red.shape[1]+1))
         (xxx, eta_viscumucts)  = get_sens(viscumucts, xvec,np.arange(1,red.shape[1]+1))
    
-        delay=2
-        my_ax[0].semilogy(np.arange(1+delay+300,red.shape[1]+1),eta_hlp1[delay+300:],ls='--',color='r',lw=2)#,label=r'Red $\tau$')
-        my_ax[0].semilogy(np.arange(1+delay,red.shape[1]+1),eta_hlp2[delay:],ls='--',color='g',lw=2)#,label=r'Green $\tau$')
+        delay=2 +400
+        delayg = 2 + 60
+        my_ax[0].semilogy(np.arange(1+delay,red.shape[1]+1),eta_hlp1[delay:],ls='--',color='r',lw=2)#,label=r'Red $\tau$')
+        my_ax[0].semilogy(np.arange(1+delayg,red.shape[1]+1),eta_hlp2[delayg:],ls='--',color='g',lw=2)#,label=r'Green $\tau$')
        
-        sotep=100
+        sotep= 100
+        delay=2
         my_ax[0].semilogy(np.arange(1+delay,red.shape[1]+1),eta_hlp3[delay:],ls='--',color='k',lw=2)
         my_ax[0].semilogy(np.arange(1+delay,red.shape[1]+1,sotep),eta_hlp3[delay::sotep],ls='None',color='k',marker='h', markersize=12,label=r'Visib. of $\tau$')
         my_ax[0].semilogy(np.arange(1+delay,red.shape[1]+1),eta_viscumucts[delay:],ls='--',color='k',lw=2)
@@ -398,19 +413,23 @@ if do_fig_sens:
         my_ax[0].set_xticks(xt)
         my_ax[0].set_xlim(xl)
       
-        my_ax[0].set_ylim([3.8,21])
-        my_ax[0].set_yticks([10])
-        my_ax[0].set_yticklabels(['10'])
+        #my_ax[0].set_ylim([3.8,21])
+        #my_ax[0].set_yticks([10])
+        #my_ax[0].set_yticklabels(['10'])
 
-        plt.legend(loc='center right',fontsize=fsizenb,frameon=False)
+        plt.legend(loc='best',fontsize=fsizenb,frameon=False)
        
         if ct == 3:
             my_ax[0].set_ylabel(r'$\delta$T ($^{\circ}$C)',fontsize=fsizepl)#,va='center',ha='center')
       
             my_ax[0].tick_params(labelsize=fsizenb) 
             
+            my_ax[0].set_ylim((0.0055,0.15))
+            my_ax[0].set_yticks([0.01,0.1])
+            my_ax[0].set_yticklabels(['0.01','0.1'])
+            
     plt.tight_layout() 
-    plt.show()  
+    #plt.show()  
     multipage_longer('SI-Sensitivity.pdf',dpi=80)
 
 do_hbar = False
@@ -449,11 +468,15 @@ if do_hbar:
     ax00.legend(["Temperature" , "Pixel","Energy","Current"], fontsize=fsizenb,frameon=False)
     ax00.axvline(x=1 , lw=2, color='k', ls='--')
     
+    ax00.text(1.05, 2+2*width, 'p = \{1.4, 0.4, 27.4, 19.4\} $\%$', fontsize=fsizenb)
+    ax00.text(1.05, 1+2*width, 'p = \{0, 3.7, 0, 0\} $\%$', fontsize=fsizenb)
+
+    
     plt.tight_layout() 
     plt.show()  
     multipage_longer('SI-Correlation.pdf',dpi=80)
     
-do_plottau = True
+do_plottau = False
 if do_plottau:
     
     fig1= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
@@ -536,7 +559,13 @@ if do_plottau:
         if ct == 3:
             xvec = np.array([0.002996,0.0031089,0.0031954,0.003285])
         
-        (taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D']),data['blue1D'], np.sqrt(data['blue1D']))    
+        Notr = np.zeros([4,data['red1D'].shape[1]])
+        Notr[0,:] = 3.0*308.0*311.0 * np.ones(data['red1D'].shape[1])
+        Notr[1,:] = 3.0*315.0*324.0 * np.ones(data['red1D'].shape[1])
+        Notr[2,:] = 3.0*316.0*338.0 * np.ones(data['red1D'].shape[1])
+        Notr[3,:] = 3.0*307.0*325.0 * np.ones(data['red1D'].shape[1])
+        #vector which is 4 long, starting at 60C  #np.sum(hlp)*reda[:,initbin:,:,:].shape[0]
+        (taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D'])/np.sqrt(Notr),data['blue1D'], np.sqrt(data['blue1D'])/np.sqrt(Notr))    
         
 #        #Vector with mean background values 
 #        backblue= np.array([0.02345457,0.01907375,  0.01535466,  0.02599181]) #60-> 30
@@ -565,7 +594,23 @@ if do_plottau:
                                                  edgecolor=my_edgecolor,
                                                  facecolor=my_facecolor,
                                                  alpha=0.5,
-                                                 linewidth=0.0)
+                                                 linewidth=1.0)
+                                                 
+        ax0.fill_between(moving_average(np.arange(1,taured.shape[1]+1),movav),
+                                                 moving_average(unumpy.nominal_values(dset[2,:]),movav)-moving_average(unumpy.std_devs(dset[2,:]),movav),
+                                                 moving_average(unumpy.nominal_values(dset[2,:]),movav)+moving_average(unumpy.std_devs(dset[2,:]),movav),
+                                                 edgecolor=my_edgecolor,
+                                                 facecolor=my_facecolor,
+                                                 alpha=0.5,
+                                                 linewidth=1.0)
+                                                 
+        ax0.fill_between(moving_average(np.arange(1,taured.shape[1]+1),movav),
+                                                 moving_average(unumpy.nominal_values(dset[1,:]),movav)-moving_average(unumpy.std_devs(dset[1,:]),movav),
+                                                 moving_average(unumpy.nominal_values(dset[1,:]),movav)+moving_average(unumpy.std_devs(dset[1,:]),movav),
+                                                 edgecolor=my_edgecolor,
+                                                 facecolor=my_facecolor,
+                                                 alpha=0.5,
+                                                 linewidth=1.0)
                                                  
         ax0.fill_between(moving_average(np.arange(1,taured.shape[1]+1),movav),
                                                  moving_average(unumpy.nominal_values(dset[0,:]),movav)-moving_average(unumpy.std_devs(dset[0,:]),movav),
@@ -573,7 +618,7 @@ if do_plottau:
                                                  edgecolor=my_edgecolor,
                                                  facecolor=my_facecolor,
                                                  alpha=0.5,
-                                                 linewidth=0.0)
+                                                 linewidth=1.0)
                          
         ax0.plot(moving_average(np.arange(1,taured.shape[1]+1),movav),moving_average(np.arange(1,taured.shape[1]+1)/2,movav),color='k',ls='--',lw=2)        
         

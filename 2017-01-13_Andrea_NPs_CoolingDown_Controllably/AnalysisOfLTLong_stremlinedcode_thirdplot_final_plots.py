@@ -158,9 +158,9 @@ if len(prefix) == 0:
     blue_int_array = Blue_int_array['data']
     
     Red_std_array = np.load('Red_std_array.npz') 
-    red_std_array = Red_int_array['data']
+    red_std_array = Red_std_array['data']
     Blue_std_array = np.load('Blue_std_array.npz') 
-    blue_std_array = Blue_int_array['data']
+    blue_std_array = Blue_std_array['data']
     
     B_array_red= np.load('B_array_red.npz')
     b_array_red = B_array_red['data']  
@@ -192,9 +192,9 @@ else:
     blue_int_array = Blue_int_array['data']
     
     Red_std_array = np.load(prefix +'Red_std_array.npz') 
-    red_std_array = Red_int_array['data']
+    red_std_array = Red_std_array['data']
     Blue_std_array = np.load(prefix +'Blue_std_array.npz') 
-    blue_std_array = Blue_int_array['data']
+    blue_std_array = Blue_std_array['data']
     
     B_array_red= np.load(prefix +'B_array_red.npz')
     b_array_red = B_array_red['data']  

@@ -155,6 +155,13 @@ if plot_spec:
     ax0.set_xticks([aux_x[f],593,aux_xx[g]])
     ax0.set_xticklabels([str("{0:.1f}".format(aux_x[f])),'593.0',str("{0:.1f}".format(aux_xx[g]))])
 
+
+    # adding dE with arrow
+    ax0.annotate('',  xy=(541.2+1.5, 0.875), xytext=(659.4-1.5, 0.875),
+            arrowprops=dict(arrowstyle='<|-|>', facecolor='k', edgecolor='k'),zorder=100)
+            #shrink=0.05,
+    ax0.text(600.3,0.925,r'$\Delta$E $\sim$ 0.41\,eV', fontsize=fsizenb, va='center',ha='center')
+
 sys.path.append("../2016-12-19_Andrea_BigNPs_5DiffTemps/") # necessary 
 ###############################################################################
 index = 0
@@ -217,7 +224,7 @@ axB.text(-0.5, 1.0, 'b', transform=axB.transAxes,fontsize=fsizepl, fontweight='b
 #axB.set_xticks([])
 
 inset200 = plt.subplot2grid((nolines,noplots), (0,6), colspan=2, rowspan=3)
-inset200.text(-0.3, 1.0, 'c', transform=inset200.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
+inset200.text(-0.3, 1.0, 'd', transform=inset200.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
 
 yap = np.load('ZZZYAP3.npz')
@@ -249,7 +256,7 @@ gs.update(wspace=0.1, hspace=-0.5, left=0.115, right=0.5, bottom=0.1, top=0.99)
 
 ax11 = plt.subplot(gs[4,0])
 
-ax11.text(-0.7, 1.20, 'd', transform=ax11.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
+ax11.text(-0.7, 1.20, 'c', transform=ax11.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5}) #was 1.0 not 1.2
 
 

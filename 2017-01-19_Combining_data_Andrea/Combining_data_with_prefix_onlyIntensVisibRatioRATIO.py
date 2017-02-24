@@ -135,9 +135,9 @@ def do_pic(ax3,fig1):
     blue_int_array = Blue_int_array['data']
     
     Red_std_array = np.load('../2017-01-05_Andrea_small_new_sample_5DiffTemps/Red_std_array.npz') 
-    red_std_array = Red_std_array['data']
+    red_std_array = Red_int_array['data']
     Blue_std_array = np.load('../2017-01-05_Andrea_small_new_sample_5DiffTemps/Blue_std_array.npz') 
-    blue_std_array = Blue_std_array['data']
+    blue_std_array = Blue_int_array['data']
     
 #    B_array_red= np.load(prefix + 'B_array_red.npz')
 #    b_array_red = B_array_red['data']  
@@ -246,9 +246,9 @@ def do_pic(ax3,fig1):
     blue_int_array3 = Blue_int_array3['data']
     
     Red_std_array3 = np.load('../2017-01-13_Andrea_NPs_CoolingDown_Controllably/Red_std_array.npz') 
-    red_std_array3 = Red_std_array3['data']
+    red_std_array3 = Red_int_array3['data']
     Blue_std_array3 = np.load('../2017-01-13_Andrea_NPs_CoolingDown_Controllably/Blue_std_array.npz') 
-    blue_std_array3 = Blue_std_array3['data']
+    blue_std_array3 = Blue_int_array3['data']
     
 #    B_array_red3= np.load(prefix +'B_array_red.npz')
 #    b_array_red3 = B_array_red3['data']  
@@ -394,34 +394,20 @@ def do_pic(ax3,fig1):
         #poisson
         #ured_int_array = unumpy.uarray(red_int_array,np.sqrt(red_int_array))
         #ured_int_array2 = unumpy.uarray(red_int_array2,np.sqrt(red_int_array2))
-        Notr = np.zeros([4])
-        Nopointsbeamon = 152
-        Notr[0] = 3.0*308.0*311.0 * Nopointsbeamon
-        Notr[1] = 3.0*315.0*324.0 * Nopointsbeamon
-        Notr[2] = 3.0*316.0*338.0 * Nopointsbeamon
-        Notr[3] = 3.0*307.0*325.0 * Nopointsbeamon
-        #vector which is 4 long, starting at 60C  #np.sum(hlp)*reda[:,initbin:,:,:].shape[0]
-        #shape numbers gotten from file "get_init_background"
-        ured_int_array3 = unumpy.uarray(red_int_array3,np.sqrt(red_int_array3)/np.sqrt(Notr))
+        ured_int_array3 = unumpy.uarray(red_int_array3,np.sqrt(red_int_array3))
         
         #ublue_int_array = unumpy.uarray(blue_int_array,np.sqrt(blue_int_array))
-        #ublue_int_array2 = unumpy.uarray(blue_int_array2,np.sqrt(blue_int_array2))31.2
-        ublue_int_array3 = unumpy.uarray(blue_int_array3,np.sqrt(blue_int_array3)/np.sqrt(Notr))
+        #ublue_int_array2 = unumpy.uarray(blue_int_array2,np.sqrt(blue_int_array2))
+        ublue_int_array3 = unumpy.uarray(blue_int_array3,np.sqrt(blue_int_array3))
         
         #yerr1 = unumpy.std_devs(((ublue_int_array[1:]-ured_int_array[1:])/(ured_int_array[1:]+ublue_int_array[1:])))    
         #yerr2 = unumpy.std_devs( ((ublue_int_array2-ured_int_array2)/(ured_int_array2+ublue_int_array2)))    
-        yerr3 = unumpy.std_devs( +((ublue_int_array3-ured_int_array3)/(ured_int_array3+ublue_int_array3))/((blue_int_array3[RTindex[2]]-red_int_array3[RTindex[2]])/(red_int_array3[RTindex[2]]+blue_int_array3[RTindex[2]])))    #########THERE WAS A MINUS!!!!!!!!
+        yerr3 = unumpy.std_devs( +((ublue_int_array3)/(ured_int_array3)))    #########THERE WAS A MINUS!!!!!!!!
         
         #ax3.errorbar( 1.0/(x_vec[1:]+273.15)*1.0e3,  ((blue_int_array[1:]-red_int_array[1:])/(red_int_array[1:]+blue_int_array[1:]))/((blue_int_array[RTindex[0]]-red_int_array[RTindex[0]])/(red_int_array[RTindex[0]]+blue_int_array[RTindex[0]]))*Multiplication_factor[index,0], yerr=yerr1, marker='o',markersize=11,linestyle='',color='k')
         #ax3.errorbar( 1.0/(x_vec2+273.15)*1.0e3, ((blue_int_array2-red_int_array2)/(red_int_array2+blue_int_array2))/ ((blue_int_array2[RTindex[1]]-red_int_array2[RTindex[1]])/(red_int_array2[RTindex[1]]+blue_int_array2[RTindex[1]]))*Multiplication_factor[index,1],yerr = yerr2,  marker='o',markersize=5,ls='',color='k')
-        ax3.errorbar( x_vec3, ((blue_int_array3-red_int_array3)/(red_int_array3+blue_int_array3))/((blue_int_array3[RTindex[2]]-red_int_array3[RTindex[2]])/(red_int_array3[RTindex[2]]+blue_int_array3[RTindex[2]]))*Multiplication_factor[index,2], yerr= yerr3, marker='o',markersize=12,ls='',color='k')
+        ax3.errorbar( x_vec3, ((blue_int_array3)/(red_int_array3))/((blue_int_array3[RTindex[2]])/(red_int_array3[RTindex[2]]))*Multiplication_factor[index,2], yerr= yerr3, marker='o',markersize=12,ls='',color='k')
     
-        #print(yerr3)
-        
-        #print(x_vec3)
-        #print(((blue_int_array3-red_int_array3)/(red_int_array3+blue_int_array3))/((blue_int_array3[RTindex[2]]-red_int_array3[RTindex[2]])/(red_int_array3[RTindex[2]]+blue_int_array3[RTindex[2]]))*Multiplication_factor[index,2])
-        #print(yerr3)        
-        
         #### JUST A TEST
         #yerrn = unumpy.std_devs( +((ublue_int_array3)/(ured_int_array3))) 
         #ax3.errorbar( x_vec3,1+((blue_int_array3)/(red_int_array3))/((blue_int_array3[RTindex[2]])/(red_int_array3[RTindex[2]]))*Multiplication_factor[index,2], yerr= yerrn, marker='o',markersize=12,ls='',color='r')
@@ -444,25 +430,30 @@ def do_pic(ax3,fig1):
         #ax3.plot(x_vec3B,(2.3115977519747477*(1 - 0.46140005619286806*np.exp(-16.15513563032235 + 4707.954620237778*x_vec3A)))/(1 + 1.538599943807132*np.exp(-16.15513563032235 + 4707.954620237778*x_vec3A))       , color = 'k', lw=2)
         
         #new with D= 0
-        #OLD FIT
-        #ax3.plot(x_vec3B,(2.150456683242829*(1 - np.exp(-16.665009616969353 + 4765.39700468485*x_vec3A)))/(1 + np.exp(-16.665009616969353 + 4765.39700468485*x_vec3A))      , color = 'k', lw=2)
-        
-        #new fit
-        ax3.plot(x_vec3B,(2.1230760215513262*(1 - np.exp(-17.230013825804175 + 4932.681642620656*x_vec3A)))/(1 + np.exp(-17.230013825804175 + 4932.681642620656*x_vec3A)) ,color = 'k', lw=2)
+        ax3.plot(x_vec3B,(2.150456683242829*(1 - np.exp(-16.665009616969353 + 4765.39700468485*x_vec3A)))/(1 + np.exp(-16.665009616969353 + 4765.39700468485*x_vec3A))      , color = 'k', lw=2)
         
         
-
+        def red1(x):
+           return (1.2826973413526264e6 + np.exp(4707.954620237778*x)*(0.9030156292015167 - 12.706204736174692*np.sqrt((1.3950212417059393e20 - 3.6486641690952644e14*np.exp(4707.954620237778*x) + 3.1792973266618586e8*np.exp(9415.909240475556*x) - 83.61736619972217*np.exp(14123.863860713333*x) + 6.734872222571795e-6*np.exp(18831.81848095111*x))/(757600.4832566812 + 1.*np.exp(4707.954620237778*x))**4)) - 9.626226848484278e6*np.sqrt((1.3950212417059393e20 - 3.6486641690952644e14*np.exp(4707.954620237778*x) + 3.1792973266618586e8*np.exp(9415.909240475556*x) - 83.61736619972217*np.exp(14123.863860713333*x) + 6.734872222571795e-6*np.exp(18831.81848095111*x))/(757600.4832566812 + 1.*np.exp(4707.954620237778*x))**4))/(757600.4832566811 + 1.*np.exp(4707.954620237778*x))
+        def red2(x):
+           return (1.2826973413526264e6 + np.exp(4707.954620237778*x)*(0.9030156292015167 + 12.706204736174692*np.sqrt((1.3950212417059393e20 - 3.6486641690952644e14*np.exp(4707.954620237778*x) + 3.1792973266618586e8*np.exp(9415.909240475556*x) - 83.61736619972217*np.exp(14123.863860713333*x) + 6.734872222571795e-6*np.exp(18831.81848095111*x))/(757600.4832566812 + 1.*np.exp(4707.954620237778*x))**4)) + 9.626226848484278e6*np.sqrt((1.3950212417059393e20 - 3.6486641690952644e14*np.exp(4707.954620237778*x) + 3.1792973266618586e8*np.exp(9415.909240475556*x) - 83.61736619972217*np.exp(14123.863860713333*x) + 6.734872222571795e-6*np.exp(18831.81848095111*x))/(757600.4832566812 + 1.*np.exp(4707.954620237778*x))**4))/(757600.4832566811 + 1.*np.exp(4707.954620237778*x))
+        
+        def blue1(x):
+            return (162345.3832090541 + np.exp(4707.954620237778*x)*(0.9709382865438488 - 3.1824463052837073*np.sqrt((1.8493663583788663e21 - 6.895241433939969e15*np.exp(4707.954620237778*x) + 7.9116279776875e9*np.exp(9415.909240475556*x) - 2212.220777615905*np.exp(14123.863860713333*x) + 0.00018013898996649402*np.exp(18831.81848095111*x))/(10.048388574039537 + 1.*np.exp(4707.954620237778*x))**4)) - 31.978457091507146*np.sqrt((1.8493663583788663e21 - 6.895241433939969e15*np.exp(4707.954620237778*x) + 7.9116279776875e9*np.exp(9415.909240475556*x) - 2212.220777615905*np.exp(14123.863860713333*x) + 0.00018013898996649402*np.exp(18831.81848095111*x))/(10.048388574039537 + 1.*np.exp(4707.954620237778*x))**4))/(10.048388574039537 + 1.*np.exp(4707.954620237778*x))
+        def blue2(x):
+            return (162345.3832090541 + np.exp(4707.954620237778*x)*(0.9709382865438488 + 3.1824463052837073*np.sqrt((1.8493663583788663e21 - 6.895241433939969e15*np.exp(4707.954620237778*x) + 7.9116279776875e9*np.exp(9415.909240475556*x) - 2212.220777615905*np.exp(14123.863860713333*x) + 0.00018013898996649402*np.exp(18831.81848095111*x))/(10.048388574039537 + 1.*np.exp(4707.954620237778*x))**4)) + 31.978457091507146*np.sqrt((1.8493663583788663e21 - 6.895241433939969e15*np.exp(4707.954620237778*x) + 7.9116279776875e9*np.exp(9415.909240475556*x) - 2212.220777615905*np.exp(14123.863860713333*x) + 0.00018013898996649402*np.exp(18831.81848095111*x))/(10.048388574039537 + 1.*np.exp(4707.954620237778*x))**4))/(10.048388574039537 + 1.*np.exp(4707.954620237778*x))
+    
+#        def orange1(x):
+#            return (1.5590958295791846e7 - 2.9019962151067033e7*np.sqrt((2.3085664491656083e26 - 3.2871925230136807e20*np.exp(4707.954620237778*x) + 1.7067853750483694e14*np.exp(9415.909240475556*x) - 3.5683921200536475e7*np.exp(14123.863860713333*x) + 2.5723452404684184*np.exp(18831.81848095111*x))/(6.744667528108135e6 + 1.*np.exp(4707.954620237778*x))**4) + np.exp(4707.954620237778*x)*(-0.6932090027361615 - 4.302652729749464*np.sqrt((2.3085664491656083e26 - 3.2871925230136807e20*np.exp(4707.954620237778*x) + 1.7067853750483694e14*np.exp(9415.909240475556*x) - 3.5683921200536475e7*np.exp(14123.863860713333*x) + 2.5723452404684184*np.exp(18831.81848095111*x))/(6.744667528108135e6 + 1.*np.exp(4707.954620237778*x))**4)))/(6.744667528108135e6 + 1.*np.exp(4707.954620237778*x))
+#        def orange2(x):
+#            return (1.5590958295791846e7 + 2.9019962151067033e7*np.sqrt((2.3085664491656083e26 - 3.2871925230136807e20*np.exp(4707.954620237778*x) + 1.7067853750483694e14*np.exp(9415.909240475556*x) - 3.5683921200536475e7*np.exp(14123.863860713333*x) + 2.5723452404684184*np.exp(18831.81848095111*x))/(6.744667528108135e6 + 1.*np.exp(4707.954620237778*x))**4) + np.exp(4707.954620237778*x)*(-0.6932090027361615 + 4.302652729749464*np.sqrt((2.3085664491656083e26 - 3.2871925230136807e20*np.exp(4707.954620237778*x) + 1.7067853750483694e14*np.exp(9415.909240475556*x) - 3.5683921200536475e7*np.exp(14123.863860713333*x) + 2.5723452404684184*np.exp(18831.81848095111*x))/(6.744667528108135e6 + 1.*np.exp(4707.954620237778*x))**4)))/(6.744667528108135e6 + 1.*np.exp(4707.954620237778*x))
+#    
         # new with D = 0
-        #OLD FIT
         def orange1(x):
             return (-9.803270435612112e6*(-3.7903684907336745 + 2.1936115068609294e-7*np.exp(4765.39700468485*x) + 1.727912385068454e7*np.sqrt((7.280728078830508e6 - 1.*np.exp(4765.39700468485*x) - 2.4385483799448196e-8*np.exp(9530.7940093697*x))**2/(1.727912385068454e7 + 1.*np.exp(4765.39700468485*x))**4) + 1.*np.exp(4765.39700468485*x)*np.sqrt((7.280728078830508e6 - 1.*np.exp(4765.39700468485*x) - 2.4385483799448196e-8*np.exp(9530.7940093697*x))**2/(1.727912385068454e7 + 1.*np.exp(4765.39700468485*x))**4)))/(1.727912385068454e7 + np.exp(4765.39700468485*x))
         def orange2(x):
             return (9.803270435612112e6*(3.7903684907336745 - 2.1936115068609294e-7*np.exp(4765.39700468485*x) + 1.727912385068454e7*np.sqrt((7.280728078830508e6 - 1.*np.exp(4765.39700468485*x) - 2.4385483799448196e-8*np.exp(9530.7940093697*x))**2/(1.727912385068454e7 + 1.*np.exp(4765.39700468485*x))**4) + 1.*np.exp(4765.39700468485*x)*np.sqrt((7.280728078830508e6 - 1.*np.exp(4765.39700468485*x) - 2.4385483799448196e-8*np.exp(9530.7940093697*x))**2/(1.727912385068454e7 + 1.*np.exp(4765.39700468485*x))**4)))/(1.727912385068454e7 + np.exp(4765.39700468485*x))
     
-        def orange1new(x):
-            return   (6.454542622503019e7 + np.exp(4932.681642620656*x)*(-2.1230760215513262 - 4.302652729749464*np.sqrt((1.834340608051446e29 + (-1.0298452840082005e24 + 3.0454104923949592e26*x)*np.exp(4932.681642620656*x) + (1.498859041835135e18 - 8.876351188583154e20*x + 1.313850526567726e23*x**2)*np.exp(9865.363285241312*x) + (1.1142230262460136e9 - 3.294928420501123e11*x)*np.exp(14798.044927861967*x) + 0.21472384225036567*np.exp(19730.726570482624*x))/(3.040184410253337e7 + 1.*np.exp(4932.681642620656*x))**4)) - 1.3080857751718283e8*np.sqrt((1.834340608051446e29 + (-1.0298452840082005e24 + 3.0454104923949592e26*x)*np.exp(4932.681642620656*x) + (1.498859041835135e18 - 8.876351188583154e20*x + 1.313850526567726e23*x**2)*np.exp(9865.363285241312*x) + (1.1142230262460136e9 - 3.294928420501123e11*x)*np.exp(14798.044927861967*x) + 0.21472384225036567*np.exp(19730.726570482624*x))/(3.040184410253337e7 + 1.*np.exp(4932.681642620656*x))**4))/(3.0401844102533367e7 + np.exp(4932.681642620656*x))         
-        def orange2new(x):
-            return   (6.454542622503019e7 + np.exp(4932.681642620656*x)*(-2.1230760215513262 + 4.302652729749464*np.sqrt((1.834340608051446e29 + (-1.0298452840082005e24 + 3.0454104923949592e26*x)*np.exp(4932.681642620656*x) + (1.498859041835135e18 - 8.876351188583154e20*x + 1.313850526567726e23*x**2)*np.exp(9865.363285241312*x) + (1.1142230262460136e9 - 3.294928420501123e11*x)*np.exp(14798.044927861967*x) + 0.21472384225036567*np.exp(19730.726570482624*x))/(3.040184410253337e7 + 1.*np.exp(4932.681642620656*x))**4)) + 1.3080857751718283e8*np.sqrt((1.834340608051446e29 + (-1.0298452840082005e24 + 3.0454104923949592e26*x)*np.exp(4932.681642620656*x) + (1.498859041835135e18 - 8.876351188583154e20*x + 1.313850526567726e23*x**2)*np.exp(9865.363285241312*x) + (1.1142230262460136e9 - 3.294928420501123e11*x)*np.exp(14798.044927861967*x) + 0.21472384225036567*np.exp(19730.726570482624*x))/(3.040184410253337e7 + 1.*np.exp(4932.681642620656*x))**4))/(3.0401844102533367e7 + np.exp(4932.681642620656*x))
     
     
 #        ax3.fill_between(x_vecA*1.0e3,  
@@ -486,8 +477,8 @@ def do_pic(ax3,fig1):
 #                         linewidth=0.0)
                          
         ax3.fill_between(x_vec3B,  
-                         orange1new(x_vec3A),
-                         orange2new(x_vec3A),  
+                         orange1(x_vec3A),
+                         orange2(x_vec3A),  
                          color =[168/256,175/256,175/256],
                          #hatch="/",
                          edgecolor='k',
@@ -499,13 +490,13 @@ def do_pic(ax3,fig1):
         # For large and small zoom, visibility is green to red
         #ax3.set_ylabel('Visibility green to red \n norm. to $\sim$30$^{\circ}$C (a.u.)',fontsize=fsizepl)
         # For  medium zoom, visibility is  red to green
-        ax3.set_ylabel('Visibility of intensity \n norm. to $\sim$30 $^{\circ}$C (a.u.)',fontsize=fsizepl)
+        ax3.set_ylabel('Ratio of intensity \n norm. to $\sim$30 $^{\circ}$C (a.u.)',fontsize=fsizepl)
         ax3.tick_params(labelsize=fsizenb)
         ax3.yaxis.set_label_position("left")
         
         ax3.set_xlim([25,65])
         ax3.set_xticks([30,40,50,60])
-        ax3.set_ylim([0.4,2.2])   #######2.2
+        ax3.set_ylim([-0.7,2.2])   #######2.2
         ax3.set_yticks([0.5, 1,1.5,2.0])
     
         ax3.set_xlabel('Temperature at heater ($^{\circ}$C)',fontsize=fsizepl)
@@ -597,26 +588,25 @@ def do_pic(ax3,fig1):
         yval = 120
         arr_img30 = se30['data'][np.floor(xlen/2.0)-xval+delx:np.floor(xlen/2.0)+xval+delx,np.floor(ylen/2.0)-yval+dely:np.floor(ylen/2.0)+yval+dely]
    
-        ypos = 0.6475#0.6175
-        inset2 = fig1.add_axes([0.39, ypos, .105, .105]) #was 0.55
+        inset2 = fig1.add_axes([0.39, 0.6175, .105, .105]) #was 0.55
         inset2.imshow(arr_img60,cmap = cm.Greys_r)
         sbar = sb.AnchoredScaleBar(inset2.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4, my_fontsize = fsizenb)
         inset2.add_artist(sbar)    
         plt.setp(inset2, xticks=[], yticks=[])
         
-        inset3 = fig1.add_axes([0.275, ypos, .105, .105]) #was 0.55
+        inset3 = fig1.add_axes([0.275, 0.6175, .105, .105]) #was 0.55
         inset3.imshow(arr_img50,cmap = cm.Greys_r)
         sbar = sb.AnchoredScaleBar(inset3.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4, my_fontsize = fsizenb)
         inset3.add_artist(sbar)    
         plt.setp(inset3, xticks=[], yticks=[])
         
-        inset4 = fig1.add_axes([0.185,ypos, .105, .105]) #was 0.55
+        inset4 = fig1.add_axes([0.185, 0.6175, .105, .105]) #was 0.55
         inset4.imshow(arr_img40,cmap = cm.Greys_r)
         sbar = sb.AnchoredScaleBar(inset4.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4, my_fontsize = fsizenb)
         inset4.add_artist(sbar)    
         plt.setp(inset4, xticks=[], yticks=[])
         
-        inset5 = fig1.add_axes([0.1, ypos, .105, .105]) #was 0.55
+        inset5 = fig1.add_axes([0.1, 0.6175, .105, .105]) #was 0.55
         inset5.imshow(arr_img30,cmap = cm.Greys_r)
         sbar = sb.AnchoredScaleBar(inset5.transData, length_scalebar_in_pixels, scalebar_legend, style = 'bright', loc = 4, my_fontsize = fsizenb)
         inset5.add_artist(sbar)    
@@ -634,23 +624,20 @@ def do_visib_other_qttties(host):
     backgdinit = 50
     ### PIXEL
     Pixel_size = [2.23, 1.79, 1.49, 1.28, 1.12]
-    #let = ['pix1', 'pix2', 'pix3', 'pix4', 'pix5'] #pixel size is decreasing
-    #loadprefix = '../2017-01-23_AndreaNP_as_a_fct_of_pixel_size/'
-   # nombre = 5
-   # undex = 2
+#    let = ['pix1', 'pix2', 'pix3', 'pix4', 'pix5'] #pixel size is decreasing
+#    loadprefix = '../2017-01-23_AndreaNP_as_a_fct_of_pixel_size/'
+#    nombre = 5
     
     ### APERTURE
     Current = [28, 379, 1800, 5700] 
-    #let = ['ap10','ap30', 'ap60', 'ap120']   
-    #loadprefix = '../2017-01-27_Andrea_NPs_Different_apertures/'
-    #nombre = 4
-    #undex = 1
+#    let = ['ap10','ap30', 'ap60', 'ap120']   
+#    loadprefix = '../2017-01-27_Andrea_NPs_Different_apertures/'
+#    nombre = 4
     
     kv = [10,15,20] 
 #    let = ['kv10', 'kv15', 'kv20'] 
 #    loadprefix = '../2017-01-25_Andrea_NPs_Different_kV/'
 #    nombre = 3
-#    undex = 0
 #    
 #    yerr1 = np.empty(nombre)
 #    red_int_array = np.empty(nombre)
@@ -659,83 +646,42 @@ def do_visib_other_qttties(host):
 #        
 #        print(index)
 #    
-        #for pixel, aperture
-#        redd = np.load(loadprefix + let[index] + 'Redbright.npz',mmap_mode='r') 
-#        red_int_array[index] = np.average(redd['data'][:,backgdinit:initbin,:,:],axis=(0,1,2,3))
-#        No = redd['data'].shape[0]*redd['data'][:,backgdinit:initbin,:,:].shape[1]*redd['data'].shape[2]*redd['data'].shape[3]
-#        del redd
-#        blued = np.load(loadprefix + let[index] + 'Bluebright.npz',mmap_mode='r') 
-#        blue_int_array[index] = np.average(blued['data'][:,backgdinit:initbin,:,:],axis=(0,1,2,3))
-#        del blued
-#        gc.collect()
-#        
-#        reddN = np.load(loadprefix + let[undex] + 'Redbright.npz',mmap_mode='r') 
-#        red_int_arrayN = np.average(reddN['data'][:,backgdinit:initbin,:,:],axis=(0,1,2,3))
-#        NoN = reddN['data'].shape[0]*reddN['data'][:,backgdinit:initbin,:,:].shape[1]*reddN['data'].shape[2]*reddN['data'].shape[3]
-#        del reddN
-#        bluedN = np.load(loadprefix + let[undex] + 'Bluebright.npz',mmap_mode='r') 
-#        blue_int_arrayN = np.average(bluedN['data'][:,backgdinit:initbin,:,:],axis=(0,1,2,3))
-#        del bluedN
-#        gc.collect()
+#        #for pixel, aperture
+#        #redd = np.load(loadprefix + let[index] + 'Redbright.npz',mmap_mode='r') 
+#        #blued = np.load(loadprefix + let[index] + 'Bluebright.npz',mmap_mode='r') 
+#        #red_int_array[index] = np.average(redd['data'][:,backgdinit:initbin,:,:],axis=(0,1,2,3))
+#        #blue_int_array[index] = np.average(blued['data'][:,backgdinit:initbin,:,:],axis=(0,1,2,3))
 #    
-        #for kv
+#        #for kv
 #        redd = np.load(loadprefix + let[index] + 'RED1D.npz',mmap_mode='r') 
-#
-#        No = redd['data'].shape[0]*redd['data'][:,backgdinit:initbin,:,:].shape[1]*redd['data'].shape[2]*redd['data'].shape[3]
-#        red_int_array[index] = np.average(redd['data'][backgdinit:initbin])
-#        del redd
 #        blued = np.load(loadprefix + let[index] + 'BLUE1D.npz',mmap_mode='r') 
+#        red_int_array[index] = np.average(redd['data'][backgdinit:initbin])
 #        blue_int_array[index] = np.average(blued['data'][backgdinit:initbin])
-#        del blued
 #        
-#        reddN = np.load(loadprefix + let[undex] + 'RED1D.npz',mmap_mode='r') 
-#        NoN = reddN['data'].shape[0]*reddN['data'][:,backgdinit:initbin,:,:].shape[1]*reddN['data'].shape[2]*reddN['data'].shape[3]
-#        red_int_arrayN = np.average(reddN['data'][backgdinit:initbin])
-#        del redd
-#        blued = np.load(loadprefix + let[undex] + 'BLUE1D.npz',mmap_mode='r') 
-#        blue_int_arrayN = np.average(bluedN['data'][backgdinit:initbin])
-#        del blued
-    
-        #print(redd['data'].shape[1])
-        #print(redd['data'][:,backgdinit:initbin,:,:].shape[1])
-        #indeed prints different things
-        
-#        ured_int_array = unumpy.uarray(red_int_array[index],np.sqrt(red_int_array[index])/np.sqrt(No))
-#        ublue_int_array = unumpy.uarray(blue_int_array[index],np.sqrt(blue_int_array[index])/np.sqrt(No))
-#        
-#        ured_int_arrayN = unumpy.uarray(red_int_arrayN,np.sqrt(red_int_arrayN)/np.sqrt(NoN))
-#        ublue_int_arrayN = unumpy.uarray(blue_int_arrayN,np.sqrt(blue_int_arrayN)/np.sqrt(NoN))
+#        ured_int_array = unumpy.uarray(red_int_array[index],np.sqrt(red_int_array[index]))
+#        ublue_int_array = unumpy.uarray(blue_int_array[index],np.sqrt(blue_int_array[index]))
 #          
 #        #print(blue_int_array[index]) 
 #        #print(red_int_array[index])
 #        print(((blue_int_array[index]-red_int_array[index])/(red_int_array[index]+blue_int_array[index])))
-#        yerr1[index] = unumpy.std_devs(((ublue_int_array-ured_int_array)/(ured_int_array+ublue_int_array))/((ublue_int_arrayN-ured_int_arrayN)/(ured_int_arrayN+ublue_int_arrayN)))
+#        yerr1[index] = unumpy.std_devs(((ublue_int_array-ured_int_array)/(ured_int_array+ublue_int_array)))
 #        print(yerr1[index])
 #        
-#        del ured_int_array, ublue_int_array  ,ured_int_arrayN  ,ublue_int_arrayN   ,red_int_arrayN   ,blue_int_arrayN
+#        del ured_int_array, ublue_int_array, redd, blued
 #        gc.collect()
-    
-    
-#    print(yerr1)
+#    
+#    
+#    aklklk
     #fig, ax4 = plt.subplots()
     
-    #OLD
-    #Note: the errors of OLD DATA are wrong, because it is never taken into account error prop, since values are normalized!!!!!!!!!!!!
     toplotpixel = [-0.331871788598/(-0.272621152559),-0.290592140046/(-0.272621152559),-0.272621152559/(-0.272621152559),-0.245528170747/(-0.272621152559),-0.251845555422/(-0.272621152559)]
-    #toploterrpixel = [0.234703670024,0.256254568909,0.279883426484,0.315887812131,0.359311715502]
+    toploterrpixel = [0.234703670024,0.256254568909,0.279883426484,0.315887812131,0.359311715502]
     
     toplotcurrent = [-0.381793734929/(-0.404870033234),(-0.404870033234)/(-0.404870033234),-0.429264480422/(-0.404870033234),-0.435263215242/(-0.404870033234)]
-    #toploterrcurrent = [0.442812930413,0.230770711289,0.121885246395,0.0702029310963]
+    toploterrcurrent = [0.442812930413,0.230770711289,0.121885246395,0.0702029310963]
     
     toplotkv = [-0.443318843718/(-0.443318843718),-0.539968820839/(-0.443318843718),-0.551046216565/(-0.443318843718)]
-    #toploterrkv = [0.211791238488,0.190393627733,0.158564880888]
-    
-    #NEW WITH REAL POISSON
-    toploterrpixel = [0.000333763125046,0.000292772343997,0.000266962694721,0.000251942059437, 0.000243962462181]
-    
-    toploterrcurrent = [0.000187551860503,0.000118287386537, 9.8976799951e-05, 9.34110498538e-05 ]
-    
-    toploterrkv = [1.0e-6,1.0e-6,1.0e-6] #did not do this one
+    toploterrkv = [0.211791238488,0.190393627733,0.158564880888]
     
     from mpl_toolkits.axes_grid1 import host_subplot
     import mpl_toolkits.axisartist as AA
@@ -757,7 +703,7 @@ def do_visib_other_qttties(host):
     par3.axis["top"].toggle(all=False)
     host.set_xlim([0.98,4])
     host.set_ylim([0.4,2.2])
-    host.set_ylabel('Visibility of intensity \n norm. to standard (a.u.)',fontsize=fsizepl)
+    host.set_ylabel('Ratio of intensity \n norm. to standard (a.u.)',fontsize=fsizepl)
    # host.set_xlabel('Pixel size (nm) ' +  r'$\blacktriangle$',fontsize=fsizepl)
     host.set_xlabel('Pixel size (nm)',fontsize=fsizepl)
     
@@ -861,9 +807,8 @@ def do_visib_other_qttties(host):
 
 #from mpl_toolkits.axes_grid1 import host_subplot
 #import mpl_toolkits.axisartist as AA
-#ax = plt.figure()
 #ax99 = host_subplot(222, axes_class=AA.Axes)
-#do_visib_other_qttties(ax)
+#do_visib_other_qttties(ax99)
 #    
 #from ace.samples import wang04
 #x, y = wang04.build_sample_ace_problem_wang04(N=200)

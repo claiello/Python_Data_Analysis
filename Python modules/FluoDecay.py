@@ -245,7 +245,8 @@ def fitexp(x,y,single,my_color,my_edgecolor,my_facecolor,minimizepoisson_here,in
                 result1.params['c'].value,
                 result1.params['a'].stderr,
                 result1.params['b'].stderr,
-                result1.params['c'].stderr)
+                result1.params['c'].stderr,
+                result1.chisqr)
 
     else:
         return (result1.params['a'].value,
@@ -363,7 +364,8 @@ def fitexp_with_error(x,y,single,my_color,my_edgecolor,my_facecolor, minimizepoi
                 result1.params['c'].value,
                 result1.params['a'].stderr,
                 result1.params['b'].stderr,
-                result1.params['c'].stderr)
+                result1.params['c'].stderr,
+                result1.chisqr)
 
     else:
         return (result1.params['a'].value,
@@ -1116,6 +1118,8 @@ def calcdecay_subplot_nan_1D_with_error(
     
     else:
        print('trying to fit single')
+       (a,b,c,ae,be,ce,chisquared) = fitexp_with_error(x_array/1e-6,blue_dset/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess,plot_error=True, error_array=error_array, vary_offset = vary_offset_desired, yerr = yerrinput, minimizepoisson_here = minimizepoisson)       
+
     
     #plt.hold(True)
     if other_dset2 is not None:  #plotting background pixels  
@@ -1131,6 +1135,8 @@ def calcdecay_subplot_nan_1D_with_error(
             plt.semilogy(x_array/1e-6,other_dset2,'go',markersize=4, label ='Transient from green photons ($<$ 593nm): \n' + r' $\tau_1 $ = ' + str("{0:.3f}".format(b2)) + ' $\pm$ ' + str("{0:.3f}".format(be2)) + '$\mu$s;' + r' $\tau_2 $ = ' + str("{0:.3f}".format(e2)) + ' $\pm$ ' + str("{0:.3f}".format(ee2)) + '$\mu$s', zorder=2) # \n A$_1$/A$_2$ = ' + str("{0:.3f}".format(a2/d2) )) 
         else:
            print('trying to fit single at dset2')
+           (a2,b2,c2,ae2,be2,ce2,chisquared2) = fitexp_with_error(x_array/1e-6,other_dset2/No_specimen,single=True, my_color='r',my_edgecolor='#ff3232', my_facecolor='#ff6666',init_guess=init_guess2,plot_error=True, error_array=error_array2, vary_offset = vary_offset_desired, yerr = yerr2input, minimizepoisson_here = minimizepoisson)       
+
            
     #plt.hold(True)
     if other_dset1 is not None: #plotting all pixels
@@ -1146,7 +1152,7 @@ def calcdecay_subplot_nan_1D_with_error(
     
     
     if single:
-        return b,0.0,be,0.0,b2,0.0,be2,0.0 #e and ee dont exist
+        return b,be,b2,be2,chisquared,chisquared2 #e and ee dont exist
     else:
         return b,e,be,ee,b2,e2,be2,ee2,chisquared, chisquared2
 
@@ -1748,7 +1754,7 @@ def calcdecay_boe(
     # dofitting
     # do fit, here with leastsq model
     if single == False:
-        (a,b,c,d,e,ae,be,ce,de,ee) = fitexp(
+        (a,b,c,d,e,ae,be,ce,de,ee,chisq) = fitexp(
                 x_array/1e-6,
                 my_data/No_specimen,
                 single=False, 
@@ -1782,7 +1788,7 @@ def calcdecay_boe(
         #plt.semilogy(x_array/1e-6,np.average(blue_dset,axis=(1,2))/No_specimen,'ro',label='CL from all pixels: \n' +  r'$\tau $ = ' + str("{0:.2f}".format(b)) + ' $\pm$ ' + str("{0:.2f}".format(be)) + '$\mu$s \n (3$\sigma$ error on complete fit shown)' )   
 
         #single use  
-        (a,b,c,ae,be,ce) = fitexp(
+        (a,b,c,ae,be,ce,chisq) = fitexp(
                 x_array/1e-6,
                 my_data/No_specimen,
                 single=True,

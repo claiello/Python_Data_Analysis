@@ -5,7 +5,86 @@ def print_result(result):
     
     for k in result.var_names:
         print(k + " = " + str(result.params[k].value))
+        
+def choose_func_poly(x, params, choice):
+    tau = params['tau'].value
+    A = params['A'].value
+    tau2 = params['tau2'].value
+    A2 = params['A2'].value
+    tau3 = params['tau3'].value
+    A3 = params['A3'].value
+                
+    c = params['c'].value
+    P = params['P'].value
+    
+    if choice is 'singleexp':
+        # single exp
+        return c*x + A*(1.- np.exp(-x/tau))
+    elif choice is 'doubleexp':
+        #double exp
+        return c*x + A*(1.- np.exp(-x/tau)) + A2*(1- np.exp(-x/tau2))
+    elif choice is 'tripleexp':
+        # triple exponential    
+        return c*x + A*(1.- np.exp(-x/tau)) + A2*(1- np.exp(-x/tau2)) + A3*(1- np.exp(-x/tau3)) 
+    elif choice is 'weirdexp':
+        return c*x + A*(1.- np.exp(-x/tau)) + P*(x**(3./2.))
+    else:
+        print('model not recognized')
+        klklk
+        
+def choose_poly_fit(x,y,choice,y_err,doPoisson):
+    
+    # define objective function: returns the array to be minimized
+    def fcn2min(params, x, data):
+        """ model decaying sine wave, subtract data"""
 
+        model = choose_func_poly(x, params, choice)
+        
+        if doPoisson:
+            print('doing Poisson')
+            return 2*(data*np.log(data) - data*np.log(model) - (data-model)) #Poisson            
+        else:
+            if y_err is not None:
+                return (model - data)/y_err**2
+            else:
+                return (model - data) 
+      
+    initC, init_b, doofdummy = linear_fit(x[-500:], y[-500:])
+
+    #(result.params['tau'], result.params['A'], result.params['tau2'], result.params['A2'], result.params['c'], result)
+
+    #(h1, h2, h3, h4, h5, result_hlp) = cumu_fit(x, y)    
+    
+    # create a set of Parameters
+    params = Parameters()
+    #params.add('tau', value = 2000.0, min = 1.0e-6, max = 5000.0, vary = True)
+    params.add('tau', value = 250.0, min = 1.0e-3,  vary = True)
+    params.add('A', value = 100.0,  min = 0.0, vary = True)
+  
+    params.add('tau2', value = 25.0, min = 1.0e-3, vary = True)        
+    #params.add('tau2', value = 50.0, min = 10.0, max = 100, vary = True)
+    params.add('A2', value = 100.0, min = 0.0, vary = True)
+    
+    params.add('tau3', value = 1.0, min = 1.0e-3,  vary = True) 
+    #params.add('tau3', value = 100.0, min = 100.0, max = 1000.0, vary = True)
+    params.add('A3', value = 100.0, min = 0.0, vary = True)
+ 
+    #initC = 1e3
+    params.add('c', value = initC, min = 1.0e-5, vary = True)
+    params.add('P', value = 0.01, min = 1.0e-6, vary = True)
+
+    # do fit, here with leastsq model
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    result = minner.minimize()
+
+#    print(result.params)
+#    print(result.params['tau'].value)
+#    print(result.params['tau2'].value)
+#    print(result.params['tau3'].value)
+#    return (result.params['tau'], result.params['A'], result.params['tau2'], result.params['A2'], result.params['tau3'], result.params['A3'], result.params['c'],  result.params['P'],result)
+ 
+    return result
+    
 def func_poly(x, params):
     tau = params['tau'].value
     A = params['A'].value

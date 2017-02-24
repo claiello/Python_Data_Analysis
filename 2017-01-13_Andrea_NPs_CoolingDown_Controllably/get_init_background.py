@@ -87,12 +87,12 @@ backgdinit = 50
 initbin = (150+50+3)-1
 
 index = 0
-red = np.load(str(let[index]) +'Redbright.npz',mmap_mode='r') 
-length_of_array = red['data'].shape[1] - initbin
-del red
+#red = np.load(str(let[index]) +'Redbright.npz',mmap_mode='r') 
+#length_of_array = red['data'].shape[1] - initbin
+#del red
 gc.collect()
 
-#length_of_array = 1398
+length_of_array = 1398
 
 
 
@@ -109,6 +109,9 @@ for index in [4,5,6,7]: #listofindex:
       
     red = np.load(str(let[index]) +'Redbright.npz',mmap_mode='r') 
     aa = np.std(red['data'][:,initbin:,:,:], axis = (0,2,3))
+    print(aa)
+    klklk
+    print(red.shape)
     del red
     gc.collect() 
     std_array_red[index,:] = aa
@@ -124,6 +127,8 @@ for index in [4,5,6,7]: #listofindex:
     gc.collect()
     
     print('here3')
+    
+klklk
 
 mycode =prefix + 'Std_array_red = tempfile.NamedTemporaryFile(delete=False)'
 exec(mycode)
@@ -132,10 +137,6 @@ np.savez(prefix +'Std_array_red', data = std_array_red)
 mycode =prefix + 'Std_array_blue = tempfile.NamedTemporaryFile(delete=False)'
 exec(mycode)
 np.savez(prefix +'Std_array_blue', data = std_array_blue)
-
-
-
-klklklklk
 
 back_array_red = np.zeros(len(nametr))
 back_array_blue = np.zeros(len(nametr))

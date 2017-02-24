@@ -71,55 +71,24 @@ ax3.text(-0.1, 1.0, 'a', transform=ax3.transAxes,fontsize=fsizepl, fontweight='b
          bbox={'facecolor':'None', 'pad':5})
 
 sys.path.append("../2017-01-19_Combining_data_Andrea/") # necessary 
-from Combining_data_with_prefix_onlyIntensVisibRatio import do_pic
+from Combining_data_with_prefix_onlyIntensVisibRatioRATIO import do_pic
 do_pic(ax3,fig1)
 
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
 import matplotlib.pyplot as plt
 ax4 = host_subplot(222, axes_class=AA.Axes)
-ax4.text(+1.1, 1.0, 'c', transform=ax4.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', bbox={'facecolor':'None', 'pad':5})
+ax4.text(+1.1, 1.0, 'b', transform=ax4.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', bbox={'facecolor':'None', 'pad':5})
 
 #ax4 = plt.subplot2grid((nolines,noplots), (0,1), colspan=1, rowspan=1)
 sys.path.append("../2017-01-19_Combining_data_Andrea/") # necessary 
-from Combining_data_with_prefix_onlyIntensVisibRatio import do_visib_other_qttties
+from Combining_data_with_prefix_onlyIntensVisibRatioRATIO import do_visib_other_qttties
 do_visib_other_qttties(ax4)
 ax4.axis["top"].set_visible(False)
 ax4.axis["left"].set_visible(False)
 
-ax30 = plt.subplot2grid((nolines,noplots), (1,0), colspan=1, rowspan=1)
-ax30.text(-0.1, 1.0, 'b', transform=ax30.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
-         bbox={'facecolor':'None', 'pad':5})
-
-#Fitted C = 17.23
-#Fitted DE = 0.425065
-def deriv(DE, k, T, C):
-    
-    return DE/(k * (T+273.15)**2)/(1 + np.cosh(DE/(k * (T+273.15)) - C))
-    
-T = np.linspace(30,60,50)
-T2 = np.linspace(25,65,50)
-ax30.plot(T,100.0*deriv(0.425065,8.617*1.0e-5,T,17.23),lw=2,color='k',ls='--')
-ax30.spines['right'].set_visible(False)
-ax30.spines['top'].set_visible(False)
-ax30.xaxis.set_ticks_position('bottom')
-ax30.yaxis.set_ticks_position('left')
-ax30.set_ylabel(r'$\partial$(visibility)/$\partial$T ($\%$ $^{\circ}$C$^{-1}$)',fontsize=fsizepl)
-ax30.set_xlabel('Temperature at heater ($^{\circ}$C)',fontsize=fsizepl)
-ax30.tick_params(labelsize=fsizenb)
-ax30.set_ylim([0.6,2.2])
-ax30.set_xlim([25, 65])
-ax30.set_xticks([30,40,50,60]) 
-ax30.set_yticks([1,1.5,2.0])
-ax30.fill_between(T2,0.5,1.5, color =[168/256,175/256,175/256],edgecolor='k',
-                         facecolor=[168/256,175/256,175/256],
-                         alpha=0.5,
-                         linewidth=0.0)
-ax30.text(37,1.0, 'previously reported \n (fluorescence ratio of intensity)', fontsize=fsizenb, va='center',ha='center')
-
-
 plt.tight_layout()
    
-multipage_longer_desired_aspect_ratio('Fig4.pdf',1600,1200,dpi=80,)
+multipage_longer_desired_aspect_ratio('Fig4RATIO.pdf',1600,1200,dpi=80,)
 
 

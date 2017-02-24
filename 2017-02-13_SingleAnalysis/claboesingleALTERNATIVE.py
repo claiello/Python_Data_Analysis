@@ -51,23 +51,50 @@ def tor(area):
 SEA= np.load('singleSEchannelC.npz')
 se = SEA['data'][40:190,120:270]   
 
+
 se_data2 = np.copy(se)
-tv_filt = denoise_tv_chambolle(se_data2, weight=0.5)
-grad_x, grad_y = np.gradient(tv_filt)
-new_pic_grad = np.sqrt(grad_x**2 + grad_y**2)
-new_pic_grad = canny(togs(new_pic_grad), sigma = 2.0) # nice too
+hlpse2 = se_data2 > filters.threshold_otsu(se_data2)
+hlpse2[hlpse2 == True] = 1.0
+hlpse2[hlpse2 == False] = 0.0
+
+# Find centers of NPs
+distance = ndimage.distance_transform_edt(hlpse2)
+local_maxi = peak_local_max(
+        distance, 
+        num_peaks = 1, 
+        indices = False, 
+        footprint = np.ones((50,50)),
+        labels = hlpse2) #footprint = min dist between maxima to find #footprint was 25,25
+markers = skimage.morphology.label(local_maxi)
+labels_ws = watershed(-distance, markers, mask=hlpse2)
+lab = np.unique(labels_ws)
+
+areas = np.array([])
+for k in lab:
+    areas = np.append(areas, len( labels_ws[labels_ws == k] ))
+cut_k = []
+cut_labels_ws = np.copy(labels_ws)
+for k in range(len(lab)):
+    if (areas[k] < 1200) or (areas[k] > 4000):   #1200 works #4000 works
+        cut_labels_ws[cut_labels_ws == lab[k]] = 0
+        cut_k.append(k)
+plt.subplot(3,3,6)
+plt.imshow(cut_labels_ws,cmap=cm.Greys)
+
+print(tor(areas))
+klklk
 
 import matplotlib.patches as patches
-
-
-
-########
-I8 = (((new_pic_grad - new_pic_grad.min()) / (new_pic_grad.max() - new_pic_grad.min())) * 255.9).astype(np.uint8)
-bw = cv2.adaptiveThreshold(I8, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 7, 0)  #101,1
-
-from scipy import ndimage
-hlpse2 = bw #ndimage.imread('bw_minimal.png', mode='L')
-print(hlpse2.shape)  
+#
+#
+#
+#########
+#I8 = (((new_pic_grad - new_pic_grad.min()) / (new_pic_grad.max() - new_pic_grad.min())) * 255.9).astype(np.uint8)
+#bw = cv2.adaptiveThreshold(I8, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 7, 0)  #101,1
+#
+#from scipy import ndimage
+#hlpse2 = bw #ndimage.imread('bw_minimal.png', mode='L')
+#print(hlpse2.shape)  
 
 hex_angle = 20
 
