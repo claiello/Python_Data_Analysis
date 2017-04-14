@@ -54,14 +54,14 @@ def reg_images(images,toberegistered1=None,toberegistered2=None):
         offset_images_corr[k+1,-oym+shift_vec[k][0]:-oym+shift_vec[k][0]+images.shape[1],
                                -oxm+shift_vec[k][1]:-oxm+shift_vec[k][1]+images.shape[2]] = offset_images[k,:,:]
     
-    fig1 = plt.figure(figsize=(8, 6), dpi=80)
-    fig1.suptitle('Reference channel for registration')
-    ax1 = plt.subplot2grid((1,2), (0, 0), colspan=1)
-    ax1.set_title('Simple avg')
-    plt.imshow(np.average(images, axis=0))
-    ax1 = plt.subplot2grid((1,2), (0, 1), colspan=1)
-    ax1.set_title('Registered')
-    plt.imshow(np.average(offset_images_corr, axis=0))
+#    fig1 = plt.figure(figsize=(8, 6), dpi=80)
+#    fig1.suptitle('Reference channel for registration')
+#    ax1 = plt.subplot2grid((1,2), (0, 0), colspan=1)
+#    ax1.set_title('Simple avg')
+#    plt.imshow(np.average(images, axis=0))
+#    ax1 = plt.subplot2grid((1,2), (0, 1), colspan=1)
+#    ax1.set_title('Registered')
+#    plt.imshow(np.average(offset_images_corr, axis=0))
     
     if toberegistered1 is not None:
         
@@ -76,17 +76,17 @@ def reg_images(images,toberegistered1=None,toberegistered2=None):
                 offset_images_corr2[k+1,-oym+shift_vec[k][0]:-oym+shift_vec[k][0]+images.shape[1],
                                    -oxm+shift_vec[k][1]:-oxm+shift_vec[k][1]+images.shape[2]] = toberegistered1[k,:,:]
        
-            fig2 = plt.figure(figsize=(8, 6), dpi=80)
-            fig2.suptitle('First passive channel for registration')
-            ax1 = plt.subplot2grid((1,2), (0, 0), colspan=1)
-            ax1.set_title('Simple avg')
-            plt.imshow(np.average(toberegistered1, axis=0))
-            ax1 = plt.subplot2grid((1,2), (0, 1), colspan=1)
-            ax1.set_title('Registered')
-            plt.imshow(np.average(offset_images_corr2, axis=0))
+#            fig2 = plt.figure(figsize=(8, 6), dpi=80)
+#            fig2.suptitle('First passive channel for registration')
+#            ax1 = plt.subplot2grid((1,2), (0, 0), colspan=1)
+#            ax1.set_title('Simple avg')
+#            plt.imshow(np.average(toberegistered1, axis=0))
+#            ax1 = plt.subplot2grid((1,2), (0, 1), colspan=1)
+#            ax1.set_title('Registered')
+#            plt.imshow(np.average(offset_images_corr2, axis=0))
     
             #plt.show() 
-            return np.average(offset_images_corr, axis=0), np.average(offset_images_corr2, axis=0)
+            return np.average(offset_images_corr, axis=0), np.average(offset_images_corr2, axis=0), offset_images_corr, offset_images_corr2
             
         else:
             

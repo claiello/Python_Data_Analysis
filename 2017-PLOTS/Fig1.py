@@ -40,6 +40,7 @@ from tempfile import TemporaryFile
 import skimage
 from skimage import exposure
 from my_fits import *
+from matplotlib import colors as mcolors
 
 from numpy import genfromtxt
 
@@ -93,11 +94,17 @@ if plot_spec:
     ax0.spines['top'].set_visible(False)
     ax0.xaxis.set_ticks_position('bottom')
     ax0.yaxis.set_ticks_position('left')
-         
-    spec = genfromtxt('spectrumCSV.csv', delimiter=',')
+      
+    #old spectrum
+    #spec = genfromtxt('spectrumCSV.csv', delimiter=',')
+    
+    #new spectrum
+    specBG = genfromtxt('bgNEW.txt', delimiter='')
+    spec = genfromtxt('RTNEW.txt', delimiter='')    
+    
     # x, y vectors
     wavel = spec[:,0]
-    spec_to_plot = spec[:,1]
+    spec_to_plot = spec[:,1] - np.array(specBG[:,1])
     # cut vector only between 300 and 720nm
     a = find_nearest(wavel,300)
     b = find_nearest(wavel,720)
@@ -109,10 +116,10 @@ if plot_spec:
     wavel = moving_average(wavel,n=mov_avg_index) #wavel + mov_avg_index/2.0 * (wavel[1] - wavel[0])
     
     # take out cst background in interval 300/720
-    spec_to_plot = spec_to_plot - np.average(spec_to_plot)
+    #spec_to_plot = spec_to_plot - np.average(spec_to_plot)
     # make all go to zero min
-    min_val = np.amin(spec_to_plot)
-    spec_to_plot = spec_to_plot + np.abs(min_val)
+    #min_val = np.amin(spec_to_plot)
+    #spec_to_plot = spec_to_plot + np.abs(min_val)
     #normalize taking into account 300/720 interval
     spec_to_plot = spec_to_plot/np.max(spec_to_plot)
     
@@ -136,31 +143,35 @@ if plot_spec:
     
     
     # plot
-    ax0.plot(wavel[:e],spec_to_plot[:e], lw=2, color='g')
-    ax0.plot(wavel[e:],spec_to_plot[e:], lw=2, color='r')
+    ax0.plot(wavel[:e],spec_to_plot[:e], lw=2, color='k')
+    ax0.plot(wavel[e:],spec_to_plot[e:], lw=2, color='k')
     # plot vertical line at 593nm (dichroic)
-    ax0.axvline(x=593, lw=2, color='k', ls='--', ymax = 0.8)
+    #ax0.axvline(x=593, lw=2, color='k', ls='--', ymax = 0.8)
     
     #labels
     xmin = 500
     xmax = 700
     ax0.set_xlim([xmin, xmax])
-    ax0.set_ylabel('Bulk cathodoluminescence \n emission spectrum (a.u.)',fontsize=fsizepl)
+    ax0.set_ylabel('Cathodoluminescence emission \n spectrum (a.u.), 1kX mag.',fontsize=fsizepl)
     ax0.set_xlabel('Wavelength (nm)',fontsize=fsizepl)
     ax0.tick_params(labelsize=fsizenb)
     ax0.set_yticks([0.5,1.0])
     ax0.set_ylim([0,1.05])
     #ax0.set_xticks([500,544.76,593+ mov_avg_index/2.0 * (wavel[1] - wavel[0]),662.93,700])
     #ax0.set_xticklabels(['500','544.76','593','662.93','700'])
-    ax0.set_xticks([aux_x[f],593,aux_xx[g]])
-    ax0.set_xticklabels([str("{0:.1f}".format(aux_x[f])),'593.0',str("{0:.1f}".format(aux_xx[g]))])
+    ax0.set_xticks([aux_x[f],aux_xx[g]])
+    ax0.set_xticklabels([str("{0:.1f}".format(aux_x[f])),str("{0:.1f}".format(aux_xx[g]))])
 
 
     # adding dE with arrow
-    ax0.annotate('',  xy=(541.2+1.5, 0.875), xytext=(659.4-1.5, 0.875),
+    ax0.annotate('',  xy=(540.5+1.5, 0.875), xytext=(654.1-1.5, 0.875),
             arrowprops=dict(arrowstyle='<|-|>', facecolor='k', edgecolor='k'),zorder=100)
             #shrink=0.05,
-    ax0.text(600.3,0.925,r'$\Delta$E $\sim$ 0.41\,eV', fontsize=fsizenb, va='center',ha='center')
+    ax0.text(600.3,0.925,r'$\Delta$E $\sim$ 0.40\,eV', fontsize=fsizenb, va='center',ha='center')
+    # Exact DeltaE = 0.39839eV
+    
+    ax0.axvspan(534,566, alpha=0.25, color='green')
+    ax0.axvspan(623,677, alpha=0.25, color='red',ymax=0.8)
 
 sys.path.append("../2016-12-19_Andrea_BigNPs_5DiffTemps/") # necessary 
 ###############################################################################
@@ -232,12 +243,12 @@ blueyap = np.average(yap['datablue'],axis=(0))/1.0e3
 indu = 83
 Time_bin = 40
 my_timo = np.arange(1,blueyap[indu:,:,:].shape[0]+1)*Time_bin/1000
-inset200.plot(my_timo, np.average(blueyap[indu:,:,:]/np.max(np.average(blueyap[indu:,:,:],axis=(1,2))),axis=(1,2)), 'o',color='b',markersize=6, markeredgewidth=0.0)
+inset200.semilogy(my_timo, np.average(blueyap[indu:,:,:]/np.max(np.average(blueyap[indu:,:,:],axis=(1,2))),axis=(1,2)), 'o',color='purple',markersize=6, markeredgewidth=0.0)
 inset200.set_xlabel("Experiment time ($\mu$s)",fontsize=fsizepl)
 inset200.set_ylabel("Approx. instrument \n response function (a.u.)",fontsize=fsizepl)
 inset200.set_xlim([0,1.1]) #2.5
 inset200.set_xticks([1]) #1,2
-inset200.set_ylim([0,1.1])
+#inset200.set_ylim([0,1.1])
 inset200.set_yticks([0.5,1])
 inset200.xaxis.set_ticks_position('bottom')
 inset200.yaxis.set_ticks_position('left')
@@ -247,7 +258,10 @@ inset200.spines['top'].set_visible(False)
 inset200.axvline(my_timo[15], lw=2, color='k', ls='--',ymax = 0.19)
 inset200.axvline(my_timo[16] , lw=2, color='k', ls='--',ymax = 0.19)
 inset200.text(0.55, 0.23, '40 ns', fontsize=fsizenb) 
+mith = np.load('Decay-Mithrene.npz')
+inset200.semilogy(np.arange(0,len(mith['data'][0,158:]))*Time_bin/1000, mith['data'][0,158:]/np.max(mith['data'][0,158:]),'o',color='b',markersize=6, markeredgewidth=0.0)
 
+#DECIDE IF PLOT WITH PLOT OR SEMILOGY
 
 ###############################################################################
 

@@ -110,7 +110,7 @@ if do_fig_taus:
     plt.rc('font', serif='Palatino')    
     
     noplots = 4
-    nolines = 4
+    nolines = 5
     
     ax00 = plt.subplot2grid((nolines,noplots), (0,0), colspan=1, rowspan=1)
     ax01 = plt.subplot2grid((nolines,noplots), (0,1), colspan=1, rowspan=1)
@@ -122,15 +122,20 @@ if do_fig_taus:
     ax12 = plt.subplot2grid((nolines,noplots), (1,2), colspan=1, rowspan=1)
     ax13 = plt.subplot2grid((nolines,noplots), (1,3), colspan=1, rowspan=1)
     
-    ax20 = plt.subplot2grid((nolines,noplots), (2,0), colspan=1, rowspan=1)
-    ax21 = plt.subplot2grid((nolines,noplots), (2,1), colspan=1, rowspan=1)
-    ax22 = plt.subplot2grid((nolines,noplots), (2,2), colspan=1, rowspan=1)
-    ax23 = plt.subplot2grid((nolines,noplots), (2,3), colspan=1, rowspan=1)
+    ax10b = plt.subplot2grid((nolines,noplots), (2,0), colspan=1, rowspan=1)
+    ax11b = plt.subplot2grid((nolines,noplots), (2,1), colspan=1, rowspan=1)
+    ax12b = plt.subplot2grid((nolines,noplots), (2,2), colspan=1, rowspan=1)
+    ax13b = plt.subplot2grid((nolines,noplots), (2,3), colspan=1, rowspan=1)
     
-    ax40 = plt.subplot2grid((nolines,noplots), (3,0), colspan=1, rowspan=1)
-    ax41 = plt.subplot2grid((nolines,noplots), (3,1), colspan=1, rowspan=1)
-    ax42 = plt.subplot2grid((nolines,noplots), (3,2), colspan=1, rowspan=1)
-    ax43 = plt.subplot2grid((nolines,noplots), (3,3), colspan=1, rowspan=1)
+    ax20 = plt.subplot2grid((nolines,noplots), (3,0), colspan=1, rowspan=1)
+    ax21 = plt.subplot2grid((nolines,noplots), (3,1), colspan=1, rowspan=1)
+    ax22 = plt.subplot2grid((nolines,noplots), (3,2), colspan=1, rowspan=1)
+    ax23 = plt.subplot2grid((nolines,noplots), (3,3), colspan=1, rowspan=1)
+    
+    ax40 = plt.subplot2grid((nolines,noplots), (4,0), colspan=1, rowspan=1)
+    ax41 = plt.subplot2grid((nolines,noplots), (4,1), colspan=1, rowspan=1)
+    ax42 = plt.subplot2grid((nolines,noplots), (4,2), colspan=1, rowspan=1)
+    ax43 = plt.subplot2grid((nolines,noplots), (4,3), colspan=1, rowspan=1)
     
     def tauestimate(counts_red, error_red, counts_blue, error_blue):
         
@@ -144,46 +149,120 @@ if do_fig_taus:
         
         return helper(ucounts_red),helper(ucounts_blue)
     
-    d_ap = pickle.load( open( "d0.p", "rb" ) ) #4#
-    d_kv = pickle.load( open( "d1.p", "rb" ) ) #3#
-    d_pixel = pickle.load( open( "d2.p", "rb" ) ) #5#
-    d_temp = pickle.load( open( "d4.p", "rb" ) ) #4#
-    
     import matplotlib.cm as cm
-    ct = 0
-    for data in [d_ap, d_kv, d_pixel, d_temp]:
+
+    for ct in [0,1,2,3]:
         
         if ct == 0:
-            xvec = np.array([28, 379, 1800, 5700])
-            my_ax = [ax03,ax13,ax23,ax43]
+            xvec = np.array([379,48,9800,662,379,9800,6000,267])
+            xvec = np.delete(xvec, [4,5])
+            xvec = np.array([48,267,379,662,6000,9800])
+            my_ax = [ax03,ax13,ax23,ax43,ax13b]
             xlab = 'Electron beam \n current (pA)'
-            xl = [-300,6000]
-            xt = [30,5500]
+            loadprefix = '../2017-03-28_AndreaNPS_varyotherparams_nostagezmovement/'
+            red0 = np.load(loadprefix + 'Red_decay_arrayCurrent.npz',mmap_mode='r')  
+            red = red0['data']
+            print(red.shape)
+            red= np.delete(red, [4,5], axis=0)
+            redaux = np.copy(red)
+            red[0,:] = redaux[1,:]
+            red[1,:] = redaux[5,:]
+            red[2,:] = redaux[0,:]
+            red[3,:] = redaux[3,:]
+            red[4,:] = redaux[4,:]
+            red[5,:] = redaux[2,:]
+            print(red.shape)
+            blue0 = np.load(loadprefix + 'Blue_decay_arrayCurrent.npz',mmap_mode='r')  
+            blue = blue0['data']
+            blue= np.delete(blue, [4,5], axis=0)
+            blueaux = np.copy(blue)
+            blue[0,:] = blueaux[1,:]
+            blue[1,:] = blueaux[5,:]
+            blue[2,:] = blueaux[0,:]
+            blue[3,:] = blueaux[3,:]
+            blue[4,:] = blueaux[4,:]
+            blue[5,:] = blueaux[2,:]
+            del red0, blue0, redaux, blueaux
+            gc.collect()
+            xl = [10, 13000]
+            xt = [50,500,5000]  
         elif ct== 1:
-            xvec =np.array( [10,15,20])
-            my_ax = [ax02,ax12,ax22,ax42]
-            xlab = 'Electron beam \n energy (kV)'
-            xl = [5,25]
-            xt = [10,20]
+            xvec =np.array( [10,15,5,16.8,7.5,12.5])
+            xvec =np.array( [5,7.5,10,12.5,15,16.8])
+            my_ax = [ax02,ax12,ax22,ax42,ax12b]
+            xlab = 'Electron beam \n energy (keV)'
+            loadprefix = '../2017-03-28_AndreaNPS_varyotherparams_nostagezmovement/'
+            red0 = np.load(loadprefix + 'Red_decay_arraykV.npz',mmap_mode='r')  
+            red = red0['data']
+            redaux = np.copy(red)
+            red[0,:] = redaux[2,:]
+            red[1,:] = redaux[3,:]
+            red[2,:] = redaux[0,:]
+            red[3,:] = redaux[1,:]
+            red[4,:] = redaux[5,:]
+            red[5,:] = redaux[4,:]
+            blue0 = np.load(loadprefix + 'Blue_decay_arraykV.npz',mmap_mode='r')  
+            blue = blue0['data']
+            blueaux = np.copy(blue)
+            blue[0,:] = blueaux[2,:]
+            blue[1,:] = blueaux[3,:]
+            blue[2,:] = blueaux[0,:]
+            blue[3,:] = blueaux[1,:]
+            blue[4,:] = blueaux[5,:]
+            blue[5,:] = blueaux[4,:]
+            del red0, blue0, redaux, blueaux
+            gc.collect()
+            xl = [4, 17.8]
+            xt = [5,10,15]
         elif ct == 2:
-            xvec = np.array([2.23, 1.79, 1.49, 1.28, 1.12])
+            xvec = np.array([2.48,3.72,1.86,2.98,1.86,2.98,2.13])
+            xvec = np.delete(xvec, [4,5])
+            xvec = np.array([1.86,2.13,2.48,2.98,3.72])
             xlab = 'Pixel size (nm)'
-            my_ax = [ax01,ax11,ax21,ax41]
-            xl = [0.9, 2.4]
-            xt = [1,2]
+            loadprefix = '../2017-03-28_AndreaNPS_varyotherparams_nostagezmovement/'
+            red0 = np.load(loadprefix + 'Red_decay_arrayPixel.npz',mmap_mode='r')  
+            red = red0['data']
+            red= np.delete(red, [4,5], axis=0)
+            redaux = np.copy(red)
+            red[0,:] = redaux[2,:]
+            red[1,:] = redaux[4,:]
+            red[2,:] = redaux[0,:]
+            red[3,:] = redaux[3,:]
+            red[4,:] = redaux[1,:]
+            blue0 = np.load(loadprefix + 'Blue_decay_arrayPixel.npz',mmap_mode='r')  
+            blue = blue0['data']
+            blue= np.delete(blue, [4,5], axis=0)
+            blueaux = np.copy(blue)
+            blue[0,:] = blueaux[2,:]
+            blue[1,:] = blueaux[4,:]
+            blue[2,:] = blueaux[0,:]
+            blue[3,:] = blueaux[3,:]
+            blue[4,:] = blueaux[1,:]
+            del red0, blue0, redaux, blueaux
+            gc.collect()
+            my_ax = [ax01,ax11,ax21,ax41,ax11b]
+            xl = [1.66,3.92]
+            xt = [2,2.5,3,3.5]
         elif ct == 3:
-            xvec = np.array([1./0.002996- 273.15,1./0.0031089- 273.15,1./0.0031954- 273.15,1./0.003285- 273.15] )
-            my_ax = [ax00,ax10,ax20,ax40] 
-            xlab = 'Temperature \n' + r'at heater ($^{\circ}$C)'
-            xl = [25,65]
-            xt = [30,40,50,60]
+            xvec = np.array([70.5, 58.8, 49.75,39.9, 30.5, 25.0 ] )
+            my_ax = [ax00,ax10,ax20,ax40,ax10b] 
+            loadprefix = '../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/'
+            xlab = 'Temperature \n' + r'at sample ($^{\circ}$C)'
+            red0 = np.load(loadprefix + 'Red_decay_arrayGOINGDOWN.npz',mmap_mode='r')  
+            red = red0['data']
+            blue0 = np.load(loadprefix + 'Blue_decay_arrayGOINGDOWN.npz',mmap_mode='r')  
+            blue = blue0['data']
+            del red0, blue0
+            gc.collect()
+            xl = [20,75]
+            xt = [25,30,40,50,60,70]
             
         for my_ind in my_ax:
             my_ind.xaxis.set_ticks_position('bottom')
             my_ind.yaxis.set_ticks_position('left')
             
-        (taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D']),data['blue1D'], np.sqrt(data['blue1D']))
-        ts_b = np.arange(0,data['red1D'].shape[1])
+        (taured,taublue) = tauestimate(red,red/(90000*5),blue, blue/(90000*5))
+        ts_b = np.arange(0,red.shape[1])
         
         aa = np.empty([taured.shape[1]])    
         cc = np.empty([taured.shape[1]])   
@@ -202,25 +281,27 @@ if do_fig_taus:
             bberr[jjj] = result.params['b'].stderr
             dderr[jjj] = result.params['b'].stderr
             
-        step = 50
+        step = 49
         initindex = 5
         colors = iter(cm.rainbow(np.linspace(0, 1, len(np.arange(initindex,taured.shape[1],step)))))   
         
         
       
         # visibility of cumu counts
-        red = data['red1D']
-        blue = data['blue1D']
-        viscumucts = (np.cumsum(unumpy.nominal_values(red),axis=1)-np.cumsum(unumpy.nominal_values(blue),axis=1))/       \
+        viscumucts = -(np.cumsum(unumpy.nominal_values(red),axis=1)-np.cumsum(unumpy.nominal_values(blue),axis=1))/       \
                          (np.cumsum(unumpy.nominal_values(red),axis=1)+np.cumsum(unumpy.nominal_values(blue),axis=1))
         #viscumucts = (viscumucts-np.min(viscumucts))/(np.max(viscumucts)-np.min(viscumucts)) 
         viscumucts = (1 - (np.max(viscumucts)-viscumucts)/(np.max(viscumucts))) * 100.0
         
         hlp3hlp3 = np.empty([taured.shape[0],taured.shape[1]])
         for jjj in np.arange(0,taured.shape[1]):
-            hlp3hlp3[:,jjj] = (unumpy.nominal_values(taured[:,jjj])-unumpy.nominal_values(taublue[:,jjj]))/(unumpy.nominal_values(taured[:,jjj])+unumpy.nominal_values(taublue[:,jjj]))
-        #hlp3hlp3 = (hlp3hlp3-np.min(hlp3hlp3))/(np.max(hlp3hlp3)-np.min(hlp3hlp3))            
-        hlp3hlp3 = (1 - (np.max(hlp3hlp3)-hlp3hlp3)/(np.max(hlp3hlp3)))   * 100.0         
+            hlp3hlp3[:,jjj] = -(unumpy.nominal_vTruealues(taured[:,jjj])-unumpy.nominal_values(taublue[:,jjj]))/(unumpy.nominal_values(taured[:,jjj])+unumpy.nominal_values(taublue[:,jjj]))        
+        hlp3hlp3 = (1 - (np.max(hlp3hlp3)-hlp3hlp3)/(np.max(hlp3hlp3)))   * 100.0   
+        
+        hlp3hlp3ratio = np.empty([taured.shape[0],taured.shape[1]])
+        for jjj in np.arange(0,taured.shape[1]):
+            hlp3hlp3ratio[:,jjj] = (unumpy.nominal_values(taublue[:,jjj]))/(unumpy.nominal_values(taured[:,jjj]))  
+        hlp3hlp3ratio = (1 - (np.max(hlp3hlp3ratio)-hlp3hlp3ratio)/(np.max(hlp3hlp3ratio)))   * 100.0 
         
         for jjj in np.arange(initindex,taured.shape[1],step):
             print(jjj)
@@ -235,12 +316,32 @@ if do_fig_taus:
             my_ax[1].plot(xvec,hlp1,marker='o',ls='dotted',color=colored,markersize=8)
             my_ax[0].plot(xvec,hlp2,marker='o',ls='dotted',color=colored,markersize=8)
            
-            
-            my_ax[2].plot(xvec,hlp3hlp3[:,jjj],marker='o',ls='dotted',color=colored,markersize=8)
-           
-            my_ax[3].plot(xvec,viscumucts[:,jjj],marker='o',ls='dotted',color=colored,markersize=8)
+            if ct != 3:
+               my_ax[2].plot(xvec,hlp3hlp3[:,jjj],marker='o',ls='dotted',color=colored,markersize=8)
+               my_ax[4].plot(xvec,hlp3hlp3ratio[:,jjj],marker='o',ls='dotted',color=colored,markersize=8)
+               my_ax[3].plot(xvec,viscumucts[:,jjj],marker='o',ls='dotted',color=colored,markersize=8) 
+            else: # (ct==3):
+               #if jjj < 212: #212 is the minimum of sensitivity in green
+                   my_ax[2].plot(xvec,hlp3hlp3[:,jjj],marker='o',ls='dotted',color=colored,markersize=8)
+                   my_ax[4].plot(xvec,hlp3hlp3ratio[:,jjj],marker='o',ls='dotted',color=colored,markersize=8)
+                   my_ax[3].plot(xvec,viscumucts[:,jjj],marker='o',ls='dotted',color=colored,markersize=8) 
+               #else:
+                  # pass
+                
                 
             my_ax[3].set_xlabel(xlab, fontsize=fsizepl)
+            
+            if ct == 0:
+                 my_ax[0].set_xscale('log')
+                 my_ax[0].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[1].set_xscale('log')
+                 my_ax[1].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[2].set_xscale('log')
+                 my_ax[2].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[3].set_xscale('log')
+                 my_ax[3].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[4].set_xscale('log')
+                 my_ax[4].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
             
             my_ax[0].set_xticks(xt)
             my_ax[0].set_xlim(xl)
@@ -253,37 +354,46 @@ if do_fig_taus:
             my_ax[2].set_xticklabels([])
             my_ax[3].set_xticks(xt)
             my_ax[3].set_xlim(xl)
+            my_ax[4].set_xticks(xt)
+            my_ax[4].set_xlim(xl)
+            my_ax[4].set_xticklabels([])
             
             my_ax[0].set_ylim([0,100])
             my_ax[1].set_ylim([0,100])
-            my_ax[2].set_ylim([-350,100]) #####was -250
-            my_ax[3].set_ylim([50,100])#([0.3,0.6])
+            my_ax[4].set_ylim([0,100])
+            my_ax[2].set_ylim([0,100]) #####was -250
+            my_ax[3].set_ylim([-500,100])#([0.3,0.6])
             
-            my_ax[0].set_yticks([50,100])
-            my_ax[1].set_yticks([50,100])
-            my_ax[2].set_yticks([100,0,-100,-200,-300])#([-0.25,-0.05,0.15])
-            my_ax[3].set_yticks([75,100])#([0.3,0.45,0.6])
+            my_ax[0].set_yticks([0,50,100])
+            my_ax[1].set_yticks([0,50,100])
+            my_ax[4].set_yticks([0,50,100])
+            my_ax[2].set_yticks([0,50,100])#([-0.25,-0.05,0.15])
+            my_ax[3].set_yticks([-500,-300,-100,100])#([0.3,0.45,0.6])
             
             if ct == 3:
-                my_ax[1].set_ylabel(r'Red band $\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
-                my_ax[0].set_ylabel(r'Green band $\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
-                my_ax[2].set_ylabel(r'Visib. of $\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
-                my_ax[3].set_ylabel('Visib. of cumul. \n' + r'counts variation ($\%$)',fontsize=fsizepl)
+                fsizeplsmall=16
+                my_ax[1].set_ylabel(r'Red' +'\n' + r'band $\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
+                my_ax[0].set_ylabel(r'Green' +  '\n' + r'band $\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
+                my_ax[2].set_ylabel(r'Visib. of' + '\n' + r'$\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
+                my_ax[3].set_ylabel('Visib. of' + '\n' + 'cumul. cts. \n' + r'variation ($\%$)',fontsize=fsizepl)
+                my_ax[4].set_ylabel(r'Ratio of' +  '\n' + r'$\tau$' + '\n' + r'variation ($\%$)',fontsize=fsizepl)
             else:
                 my_ax[0].set_yticklabels([])
                 my_ax[1].set_yticklabels([])
                 my_ax[2].set_yticklabels([])
                 my_ax[3].set_yticklabels([])
+                my_ax[4].set_yticklabels([])
             
             
         my_ax[0].tick_params(labelsize=fsizenb)  
         my_ax[1].tick_params(labelsize=fsizenb)  
         my_ax[2].tick_params(labelsize=fsizenb)  
         my_ax[3].tick_params(labelsize=fsizenb)  
+        my_ax[4].tick_params(labelsize=fsizenb)  
         ct = ct + 1
         
     plt.tight_layout() 
-    plt.show()  
+    #plt.show()  
     multipage_longer('SI-TimeEvolution.pdf',dpi=80)
 
  
@@ -450,10 +560,25 @@ if do_hbar:
     ax00.yaxis.set_ticks_position('left')
     
     medidas = ['Mutual info.', r'Spearman \textit{r}', r'Pearson \textit{r}',   'Dist. corr.', 'Max. info.']
-    Temp = [1.38629436112,1.0, 0.98563,1.0-0.0143673005445,1.0]
-    Pixel = [1.60943791243 ,0.89999,0.97876,1.0-0.0212430905327,0.97095]
-    kv = [1.09861228867,1.0,0.90897,1.0-0.0910320599631, 0.91830]
-    current = [1.38629436112,1.0, 0.80581,1.0-0.19419341885,1.0]
+    #OLD DATA 
+#    Temp = [1.38629436112,1.0, 0.98563,1.0-0.0143673005445,1.0]
+#    Pixel = [1.60943791243 ,0.89999,0.97876,1.0-0.0212430905327,0.97095]
+#    kv = [1.09861228867,1.0,0.90897,1.0-0.0910320599631, 0.91830]
+#    current = [1.38629436112,1.0, 0.80581,1.0-0.19419341885,1.0]
+    
+    
+    #NEW DATA #This tempV,R data is intensity foreground - intensity background
+    TempV = [1.79175946923,1.0,0.87569793582631839 ,0.124302064174,1.0]  #p = 0.0, p=0.022216208943720429
+    TempR = [1.79175946923,1.0, 0.91479498311157048, 0.0852050168884, 1.0] #p = 0.0, p=0.010580552620528979
+    
+    PixelV = [1.54982604588,0.50917507721731559,0.52585369041972618,0.47414630958,0.5216406363433185]   #spearman p 0.24314622431702532, pearson p 0.22540753643334777
+    kvV = [1.38629436112,0.79999999999999993,0.92722586025428866,0.0727741397457,1.0 ] #sp  0.20000000000000007, pp  0.072774139745711341, 
+    currentV = [1.38629436112,0.39999999999999997,0.87092099907266973,0.129079000927,0.3112781244591329] #sp 0.59999999999999998, pp  0.12907900092733027
+    
+    PixelR = [1.54982604588,0.50917507721731559,0.53073752545557129,0.469262474544,0.5216406363433185] #sp 0.24314622431702532, pp 0.22033266939601734,  
+    kvR = [1.38629436112,0.79999999999999993,0.93117918480877637,0.0688208151912,1.0 ] #sp 0.20000000000000007, pp  0.068820815191223628,
+    currentR = [1.38629436112, 0.39999999999999997, 0.91325512549227394,0.0867448745077,0.3112781244591329]  #sp  0.59999999999999998, pp 0.086744874507726055
+    
     ind = np.arange(len(medidas))
     width = 0.2
     ax00.barh(ind + 3*width, Temp, width, color='k',edgecolor='None')
@@ -533,46 +658,41 @@ if do_plottau:
              return np.cumsum(arrayx*np.arange(1,counts_red.shape[1]+1), axis = 1)/np.cumsum(arrayx, axis = 1)
         
         return helper(ucounts_red),helper(ucounts_blue)
-        
-#    def tending_function(counts, background):
-#        
-#         hlp1 = np.empty([counts.shape[0], counts.shape[1]])
-#         hlp2 = np.empty([counts.shape[0], counts.shape[1]])
-#         for jj in np.arange(0,counts.shape[0] ):
-#             hlp1[jj] = background[jj]/2.0*(np.arange(1,counts.shape[1]+1))**2
-#             hlp2[jj] = background[jj]*(np.arange(1,counts.shape[1]+1))**2
-#        
-#         return (np.cumsum(counts*np.arange(1,counts.shape[1]+1), axis = 1) +  hlp1)/      \
-#                (np.cumsum(counts, axis = 1) + hlp2 )
     
     def moving_average(a,n=3):
         ret = np.cumsum(a)
         ret[n:] = ret[n:] - ret[:-n]
         return ret[n-1:]/n
 
-    d_temp = pickle.load( open( "d4.p", "rb" ) ) #4#
+    #for old data
+    #d_temp = pickle.load( open( "d4.p", "rb" ) ) #4#
 
     import matplotlib.cm as cm
-    ct = 3
-    for data in [d_temp]: #[d_ap, d_kv, d_pixel, d_temp]:
-    
-        if ct == 3:
-            xvec = np.array([0.002996,0.0031089,0.0031954,0.003285])
+
+    #for old data
+    #for data in [d_temp]: #[d_ap, d_kv, d_pixel, d_temp]:
+    if True:
         
-        Notr = np.zeros([4,data['red1D'].shape[1]])
-        Notr[0,:] = 3.0*308.0*311.0 * np.ones(data['red1D'].shape[1])
-        Notr[1,:] = 3.0*315.0*324.0 * np.ones(data['red1D'].shape[1])
-        Notr[2,:] = 3.0*316.0*338.0 * np.ones(data['red1D'].shape[1])
-        Notr[3,:] = 3.0*307.0*325.0 * np.ones(data['red1D'].shape[1])
-        #vector which is 4 long, starting at 60C  #np.sum(hlp)*reda[:,initbin:,:,:].shape[0]
-        (taured,taublue) = tauestimate(data['red1D'], np.sqrt(data['red1D'])/np.sqrt(Notr),data['blue1D'], np.sqrt(data['blue1D'])/np.sqrt(Notr))    
+        Il_data3 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Il_dataGOINGDOWN.npz')
+        xvec = Il_data3['data']  
         
-#        #Vector with mean background values 
-#        backblue= np.array([0.02345457,0.01907375,  0.01535466,  0.02599181]) #60-> 30
-#        backred=np.array([ 0.02074025,0.02155595,  0.01922453,  0.01917648])
-#        
-#        redto = tending_function(unumpy.nominal_values(taured), backred)
-#        blueto = tending_function(unumpy.nominal_values(taublue), backblue)
+        Red_decay_array3 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Red_decay_arrayGOINGDOWN.npz') 
+        red = Red_decay_array3['data']
+        Blue_decay_array3 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Blue_decay_arrayGOINGDOWN.npz') 
+        blue = Blue_decay_array3['data']
+        
+        Notr = np.zeros([6,1398])
+        #From file get_no_signal_pixels_only
+        No_signal = [90000,90000,90000,90000,90000,90000] # [38921.0,29452.0,29608.0,34650.0,33207.0,37710.0]
+        Nopointsbeamon = 152
+        Notr[0,:] = 5.0*No_signal[0] * Nopointsbeamon
+        Notr[1,:] = 5.0*No_signal[1] * Nopointsbeamon
+        Notr[2,:] = 5.0*No_signal[2] * Nopointsbeamon
+        Notr[3,:] = 5.0*No_signal[3] * Nopointsbeamon
+        Notr[4,:] = 5.0*No_signal[4] * Nopointsbeamon
+        Notr[5,:] = 5.0*No_signal[5] * Nopointsbeamon
+        
+        (taured,taublue) = tauestimate(red, np.sqrt(red)/np.sqrt(Notr),blue, np.sqrt(blue)/np.sqrt(Notr))    
         
     def plotinho(ax0, dset,my_color,ax0b,my_edgecolor, my_facecolor):   
         
@@ -654,4 +774,234 @@ if do_plottau:
     plt.show()  
     multipage_longer('SI-Tau.pdf',dpi=80)
 
+do_fig_ints = True
+if do_fig_ints:
+    fig1= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
+    fig1.set_size_inches(1200./fig1.dpi,900./fig1.dpi) #1200 900
+    plt.rc('text', usetex=True)
+    plt.rc('font', family='serif')
+    plt.rc('font', serif='Palatino')    
+    
+    noplots = 4
+    nolines = 4
+    
+    ax00 = plt.subplot2grid((nolines,noplots), (0,0), colspan=1, rowspan=1)
+    ax01 = plt.subplot2grid((nolines,noplots), (0,1), colspan=1, rowspan=1)
+    ax02 = plt.subplot2grid((nolines,noplots), (0,2), colspan=1, rowspan=1)
+    ax03 = plt.subplot2grid((nolines,noplots), (0,3), colspan=1, rowspan=1)
+    
+    ax10 = plt.subplot2grid((nolines,noplots), (1,0), colspan=1, rowspan=1)
+    ax11 = plt.subplot2grid((nolines,noplots), (1,1), colspan=1, rowspan=1)
+    ax12 = plt.subplot2grid((nolines,noplots), (1,2), colspan=1, rowspan=1)
+    ax13 = plt.subplot2grid((nolines,noplots), (1,3), colspan=1, rowspan=1)
+    
+#    ax10b = plt.subplot2grid((nolines,noplots), (2,0), colspan=1, rowspan=1)
+#    ax11b = plt.subplot2grid((nolines,noplots), (2,1), colspan=1, rowspan=1)
+#    ax12b = plt.subplot2grid((nolines,noplots), (2,2), colspan=1, rowspan=1)
+#    ax13b = plt.subplot2grid((nolines,noplots), (2,3), colspan=1, rowspan=1)
+    
+    ax20 = plt.subplot2grid((nolines,noplots), (2,0), colspan=1, rowspan=1)
+    ax21 = plt.subplot2grid((nolines,noplots), (2,1), colspan=1, rowspan=1)
+    ax22 = plt.subplot2grid((nolines,noplots), (2,2), colspan=1, rowspan=1)
+    ax23 = plt.subplot2grid((nolines,noplots), (2,3), colspan=1, rowspan=1)
+    
+    ax40 = plt.subplot2grid((nolines,noplots), (3,0), colspan=1, rowspan=1)
+    ax41 = plt.subplot2grid((nolines,noplots), (3,1), colspan=1, rowspan=1)
+    ax42 = plt.subplot2grid((nolines,noplots), (3,2), colspan=1, rowspan=1)
+    ax43 = plt.subplot2grid((nolines,noplots), (3,3), colspan=1, rowspan=1)
+    
+    import matplotlib.cm as cm
+
+    for ct in [0,1,2,3]:
+        
+        if ct == 0:
+            xvec = np.array([379,48,9800,662,379,9800,6000,267])
+            xvec = np.delete(xvec, [4,5])
+            xvec = np.array([48,267,379,662,6000,9800])
+            my_ax = [ax03,ax13,ax23,ax43]#,ax13b]
+            xlab = 'Electron beam \n current (pA)'
+            loadprefix = '../2017-03-28_AndreaNPS_varyotherparams_nostagezmovement/'
+            red0 = np.load(loadprefix + 'Red_int_arrayCurrent.npz',mmap_mode='r')  
+            red = red0['data']
+            print(red.shape)
+            red= np.delete(red, [4,5], axis=0)
+            redaux = np.copy(red)
+            red[0] = redaux[1]
+            red[1] = redaux[5]
+            red[2] = redaux[0]
+            red[3] = redaux[3]
+            red[4] = redaux[4]
+            red[5] = redaux[2]
+            print(red.shape)
+            blue0 = np.load(loadprefix + 'Blue_int_arrayCurrent.npz',mmap_mode='r')  
+            blue = blue0['data']
+            blue= np.delete(blue, [4,5], axis=0)
+            blueaux = np.copy(blue)
+            blue[0] = blueaux[1]
+            blue[1] = blueaux[5]
+            blue[2] = blueaux[0]
+            blue[3] = blueaux[3]
+            blue[4] = blueaux[4]
+            blue[5] = blueaux[2]
+            del red0, blue0, redaux, blueaux
+            gc.collect()
+            xl = [10, 13000]
+            xt = [50,500,5000]  
+        elif ct== 1:
+            xvec =np.array( [10,15,5,16.8,7.5,12.5])
+            xvec =np.array( [5,7.5,10,12.5,15,16.8])
+            my_ax = [ax02,ax12,ax22,ax42]#,ax12b]
+            xlab = 'Electron beam \n energy (keV)'
+            loadprefix = '../2017-03-28_AndreaNPS_varyotherparams_nostagezmovement/'
+            red0 = np.load(loadprefix + 'Red_int_arraykV.npz',mmap_mode='r')  
+            red = red0['data']
+            redaux = np.copy(red)
+            red[0] = redaux[2]
+            red[1] = redaux[3]
+            red[2] = redaux[0]
+            red[3] = redaux[1]
+            red[4] = redaux[5]
+            red[5] = redaux[4]
+            blue0 = np.load(loadprefix + 'Blue_int_arraykV.npz',mmap_mode='r')  
+            blue = blue0['data']
+            blueaux = np.copy(blue)
+            blue[0] = blueaux[2]
+            blue[1] = blueaux[3]
+            blue[2] = blueaux[0]
+            blue[3] = blueaux[1]
+            blue[4] = blueaux[5]
+            blue[5] = blueaux[4]
+            del red0, blue0, redaux, blueaux
+            gc.collect()
+            xl = [4, 17.8]
+            xt = [5,10,15]
+        elif ct == 2:
+            xvec = np.array([2.48,3.72,1.86,2.98,1.86,2.98,2.13])
+            xvec = np.delete(xvec, [4,5])
+            xvec = np.array([1.86,2.13,2.48,2.98,3.72])
+            xlab = 'Pixel size (nm)'
+            loadprefix = '../2017-03-28_AndreaNPS_varyotherparams_nostagezmovement/'
+            red0 = np.load(loadprefix + 'Red_int_arrayPixel.npz',mmap_mode='r')  
+            red = red0['data']
+            red= np.delete(red, [4,5], axis=0)
+            redaux = np.copy(red)
+            red[0] = redaux[2]
+            red[1] = redaux[4]
+            red[2] = redaux[0]
+            red[3] = redaux[3]
+            red[4] = redaux[1]
+            blue0 = np.load(loadprefix + 'Blue_int_arrayPixel.npz',mmap_mode='r')  
+            blue = blue0['data']
+            blue= np.delete(blue, [4,5], axis=0)
+            blueaux = np.copy(blue)
+            blue[0] = blueaux[2]
+            blue[1] = blueaux[4]
+            blue[2] = blueaux[0]
+            blue[3] = blueaux[3]
+            blue[4] = blueaux[1]
+            del red0, blue0, redaux, blueaux
+            gc.collect()
+            my_ax = [ax01,ax11,ax21,ax41]#,ax11b]
+            xl = [1.66,3.92]
+            xt = [2,2.5,3,3.5]
+        elif ct == 3:
+            xvec = np.array([70.5, 58.8, 49.75,39.9, 30.5, 25.0 ] )
+            my_ax = [ax00,ax10,ax20,ax40]#,ax10b] 
+            loadprefix = '../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/'
+            xlab = 'Temperature \n' + r'at sample ($^{\circ}$C)'
+            red0 = np.load(loadprefix + 'Red_int_arrayGOINGDOWN.npz',mmap_mode='r')  
+            red = red0['data']
+            blue0 = np.load(loadprefix + 'Blue_int_arrayGOINGDOWN.npz',mmap_mode='r')  
+            blue = blue0['data']
+            del red0, blue0
+            gc.collect()
+            xl = [20,75]
+            xt = [25,30,40,50,60,70]
+            
+        for my_ind in my_ax:
+            my_ind.xaxis.set_ticks_position('bottom')
+            my_ind.yaxis.set_ticks_position('left')
+            
+        if ct != 3:
+            ratio = ((red)/(blue))/((red[0])/(blue[0]))
+            visibility = (blue-red)/(blue+red)/((blue[0]-red[0])/(blue[0]+red[0]))
+        else:
+            ratio = ((red)/(blue))/((red[-1])/(blue[-1]))
+            visibility = (blue-red)/(blue+red)/((blue[-1]-red[-1])/(blue[-1]+red[-1]))
+        
+       
+       #tau red
+        redn= (1-(np.max(red)-red)/np.max(red) )* 100.0  
+       #tau blue
+        bluen= (1-(np.max(blue)-blue)/np.max(blue) )* 100.0 
+       #ratio
+        ration = (1-(np.max(ratio)-ratio)/np.max(ratio) )* 100.0 
+       #visib
+        visibilityn = (1-(np.max(visibility)-visibility)/np.max(visibility) )* 100.0 
+           
+        my_ax[1].plot(xvec,redn,marker='o',ls='dotted',color='k',markersize=8)
+        my_ax[0].plot(xvec,bluen,marker='o',ls='dotted',color='k',markersize=8)
+   
+            
+        my_ax[2].plot(xvec,ration,marker='o',ls='dotted',color='k',markersize=8)
+        my_ax[3].plot(xvec,visibilityn,marker='o',ls='dotted',color='k',markersize=8) 
+                     
+        my_ax[3].set_xlabel(xlab, fontsize=fsizepl)
+            
+        if ct == 0:
+                 my_ax[0].set_xscale('log')
+                 my_ax[0].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[1].set_xscale('log')
+                 my_ax[1].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[2].set_xscale('log')
+                 my_ax[2].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 my_ax[3].set_xscale('log')
+                 my_ax[3].get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+                 
+        my_ax[0].set_xticks(xt)
+        my_ax[0].set_xlim(xl)
+        my_ax[0].set_xticklabels([])
+        my_ax[1].set_xticks(xt)
+        my_ax[1].set_xlim(xl)
+        my_ax[1].set_xticklabels([])
+        my_ax[2].set_xticks(xt)
+        my_ax[2].set_xlim(xl)
+        my_ax[2].set_xticklabels([])
+        my_ax[3].set_xticks(xt)
+        my_ax[3].set_xlim(xl)
+            
+            
+        
+        
+        my_ax[0].set_yticks([0,50,100])
+        my_ax[1].set_yticks([0,50,100])
+        my_ax[2].set_yticks([40,70,100])#([-0.25,-0.05,0.15])
+        my_ax[3].set_yticks([60,80,100])#([0.3,0.45,0.6])
+        
+        my_ax[0].set_ylim([0,100])
+        my_ax[1].set_ylim([0,100])
+        my_ax[2].set_ylim([40,100]) #####was -250
+        my_ax[3].set_ylim([60,100])#([0.3,0.6])
+            
+        if ct == 3:
+            my_ax[1].set_ylabel(r'Red' +'\n' + r'band int.' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
+            my_ax[0].set_ylabel(r'Green' +  '\n' + r'band int.' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
+            my_ax[2].set_ylabel(r'Ratio of' + '\n' + r'int.' + '\n' + r'variation ($\%$)',fontsize=fsizepl)#,va='center',ha='center')
+            my_ax[3].set_ylabel('Visib. of' + '\n' + 'int. \n' + r'variation ($\%$)',fontsize=fsizepl)
+        else:
+            my_ax[0].set_yticklabels([])
+            my_ax[1].set_yticklabels([])
+            my_ax[2].set_yticklabels([])
+            my_ax[3].set_yticklabels([])
+            
+            
+        my_ax[0].tick_params(labelsize=fsizenb)  
+        my_ax[1].tick_params(labelsize=fsizenb)  
+        my_ax[2].tick_params(labelsize=fsizenb)  
+        my_ax[3].tick_params(labelsize=fsizenb)  
+        ct = ct + 1
+        
+    plt.tight_layout() 
+    #plt.show()  
+    multipage_longer('SI-EquivalentToTimeEvoloution.pdf',dpi=80)
 

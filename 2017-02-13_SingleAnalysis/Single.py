@@ -84,6 +84,7 @@ import cv2
 fsizepl = 24
 fsizenb = 20
 mkstry = ['8','11','5'] #marker size for different dsets Med Zoom/Large Zoom/Small Zoom
+tauindice = 250 ##-1: takes last tau, after 1.4ms of acquisition
 ###
 def tauestimate(counts_red, error_red):
     
@@ -366,8 +367,8 @@ if do_A:
        
        #ax5100.errorbar(tor(areas[k]),taured[k,-1],yerr= 0*tauredstd[k,-1],marker = 'H', markersize = 5, color = 'r', ls='None')
        #ax510.errorbar(tor(areas[k]),taublue[k,-1],yerr= 0*taubluestd[k,-1],marker = 'H', markersize = 5, color = 'g', ls='None')
-       ax5100.plot(tor(areas[k]),taured[k,-1],marker = 'H', markersize = 8, color = 'r', ls='None', markeredgewidth=0.0)
-       ax510.plot(tor(areas[k]),taublue[k,-1],marker = 'H', markersize = 8, color = 'g', ls='None', markeredgewidth=0.0)
+       ax5100.plot(tor(areas[k]),taured[k,tauindice],marker = 'H', markersize = 8, color = 'r', ls='None', markeredgewidth=0.0)
+       ax510.plot(tor(areas[k]),taublue[k,tauindice],marker = 'H', markersize = 8, color = 'g', ls='None', markeredgewidth=0.0)
                       
            
 #       colors = iter(cm.rainbow(np.linspace(0, 1, len(np.arange(0,sizered,step)))))      
@@ -614,8 +615,8 @@ if do_B:
        #saved area is already multiplied by Pix^2
        #ax5100.errorbar(tor(areas[k]),taured[k,-1], yerr=0*tauredstd[k,-1], marker = 'H', markersize = 8, color = 'r', ls='None', markeredgewidth=0.0)
        #ax510.errorbar(tor(areas[k]),taublue[k,-1], yerr=0*taubluestd[k,-1],marker = 'H', markersize = 8, color = 'g', ls='None', markeredgewidth=0.0)
-       ax5100.plot(tor(areas[k]),taured[k,-1],  marker = 'H', markersize = 10, color = 'r', ls='None', markeredgewidth=0.0)
-       ax510.plot(tor(areas[k]),taublue[k,-1], marker = 'H', markersize = 10, color = 'g', ls='None', markeredgewidth=0.0)
+       ax5100.plot(tor(areas[k]),taured[k,tauindice],  marker = 'H', markersize = 10, color = 'r', ls='None', markeredgewidth=0.0)
+       ax510.plot(tor(areas[k]),taublue[k,tauindice], marker = 'H', markersize = 10, color = 'g', ls='None', markeredgewidth=0.0)
       
 #       colors = iter(cm.rainbow(np.linspace(0, 1, len(np.arange(0,sizered,step)))))      
 #       for jj in np.arange(initind,sizered,step):
@@ -817,8 +818,8 @@ if do_C:
        #ax5100.errorbar(tor(areas[k]),taured[k,-1], yerr=0*tauredstd[k,-1],marker = 'H', markersize = 11, color = 'r', ls='None',zorder=2)
        #ax510.errorbar(tor(areas[k]),taublue[k,-1],yerr=0*taubluestd[k,-1],marker = 'H', markersize = 11, color = 'g', ls='None',zorder=2)
        
-       ax5100.plot(tor(areas[k]),taured[k,-1], marker = 'H', markersize = 12, color = 'r', ls='None', markeredgewidth=0.0, zorder=2)
-       ax510.plot(tor(areas[k]),taublue[k,-1], marker = 'H', markersize = 12, color = 'g', ls='None',markeredgewidth=0.0, zorder=2)
+       ax5100.plot(tor(areas[k]),taured[k,tauindice], marker = 'H', markersize = 12, color = 'r', ls='None', markeredgewidth=0.0, zorder=2)
+       ax510.plot(tor(areas[k]),taublue[k,tauindice], marker = 'H', markersize = 12, color = 'g', ls='None',markeredgewidth=0.0, zorder=2)
        
        
 #       colors = iter(cm.rainbow(np.linspace(0, 1, len(np.arange(0,sizered,step)))))      
@@ -973,8 +974,8 @@ if do_D:
        print('area,tau of D')
        print(tor(areas[k]*0.79*0.79))
        print(taured[k,-1])
-       ax5100.plot(tor(areas[k]),taured[k,-1], marker = 'x', markersize = 12, color = 'r', ls='None',zorder=2000)
-       ax510.plot(tor(areas[k]),taublue[k,-1], marker = 'x', markersize = 12, color = 'g', ls='None',zorder=2000)
+       ax5100.plot(tor(areas[k]),taured[k,tauindice], marker = 'x', markersize = 12, color = 'r', ls='None',zorder=2000)
+       ax510.plot(tor(areas[k]),taublue[k,tauindice], marker = 'x', markersize = 12, color = 'g', ls='None',zorder=2000)
        
 #       colors = iter(cm.rainbow(np.linspace(0, 1, len(np.arange(0,sizered,step)))))      
 #       for jj in np.arange(initind,sizered,step):
@@ -1021,18 +1022,18 @@ ax51.yaxis.set_ticks_position('right')
 
 #fig1.delaxes(ax51)
 
-ax510.set_ylabel(r'Green band $\tau$' + '\n after 1.4 ms acquisition ($\mu$s)',fontsize=fsizepl)
-ax5100.set_ylabel(r'Red band $\tau$' + '\n after 1.4 ms acquisition ($\mu$s)',fontsize=fsizepl)
+ax510.set_ylabel(r'Green band $\tau$' + '\n after 250 $\mu$s acquisition ($\mu$s)',fontsize=fsizepl)
+ax5100.set_ylabel(r'Red band $\tau$' + '\n after 250 $\mu$s acquisition ($\mu$s)',fontsize=fsizepl)
 #ax510b.set_ylabel(r'Green band $\tau$ ($\mu$s)',fontsize=fsizepl)
 #ax5100b.set_ylabel(r'Red band $\tau$ ($\mu$s)',fontsize=fsizepl)
 ax510.set_xlabel('Nanoparticle diameter (nm)',fontsize=fsizepl)
-ax510.set_yticks([100,200,300,400,500,600])
-ax510.set_ylim([0,610])
+ax510.set_yticks([30,40,50,60,70,80]) #[100,200,300,400,500,600])
+ax510.set_ylim([28,82])  ###1.4ms -> 0,610
 ax510.set_xlim([36,64])
 ax510.set_xticks([40,50,60])
 ax5100.set_xlabel('Nanoparticle diameter (nm)',fontsize=fsizepl)
-ax5100.set_yticks([100,200,300,400,500,600])
-ax5100.set_ylim([0,610])
+ax5100.set_yticks([30,40,50,60,70,80]) #[100,200,300,400,500,600])
+ax5100.set_ylim([28,82]) #[0,610])
 ax5100.set_xlim([36,64])
 ax5100.set_xticks([40,50,60])
 ax510.tick_params(labelsize=fsizenb)
@@ -1126,12 +1127,12 @@ ax.tick_params(labelsize=fsizenb)
 #    ax.scatter(B['intensb'][B['non_cut_k']],B['taublue'][B['non_cut_k'],-1],s=B['areas'][B['non_cut_k']]/areafactor, color='g', alpha=0.5, marker = 's')
 if do_C:
     #green t, different areas, triangleC
-    ax.plot(C['intensb'][C['non_cut_k']],C['taublue'][C['non_cut_k'],-1], color='g', markeredgewidth=0.0,marker = 'H', markersize = 12)
+    ax.plot(C['intensb'][C['non_cut_k']],C['taublue'][C['non_cut_k'],tauindice], color='g', markeredgewidth=0.0,marker = 'H', markersize = 12)
 if do_D:
     #green t, different areas, triangleC
     print(D['intensb'][D['non_cut_k']])
-    print(D['taublue'][D['non_cut_k'],-1])
-    ax.plot(D['intensb'][D['non_cut_k']],D['taublue'][D['non_cut_k'],-1], color='g', marker = 'x', markersize = 12)
+    print(D['taublue'][D['non_cut_k'],tauindice])
+    ax.plot(D['intensb'][D['non_cut_k']],D['taublue'][D['non_cut_k'],tauindice], color='g', marker = 'x', markersize = 12)
 
 ##axp.spines['left'].set_visible(False)
 ##axp.spines['top'].set_visible(False)
@@ -1149,15 +1150,16 @@ if do_D:
 #    axp.scatter(B['intensr'][B['non_cut_k']],B['taured'][B['non_cut_k'],-1],s=B['areas'][B['non_cut_k']]/areafactor, color='r', alpha=0.5, marker = 's')
 if do_C:
     #red t, different areas, triangleC
-    ax.plot(C['intensr'][C['non_cut_k']],C['taured'][C['non_cut_k'],-1], color='r', marker = 'H', markersize = 12, markeredgewidth=0.0)
+    ax.plot(C['intensr'][C['non_cut_k']],C['taured'][C['non_cut_k'],tauindice], color='r', marker = 'H', markersize = 12, markeredgewidth=0.0)
 if do_D:
     #red t, different areas, triangleC
     print(D['intensr'][D['non_cut_k']])
-    print(D['taured'][D['non_cut_k'],-1])
-    ax.plot(D['intensr'][D['non_cut_k']],D['taured'][D['non_cut_k'],-1], color='r', marker = 'x', markersize = 12)
+    print(D['taured'][D['non_cut_k'],tauindice])
+    ax.plot(D['intensr'][D['non_cut_k']],D['taured'][D['non_cut_k'],tauindice], color='r', marker = 'x', markersize = 12)
 #uncommented until here
-ax.set_ylabel(r'$\tau$ after 1.4 ms of acquisition ($\mu$s)',fontsize=fsizepl)
-ax.set_yticks([530,550,570])
+ax.set_ylabel(r'$\tau$ after 250 $\mu$s of acquisition ($\mu$s)',fontsize=fsizepl)
+ax.set_yticks([72,75,78])#[530,550,570])
+ax.set_ylim([71,79])
 ax.set_xlim([0.4,2.5])
 ax.set_xticks([0.5,1,1.5,2])
  

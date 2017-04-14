@@ -219,6 +219,136 @@ def linear_fit(x, y):
     #print(result.params)
 
     return (result.params['a'], result.params['b'], result)
+    
+def linear_fit_fixed_point(x, y, xo,yo):
+
+    # define objective function: returns the array to be minimized
+    def fcn2min(params, x, data):
+        """ model decaying sine wave, subtract data"""
+        a = params['a'].value
+
+        model = a * (x-xo) + yo
+    
+        return model - data
+
+    # create a set of Parameters
+    params = Parameters()
+    params.add('a', value = 0.1, vary = True)
+
+    # do fit, here with leastsq model
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    result = minner.minimize()
+
+    #print(result.params)
+
+    return (result.params['a'],result)
+    
+def parabola_fit_fixed_point(x, y, xo,yo):
+
+    # define objective function: returns the array to be minimized
+    def fcn2min(params, x, data):
+        """ model decaying sine wave, subtract data"""
+        a = params['a'].value
+        b = params['b'].value
+
+        model = a*(x-xo)**2  + b*(x-xo) + yo
+    
+        return model - data
+
+    # create a set of Parameters
+    params = Parameters()
+    params.add('a', value = 0.000153, vary = True)
+    params.add('b', value = 0.0043, vary = True)
+
+    # do fit, here with leastsq model
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    result = minner.minimize()
+
+    #print(result.params)
+
+    return (result.params['a'],result.params['b'],result)
+    
+def parabola_fit(x, y):
+
+    # define objective function: returns the array to be minimized
+    def fcn2min(params, x, data):
+        """ model decaying sine wave, subtract data"""
+        a = params['a'].value
+        b = params['b'].value
+        c = params['c'].value
+
+        model = a * x**2 + b*x + c
+    
+        return model - data
+
+    (bguess, cguess, dummy_result) = linear_fit(x, y)
+    #mock
+    print('guesses')
+    print(bguess.value)
+    print(cguess.value)
+
+    # create a set of Parameters
+    params = Parameters()
+    params.add('a', value = 0.1, vary = True)
+    params.add('b', value = bguess.value, vary = True)
+    params.add('c', value = cguess.value, vary = True)
+
+    # do fit, here with leastsq model
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    result = minner.minimize()
+
+    #print(result.params)
+
+    #return (result)
+    return (result.params['a'],result.params['b'],result.params['c'],result)    
+    
+def visi_fit(x, y):
+
+    # define objective function: returns the array to be minimized
+    def fcn2min(params, x, data):
+        """ model decaying sine wave, subtract data"""
+        a = params['a'].value
+        b = params['b'].value
+
+        model = -1.0 + 2.0/(1.0 + b + a * x)
+    
+        return model - data
+
+    # create a set of Parameters
+    params = Parameters()
+    params.add('a', value = 0.1, vary = True)
+    params.add('b', value = 0.1, vary = True)
+
+    # do fit, here with leastsq model
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    result = minner.minimize()
+
+    #print(result.params)
+
+    return (result.params['a'], result.params['b'], result)
+    
+def visi_fit_fixed_point(x, y,xo,yo):
+
+    # define objective function: returns the array to be minimized
+    def fcn2min(params, x, data):
+        """ model decaying sine wave, subtract data"""
+        a = params['a'].value
+
+        model = -1.0 + 2.0/(1.0 + (-1-a*xo + 2/(1.0 +yo)) + a * x)
+    
+        return model - data
+
+    # create a set of Parameters
+    params = Parameters()
+    params.add('a', value = 0.1, vary = True)
+
+    # do fit, here with leastsq model
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    result = minner.minimize()
+
+    #print(result.params)
+
+    return (result.params['a'],result)
 
 def linear_fit_with_error(x, y, y_err):
 
@@ -230,10 +360,10 @@ def linear_fit_with_error(x, y, y_err):
 
         model = a * x + b
         
-        #print('beware doing poisson')
-        #return 2*(data*np.log(data) - data*np.log(model) - (data-model)) #Poisson 
+        print('beware doing poisson')
+        return 2*(data*np.log(data) - data*np.log(model) - (data-model)) #Poisson 
         
-        return (model - data)**2/y_err**2
+        #return (model - data)**2/y_err**2
 
     # create a set of Parameters
     params = Parameters()

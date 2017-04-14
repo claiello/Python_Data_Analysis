@@ -453,7 +453,7 @@ def gmmone_tr_in_masked_channel(imagemask, imagemasked,imagemasked_is_4D=False):
         gc.collect()
         return darkother, brightother, darkone, brightone, np.sum(fac1)/imagemasked.shape[2]/imagemasked.shape[3], np.sum(fac2)/imagemasked.shape[2]/imagemasked.shape[3]
         
-def gmmone_tr_in_masked_channel_modif_memory_issue(imagemask, imagemasked,imagemasked_is_4D=False):
+def gmmone_tr_in_masked_channel_modif_memory_issue(imagemask, imagemasked=False,imagemasked_is_4D=False):
     
     img = np.copy(imagemask)
     classif = GMM(n_components=2, covariance_type='diag')
@@ -475,11 +475,11 @@ def gmmone_tr_in_masked_channel_modif_memory_issue(imagemask, imagemasked,imagem
     
     if not imagemasked_is_4D:
     
-        brightother = np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2]])
-        darkother = np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2]])
+        #brightother = np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2]])
+        #darkother = np.zeros([imagemasked.shape[0],imagemasked.shape[1],imagemasked.shape[2]])
         
-        fac1 = (binary_img)*np.isfinite(imagemask)*1
-        fac2 = (1-binary_img)*np.isfinite(imagemask)*1 
+        #fac1 = (binary_img)*np.isfinite(imagemask)*1
+       # fac2 = (1-binary_img)*np.isfinite(imagemask)*1 
         
         #brightother =  imagemasked * fac1 
         #darkother =  imagemasked * fac2        
