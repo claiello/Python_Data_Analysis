@@ -107,7 +107,6 @@ def do_visib_other_qttties(host,par2,par3,ax3,ax4,ax5,ax3a,ax4a,ax5a):
     toplotcurrent= np.delete(toplotcurrent, [4,5])
     toplotcurrentratio= np.delete(toplotcurrentratio, [4,5])
     print(Current_full.shape)
-    klklk
     
     kv = [10,15,5,16.8,7.5,12.5]
     let =  ['kv10','kv15','kv5','kv16pt8','kv7pt5','kv12pt5'] #kV, all at 379pA, 30mum aperture!!!!
@@ -232,7 +231,7 @@ def do_visib_other_qttties(host,par2,par3,ax3,ax4,ax5,ax3a,ax4a,ax5a):
     #par2 = host.twiny()
     #par3 = host.twiny()
    
-    #host.set_xlim([1.45,10])
+    host.set_xlim([1.66,3.92])
     par3.set_xlim([4, 17.8])
     par2.set_xlim([10, 13000])
     
@@ -240,7 +239,7 @@ def do_visib_other_qttties(host,par2,par3,ax3,ax4,ax5,ax3a,ax4a,ax5a):
     host.set_xlabel('Pixel size (nm)',fontsize=fsizepl)
    
     par2.set_xlabel('Electron beam current (pA)',fontsize=fsizepl)
-    par3.set_xlabel('Electron beam energy (kV)',fontsize=fsizepl)
+    par3.set_xlabel('Electron beam energy (keV)',fontsize=fsizepl)
     
     host.plot( Pixel_size, toplotpixelratio, marker='d',markersize=12,linestyle='',color='k', label='Ratio of intensities',markeredgecolor='None')
 
@@ -284,6 +283,7 @@ def do_visib_other_qttties(host,par2,par3,ax3,ax4,ax5,ax3a,ax4a,ax5a):
     par3.tick_params(labelsize=fsizenb)
     
     ax3.tick_params(labelsize=fsizenb)
+    ax3a.set_xlim([1.66,3.92])
     ax4.tick_params(labelsize=fsizenb)
     ax5.tick_params(labelsize=fsizenb)
     
@@ -325,7 +325,7 @@ def do_visib_other_qttties(host,par2,par3,ax3,ax4,ax5,ax3a,ax4a,ax5a):
     ax3.set_xlabel('Pixel size (nm), \n in the order of experiment',fontsize=fsizepl)
    
     ax4.set_xlabel('Electron beam current (pA), \n in the order of experiment',fontsize=fsizepl)
-    ax5.set_xlabel('Electron beam energy (kV), \n in the order of experiment',fontsize=fsizepl)
+    ax5.set_xlabel('Electron beam energy (keV), \n in the order of experiment',fontsize=fsizepl)
     
     ax3.plot(np.arange(0,len(toplotpixelred)),toplotpixelred, marker='^',markersize=12,linestyle='',color='r',markeredgecolor='None')
     ax3.plot(np.arange(0,len(toplotpixelred)),toplotpixelgreen, marker='^',markersize=12,linestyle='',color='g',markeredgecolor='None')
@@ -366,7 +366,7 @@ def do_visib_other_qttties(host,par2,par3,ax3,ax4,ax5,ax3a,ax4a,ax5a):
     ax3a.set_xlabel('Pixel size (nm)',fontsize=fsizepl)
    
     ax4a.set_xlabel('Electron beam current (pA)',fontsize=fsizepl)
-    ax5a.set_xlabel('Electron beam energy (kV)',fontsize=fsizepl)
+    ax5a.set_xlabel('Electron beam energy (keV)',fontsize=fsizepl)
     
     ax3a.plot(Pixel_size_full,toplotpixelred, marker='^',markersize=12,linestyle='',color='r',markeredgecolor='None')
     ax3a.plot(Pixel_size_full,toplotpixelgreen, marker='^',markersize=12,linestyle='',color='g',markeredgecolor='None')

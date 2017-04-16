@@ -9,7 +9,7 @@ Created on Wed Feb  8 22:27:35 2017
 from matplotlib.offsetbox import AnchoredOffsetbox
 class AnchoredScaleBar(AnchoredOffsetbox):
     def __init__(self, transform, size=0, label=None, horizontal = True, style = 'dark', loc=4,
-                 pad=0.1, borderpad=0.1, sep=2, prop=None, my_fontsize = None, **kwargs):
+                 pad=0.1, borderpad=0.1, sep=2, prop=None, my_fontsize = None, my_linewidth = None, **kwargs):
         """
         Draw a horizontal and/or vertical  bar with the size in data coordinate
         of the give axes. A label will be drawn underneath (center-aligned).
@@ -31,8 +31,11 @@ class AnchoredScaleBar(AnchoredOffsetbox):
             textcol = 'w'
         bars = AuxTransformBox(transform)
         endpt = (size, 0) if horizontal else (0, size)
-        art = mpatches.FancyArrowPatch((0, 0), endpt, color = textcol,
-                                       arrowstyle = "|-|")
+        
+        if my_linewidth is None:
+            art = mpatches.FancyArrowPatch((0, 0), endpt, color = textcol, arrowstyle = "|-|")
+        else:
+            art = mpatches.FancyArrowPatch((0, 0), endpt, color = textcol, arrowstyle = "|-|", linewidth = my_linewidth)
         # This doesn't work; why?
         #                              arrowstyle = mpatches.ArrowStyle.BarAB(1, 60, 1))
         bars.add_artist(art)

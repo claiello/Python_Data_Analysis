@@ -304,6 +304,7 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
     image0 = images[0,:,:] #se
     offset_images = images[1:images.shape[0],:,:]
     shift_vec = np.zeros([images.shape[0],2])
+    #gc.collect()
     
     oyp = 0
     oym = 0
@@ -324,6 +325,7 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
             oxp = shift_vec[k][1]
         if shift_vec[k][1] < oxm:
             oxm = shift_vec[k][1]
+        #gc.collect()
         
         print("Detected pixel offset (y, x):")
         print(shift)
@@ -335,14 +337,16 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
         #print(shift)
         
     offset_images_corr = np.zeros([images.shape[0],images.shape[1]+oyp-oym,images.shape[2]+oxp-oxm])
+    #gc.collect()
     
     offset_images_corr[0,-oym:images.shape[1]-oym,-oxm:images.shape[2]-oxm] = image0
+    #gc.collect()
     
     for k in range(images.shape[0]-1):
         
         offset_images_corr[k+1,-oym+shift_vec[k][0]:-oym+shift_vec[k][0]+images.shape[1],
                                -oxm+shift_vec[k][1]:-oxm+shift_vec[k][1]+images.shape[2]] = offset_images[k,:,:]
-    
+        #gc.collect()
     #Optional plotting
 #    fig1 = plt.figure(figsize=(8, 6), dpi=80)
 #    fig1.suptitle('Reference channel for registration')
@@ -358,16 +362,18 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
         if toberegistered2 is None:
         
             offset_images_corr2 = np.zeros([images.shape[0],toberegistered1.shape[1],images.shape[1]+oyp-oym,images.shape[2]+oxp-oxm])
+            #gc.collect()
        
             for kk in range(toberegistered1.shape[1]-1):
                 print(kk/(toberegistered1.shape[1]-1.0))
                 offset_images_corr2[0,kk,-oym:images.shape[1]-oym,-oxm:images.shape[2]-oxm] = toberegistered1[0,kk,:,:]
-            
+                #gc.collect()
+                
                 for k in range(images.shape[0]-1):
             
                     offset_images_corr2[k+1,kk,-oym+shift_vec[k][0]:-oym+shift_vec[k][0]+images.shape[1],
                                    -oxm+shift_vec[k][1]:-oxm+shift_vec[k][1]+images.shape[2]] = toberegistered1[k,kk,:,:]
-       
+                    #gc.collect()
        #OPTIONAL PLOTTING
 #            fig2 = plt.figure(figsize=(8, 6), dpi=80)
 #            fig2.suptitle('First passive channel for registration')

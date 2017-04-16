@@ -350,28 +350,32 @@ def visi_fit_fixed_point(x, y,xo,yo):
 
     return (result.params['a'],result)
 
-def linear_fit_with_error(x, y, y_err):
+def linear_fit_with_error(x, y, y_err, use_poisson = False):
 
     # define objective function: returns the array to be minimized
-    def fcn2min(params, x, data):
+    def fcn2min(params, x, data, use_poisson):
         """ model decaying sine wave, subtract data"""
         a = params['a'].value
         b = params['b'].value
 
         model = a * x + b
         
-        print('beware doing poisson')
-        return 2*(data*np.log(data) - data*np.log(model) - (data-model)) #Poisson 
-        
-        #return (model - data)**2/y_err**2
+
+        if use_poisson:
+            # doesn't work if data is negative
+            return 2*(data*np.log(data) - data*np.log(model) - (data-model)) #Poisson 
+        else:
+            return (model - data)**2/y_err**2
 
     # create a set of Parameters
     params = Parameters()
     params.add('a', value = 0.1, vary = True)
     params.add('b', value = 0.1, vary = True)
 
+    if use_poisson:
+        print('beware doing poisson')
     # do fit, here with leastsq model
-    minner = Minimizer(fcn2min, params, fcn_args=(x, y))
+    minner = Minimizer(fcn2min, params, fcn_args=(x, y, use_poisson))
     result = minner.minimize()
 
     #print(result.params)

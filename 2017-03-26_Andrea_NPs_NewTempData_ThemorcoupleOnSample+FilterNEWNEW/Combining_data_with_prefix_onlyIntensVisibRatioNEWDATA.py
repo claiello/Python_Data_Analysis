@@ -80,9 +80,12 @@ def do_pic(ax3,fig1):
     FACTOR = 1.0
     
     Il_data3d = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Il_dataGOINGDOWN.npz')
-    il_data3d = Il_data3d['data']  
+    #il_data3d = Il_data3d['data']  
+    # replacing with calibrated temperature values from the heating up
+    il_data3d = np.array([29.767038939801189, 32.989664557794143, 41.60740810742837, 50.690450376594001, 59.078831716569162, 71.049952240480138])[::-1]
     Il_data_std3d = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Il_data_stdGOINGDOWN.npz')
-    il_data_std3d = Il_data_std3d['data']  
+    #il_data_std3d = Il_data_std3d['data']  
+    il_data_std3d = np.array([0.15004144802124503, 0.13120359603133785, 0.07976927921856572, 0.10440306773732771, 0.45758747280836515, 0.74933681763885074])[::-1]
     
     Red_int_array3d = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Red_int_arrayGOINGDOWN.npz') 
     red_int_array3d = FACTOR*Red_int_array3d['data']
@@ -206,7 +209,7 @@ def do_pic(ax3,fig1):
         ax3.annotate('', xy=(51.5,1.25), xytext=(58,1.13),
                 arrowprops=dict(facecolor='black', shrink=0.05))  
         
-        left, bottom, width, height = [0.48, 0.6, 0.05,0.05]
+        left, bottom, width, height = [0.48, 0.625, 0.05,0.05]
         axinset11 = fig1.add_axes([left, bottom, width, height])
         axinset11.plot( il_data3EACHAVG.flatten()[5::6], ratiuEACHAVG[5::6], marker='d',markersize=12,ls='',color='r',label='Ratio of intensities',markeredgecolor='None')
         #axinset11.spines['right'].set_visible(False)
@@ -296,7 +299,7 @@ def do_pic(ax3,fig1):
         
         ax3.set_xlim([20,75])
         ax3.set_xticks([25,30,40,50,60,70])
-        #ax3.set_ylim([0.9,1.6])
+        ax3.set_ylim(ymin = 0.9, ymax = 1.6)
        
         ax3.set_yticks([1,1.5])
         #ax3.legend(loc='upper left',frameon=False, fontsize=fsizenb,numpoints=1)
@@ -367,8 +370,8 @@ def do_pic(ax3,fig1):
         values = np.array([])
         for s1 in [-1, +1]:
             for ss1 in [-1, +1]:
-                    my_hlp = d_parab( x_vec3B, a + s1*sigma_dev[0], b + ss1*sigma_dev[1],1.0)
-        values = np.vstack((values, my_hlp)) if values.size else my_hlp
+                    my_hlp = d_parab( x_vec3B, a + s1*sigma_dev[0], b + ss1*sigma_dev[1], 1.0)
+                    values = np.vstack((values, my_hlp)) if values.size else my_hlp
         fitError = np.std(values, axis=0) 
 
         ax3.fill_between(x_vec3B,  
@@ -401,13 +404,23 @@ def do_pic(ax3,fig1):
         for s1 in [-1, +1]:
             for ss1 in [-1, +1]:
                 for sss1 in [-1, +1]:
-                    my_hlp = d_paraball( x_vec3Bd, ad + s1*sigma_devd[0], bd + ss1*sigma_devd[1],cd + sss1*sigma_devd[2]) 
-        values = np.vstack((values, my_hlp)) if values.size else my_hlp
+                    my_hlp = d_paraball( x_vec3Bd, ad + s1*sigma_devd[0], bd + ss1*sigma_devd[1], cd + sss1*sigma_devd[2]) 
+                    values = np.vstack((values, my_hlp)) if values.size else my_hlp
         fitError = np.std(values, axis=0) 
         
-        ax3.fill_between(x_vec3Bd,  
-                         ad.value*(x_vec3Bd)**2 + bd.value*(x_vec3Bd) + cd.value-1.0*fitError,
-                         ad.value*(x_vec3Bd)**2 + bd.value*(x_vec3Bd) + cd.value+1.0*fitError,  
+        
+
+#        def d_paraball(x,aa,bb,c):
+#            return aa*(x)**2 + b*(x) + c
+
+#ad.value*(x_vec3Bd)**2 + bd.value*(x_vec3Bd) + cd.value-1.0*fitError,
+#ad.value*(x_vec3Bd)**2 + bd.value*(x_vec3Bd) + cd.value+1.0*fitError,  
+
+        ax3.fill_between(x_vec3Bd,
+                        #d_paraball( x_vec3Bd, ad.value, bd.value, cd.value ) + 1.0*fitError,
+                        #d_paraball( x_vec3Bd, ad.value, bd.value, cd.value ) + 1.0*fitError,
+                         ad.value*(x_vec3Bd)**2 + bd.value*(x_vec3Bd) + cd.value+1.0*fitError,
+                         ad.value*(x_vec3Bd)**2 + bd.value*(x_vec3Bd) + cd.value-1.0*fitError, 
                          color ='b', #[168/256,175/256,175/256],
                          edgecolor='b',
                          facecolor='b', #[168/256,175/256,175/256],

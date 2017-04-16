@@ -105,44 +105,50 @@ index= 0
 se25 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/' + leto[index] +'SEchannel.npz',mmap_mode='r')
 arr_img25 = se25['data'][xinit[index]:xend[index],yinit[index]:yend[index]] 
    
-ypos = 0.5#0.6475#0.6175
+ypos = 0.85#0.6475#0.6175
 sizefig = 0.09 #.105
 
 inset1 = fig1.add_axes([0.45, ypos, sizefig, sizefig]) #was 0.55
 inset1.imshow(arr_img70,cmap = cm.Greys_r)
-sbar = sb.AnchoredScaleBar(inset1.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb)
+sbar = sb.AnchoredScaleBar(inset1.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth = 2.0)
 inset1.add_artist(sbar)    
 plt.setp(inset1, xticks=[], yticks=[])        
+inset1.set_title(r'70 $^{\circ}$C', fontsize = fsizepl)
 
 inset2 = fig1.add_axes([0.37, ypos, sizefig, sizefig]) #was 0.55
 inset2.imshow(arr_img60,cmap = cm.Greys_r)
-sbar = sb.AnchoredScaleBar(inset2.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb)
+sbar = sb.AnchoredScaleBar(inset2.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth = 2.0)
 inset2.add_artist(sbar)    
 plt.setp(inset2, xticks=[], yticks=[])
+inset2.set_title(r'60 $^{\circ}$C', fontsize = fsizepl)
 
 inset3 = fig1.add_axes([0.29, ypos, sizefig, sizefig]) #was 0.55
 inset3.imshow(arr_img50,cmap = cm.Greys_r)
-sbar = sb.AnchoredScaleBar(inset3.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb)
+sbar = sb.AnchoredScaleBar(inset3.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth = 2.0)
 inset3.add_artist(sbar)    
 plt.setp(inset3, xticks=[], yticks=[])
+inset3.set_title(r'50 $^{\circ}$C', fontsize = fsizepl)
 
 inset4 = fig1.add_axes([0.21,ypos, sizefig, sizefig]) #was 0.55
 inset4.imshow(arr_img40,cmap = cm.Greys_r)
-sbar = sb.AnchoredScaleBar(inset4.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb)
+sbar = sb.AnchoredScaleBar(inset4.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth = 2.0)
 inset4.add_artist(sbar)    
 plt.setp(inset4, xticks=[], yticks=[])
+inset4.set_title(r'40 $^{\circ}$C', fontsize = fsizepl)
 
 inset5 = fig1.add_axes([0.13, ypos, sizefig, sizefig]) #was 0.55
 inset5.imshow(arr_img30,cmap = cm.Greys_r)
-sbar = sb.AnchoredScaleBar(inset5.transData, length_scalebar_in_pixels,'', style = 'dark', loc = 4, my_fontsize = fsizenb)
+sbar = sb.AnchoredScaleBar(inset5.transData, length_scalebar_in_pixels,'', style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth = 2.0)
 inset5.add_artist(sbar)    
 plt.setp(inset5, xticks=[], yticks=[])
+inset5.set_title(r'30 $^{\circ}$C', fontsize = fsizepl)
 
 inset6 = fig1.add_axes([0.05, ypos, sizefig, sizefig]) #was 0.55
 inset6.imshow(arr_img25,cmap = cm.Greys_r)
-sbar = sb.AnchoredScaleBar(inset6.transData, length_scalebar_in_pixels,scalebar_legend, style = 'dark', loc = 8, my_fontsize = fsizenb)
+sbar = sb.AnchoredScaleBar(inset6.transData, length_scalebar_in_pixels,scalebar_legend, style = 'dark', loc = 8, my_fontsize = fsizenb, my_linewidth = 2.0)
 inset6.add_artist(sbar)    
 plt.setp(inset6, xticks=[], yticks=[])
+inset6.set_title(r'25 $^{\circ}$C', fontsize = fsizepl)
 
 ################ A
 ax3 = plt.subplot2grid((nolines,noplots), (1,0), colspan=6, rowspan=2)

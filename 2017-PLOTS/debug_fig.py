@@ -137,113 +137,24 @@ if True:
     ccerr = np.empty([taured.shape[1]])   
     bb = np.empty([taured.shape[1]])    
     dd = np.empty([taured.shape[1]]) 
-    for jjj in np.arange(1,taured.shape[1]):
-        print(jjj)
-        #####NEEDS TO BE FITTED USING POISSON - LOOK FOR OUTPUT "BEWARE DOING POISSON"
-        (a,b,result) = linear_fit_with_error((xvec), unumpy.nominal_values(taured[:,jjj]), unumpy.std_devs(taured[:,jjj]), use_poisson = True)
-        (c,d,result2) = linear_fit_with_error((xvec) , unumpy.nominal_values(taublue[:,jjj]), unumpy.std_devs(taublue[:,jjj]), use_poisson = True)
-        aa[jjj] = a
-        cc[jjj] = c
-        bb[jjj] = b
-        dd[jjj] = d
-        aaerr[jjj] = result.params['a'].stderr
-        ccerr[jjj] = result2.params['a'].stderr
-        
-    step = 49 #was 50
-    colors = iter(cm.rainbow(np.linspace(0, 1, len(np.arange(0,taured.shape[1],step)))))   
-    inittime = 5 #was 1              
-    for jjj in np.arange(inittime,taured.shape[1],step):
-        colorful = next(colors)
-        hlp1= unumpy.nominal_values(taured[:,jjj])
-        hlp2= unumpy.nominal_values(taublue[:,jjj])
-        #hlpcumu below is VISIB of CUMU of TAUS
-        hlpcumu = (np.cumsum(unumpy.nominal_values(taured[:,jjj]))-np.cumsum(unumpy.nominal_values(taublue[:,jjj])))/(np.cumsum(unumpy.nominal_values(taured[:,jjj]))+np.cumsum(unumpy.nominal_values(taublue[:,jjj])))
-        
-        ax1.plot(xvec,hlp1 ,marker='o',ls='None',color=colorful,markersize=8)
-        ax1.plot(xvec,aa[jjj]*(xvec) + bb[jjj],ls='-',color=colorful,markersize=8)   
       
-        if jjj < 165:
-            ax3.plot(xvec,hlp2 ,marker='o',ls='None',color=colorful,markersize=8)
-            ax3.plot(xvec,cc[jjj]*(xvec) + dd[jjj],ls='-',color=colorful,markersize=8)
-        
-        if jjj == inittime:
-            ax3.text(60, 85, '   ' + 'time in\n 50 $\mu$s intervals', fontsize=fsizenb, va='center',ha='center')
-            ax3.annotate('', xy=(60,175), xytext=(60,110),
-                arrowprops=dict(facecolor='black', shrink=0.05))   
-            ax3.text(-0.18, 1.0, 'a', transform=ax3.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', bbox={'facecolor':'None', 'pad':5})
-        
-        #'Time in 50 $\mu$s \n    intervals
-        ax1.set_ylabel(r'Red band $\tau$ ($\mu$s)',fontsize=fsizepl)
-        ax1.set_xlabel('Temperature at sample ($^{\circ}$C)',fontsize=fsizepl)
-        ax1.tick_params(labelsize=fsizenb)
-        #ax1.set_ylim([0,305])
-        ax1.set_xlim([20, 75])
-        ax1.set_xticks([25,30,40,50,60,70]) 
-        ax1.set_yticks([100,200,300])
-        ax1.yaxis.set_label_position("right")
-        
-        ax3.set_ylabel(r'Green band $\tau$ ($\mu$s)',fontsize=fsizepl)
-       
-        #ax3.set_ylim([0,305])
-        ax3.set_xlim([20,75])
-        ax3.set_yticks([100,200,300])
-        ax3.set_xticks([25,30,40,50,60,60,70])
-        ax3.tick_params(labelsize=fsizenb)
-        ax3.set_xlabel('Temperature at sample ($^{\circ}$C)',fontsize=fsizepl)
-        
-        ax1.set_ylim([-1,375])
-        ax3.set_ylim([-1,375])
-       
     #labels
     xmin = 0
     xmax = 1390
     indicetonorm = 5
     starrtred = 25
     starrtgreen = 15
-    ax4.plot(np.arange(1+starrtred,taured.shape[1]+1),np.abs(100.0*aa[starrtred:]/unumpy.nominal_values(taured[indicetonorm,starrtred:])),ls='--',color='r',lw=2)
-    ax4.plot(np.arange(1+starrtgreen,taured.shape[1]+1),np.abs(100.0*cc[starrtgreen:]/unumpy.nominal_values(taublue[indicetonorm,starrtgreen:])),ls='--',color='g',lw=2)
-    ax4.text(-0.18, 1.0, 'b', transform=ax4.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', bbox={'facecolor':'None', 'pad':5})
-    
-    ax4.set_ylabel('Abs. of norm. slope \n' +  r'$\vert\bar{\alpha}\vert$ $\equiv$ $\vert\partial\tau$/$\partial$T$\vert$/$\tau_{\sim\,25\,^{\circ}C}$' + ' ($\%$ $^{\circ}$C$^{-1}$)',fontsize=fsizepl)
-    ax4.set_xlabel('Transient cathodoluminescence \n acquisition time ($\mu$s)',fontsize=fsizepl)
-    ax4.tick_params(labelsize=fsizenb)
-    ax4.set_xticks([500,1000])#,1500])
-    #ax4.set_yticks([0.25, -0.25, -0.75, -1.25])
-    annotated = 'previously reported\n (fluorescence lifetime)'
-    ax4.plot(1000,0.54, marker='o',color='g', markeredgewidth=0.0, markersize = 8)
-    ax4.annotate(annotated, xy=(1000, 0.53), xytext=(1000,0.4), fontsize=fsizenb,
-            arrowprops=dict(facecolor='k', edgecolor='None', shrink=0.05), va='center',ha='center')
-            
-    ####FIND MINIMUM
-    minslopered = np.max(np.abs(100.0*aa/unumpy.nominal_values(taured[indicetonorm,:])))
-    timeminslopered = find_nearest(np.abs(100.0*aa/unumpy.nominal_values(taured[indicetonorm,:])),minslopered)
-    minslopegreen = np.max(np.abs(100.0*cc/unumpy.nominal_values(taublue[indicetonorm,:])))
-    timeminslopegreen = find_nearest(np.abs(100.0*cc/unumpy.nominal_values(taublue[indicetonorm,:])),minslopegreen)
-  
-#    ax4.vlines(timeminslopered,ymin=-1, ymax=minslopered, linestyle='dashed',color='r',lw=2,zorder=1)
-#    ax4.vlines(timeminslopegreen,ymin=-1, ymax=minslopegreen,linestyle='dashed',color='g',lw=2,zorder=1)
-    ax4.set_xticks([500,1000]) #,timeminslopered,timeminslopegreen])
-    ax4.plot(timeminslopered,minslopered, marker='o',color='r', markeredgewidth=0.0, markersize = 8)
-    ax4.plot(timeminslopegreen,minslopegreen, marker='o',color='g', markeredgewidth=0.0, markersize = 8)
-    ax4.hlines(minslopered,xmax=timeminslopered, xmin=15, linestyle='solid',color='r',lw=2,zorder=1)
-    ax4.hlines(minslopegreen,xmax=timeminslopegreen, xmin=15, linestyle='solid',color='g',lw=2,zorder=1)
-    ax4.hlines(0.54,xmax=1000, xmin=0, linestyle='solid',color='g',lw=2,zorder=1)
-    ax4.set_ylim([0,1.02])
-    ax4.set_yticks([0.5, 1])
-    ax4.set_yticklabels(['0.5','1'])
-    ax4.set_xlim([15,1400])
-        
+               
+     
     sys.path.append("../2017-01-28_Gradient_Sensitivity/") # necessary for the tex fonts
     from calc_sens import get_sens  
-    (xxx, eta_taured)  = get_sens(taured, xvec,np.arange(1,taured.shape[1]+1), use_poisson = True)
-    (xxx, eta_taublue)  = get_sens(taublue, xvec,np.arange(1,taured.shape[1]+1), use_poisson = True)
-    
+       
     ##### SENSITIVITY OF OTHER QUANTITIES
-    (xxx, eta_visib) = get_sens((taublue-taured)/(taured+taublue), xvec,np.arange(1,taured.shape[1]+1))
-    (xxx, eta_ratio) = get_sens((taublue)/(taured), xvec,np.arange(1,taured.shape[1]+1), use_poisson = True)
-    print('do viscumcounts')
+    
     (xxx, eta_viscumcounts) = get_sens(viscumcounts(red, np.sqrt(red)/np.sqrt(Notr),blue, np.sqrt(blue)/np.sqrt(Notr)), xvec,np.arange(1,taured.shape[1]+1))
-           
+    
+    asd
+
     ax0 = plt.subplot2grid((nolines,noplots), (1,1), colspan=1, rowspan=1)
     ax0.semilogy(np.arange(1+starrtred,taured.shape[1]+1),eta_taured[starrtred:] ,color='r',ls='--',lw=2)
     ax0.semilogy(np.arange(1+starrtgreen,taured.shape[1]+1),eta_taublue[starrtgreen:] ,color='g',ls='--',lw=2)
@@ -255,22 +166,22 @@ if True:
     ax0.yaxis.set_label_position("right")
     ax0.set_xticks([500,1000])#,1500])
     #ax0.set_ylim((0.0065,0.15))
-    ax0.set_ylabel(r'Sensitivity $\delta$T $\equiv$ $\sigma_{\textrm{signal}}$/$\vert\partial$(signal)/$\partial$T$\vert$ ($^{\circ}$C)',fontsize=fsizepl)
+    ax0.set_ylabel(r'Sensitivity $\delta$T $\equiv$ $\sigma_{\tau}$/$\vert\partial\tau$/$\partial$T$\vert$ ($^{\circ}$C)',fontsize=fsizepl)
     ax0.set_xlabel('Transient cathodoluminescence \n acquisition time ($\mu$s)',fontsize=fsizepl)
     #ax0.set_yticks([0.01,0.1])
     #ax0.set_yticklabels(['0.01','0.1'])
     ax0.set_xlim([xmin, xmax])
     ax0.tick_params(labelsize=fsizenb) 
     startpt = 10
-    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1),eta_ratio[startpt:] ,ls='--',lw=2,color='k',label=r'Ratio of $\tau$')
-    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1),eta_visib[startpt:] ,ls='dotted',lw=2,color='k',label=r'Visibility of $\tau$')
-    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1),eta_viscumcounts[startpt:] ,color='k',ls='-.',lw=2,label=r'Visibility of cumul. cts.')
+    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1),eta_ratio[startpt:] ,ls='--',lw=2,color='k')
+    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1),eta_visib[startpt:] ,ls='--',lw=2,color='k')
+    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1),eta_viscumcounts[startpt:] ,color='k',ls='--',lw=2)
     
-#    stepchen = 100
-#    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1,stepchen),eta_ratio[startpt::stepchen] ,marker='d',ls='None',label=r'Ratio of $\tau$', markersize=12, markeredgecolor='None', color='k')
-#    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1,stepchen),eta_visib[startpt::stepchen] ,marker='o',ls='None',label=r'Visibility of $\tau$', markersize=12, markeredgecolor='None', color='k')
-#    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1,stepchen),eta_viscumcounts[startpt::stepchen] ,marker='h',color='k',ls='None',label=r'Visibility of cumul. cts.', markersize=12, markeredgecolor='None')
-
+    stepchen = 100
+    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1,stepchen),eta_ratio[startpt::stepchen] ,marker='d',ls='None',label=r'Ratio of $\tau$', markersize=12, markeredgecolor='None', color='k')
+    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1,stepchen),eta_visib[startpt::stepchen] ,marker='o',ls='None',label=r'Visibility of $\tau$', markersize=12, markeredgecolor='None', color='k')
+    ax0.semilogy(np.arange(1+startpt,taured.shape[1]+1,stepchen),eta_viscumcounts[startpt::stepchen] ,marker='h',color='k',ls='None',label=r'Visibility of cumul. cts.', markersize=12, markeredgecolor='None')
+    
     ax0.legend(loc='best',numpoints=1,frameon=False, fontsize=fsizenb)
     ####FIND MINIMUM
     minslopered = np.min(eta_taured[starrtred:])
@@ -295,8 +206,6 @@ if True:
     ax0.set_yticks([0.01, 0.1, 1]) #, minslopered,minslopegreen])
     ax0.set_yticklabels(['0.01','0.1','1']) #,'0.021','0.048'])
     ax0.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
-
-    ax0.set_ylim([0.0095, 1.05])
 
 plt.tight_layout()
 multipage_longer('Fig5.pdf',dpi=80)

@@ -2,8 +2,8 @@ import os
 import sys
 sys.path.append("/usr/bin") # necessary for the tex fonts
 sys.path.append("../Python modules/") # necessary for the tex fonts
-import scipy as sp
-import scipy.misc
+#import scipy as sp
+#import scipy.misc
 import matplotlib
 import matplotlib.pyplot as plt
 import h5py
@@ -31,7 +31,7 @@ import matplotlib.cm as cm
 #from FluoDecay import *
 #from PlottingFcts import *
 #from mpl_toolkits.axes_grid1 import make_axes_locatable
-import scipy.misc
+#import scipy.misc
 #import matplotlib.animation as animation
 import gc
 import tempfile
@@ -54,7 +54,7 @@ from CreateDatasets import *
 def moving_average(a,n=3):
     vec = np.cumsum(a)
     vec[n:] = vec[n:] - vec[:-n]
-    return (1/n)*vec[n-1:]
+    return (1.0/n)*vec[n-1:]
 
 let = ['RT','N30','N40','N50','N60', 'N70']
 letd = ['N70D','N60D','N50D', 'N40D','N30D','RTD']
@@ -86,7 +86,13 @@ x = 89000 # = (450000 - 5000)/5
 ind_hlp = np.array([0.5 * x, 1.5 * x, 2.5 * x, 3.5 * x, 4.5 * x], dtype = np.int) # helper indices for the moved_averaged array
 in1 = np.array([0,x,2*x,3*x,4*x],dtype=np.int)
 in2 = np.array([x,2*x,3*x,4*x,5*x],dtype=np.int)
-    
+
+result_new_x = np.array([])
+result_new_y = np.array([])
+
+result_down_y = np.array([])
+
+
 for index in listofindex:
     
     print(index)
@@ -121,9 +127,12 @@ for index in listofindex:
         TUP = np.array([np.average(t_up[0:x]),np.average(t_up[x:2*x]),np.average(t_up[2*x:3*x]),np.average(t_up[3*x:4*x]),np.average(t_up[4*x:5*x])])
         heating_volt_to_temp = temp_up[index][1] + (temp_up[index][0] - temp_up[index][1])/(t_up[0] - t_up[-1])  *  (TUP - t_up[-1])
         #heating_volt_to_temp = temp_up[index][1] + (temp_up[index][0] - temp_up[index][1])/(t_up[0] - t_up[-1])  *  (t_up[ind_hlp] - t_up[-1])
-        
-        print(heating_volt_to_temp)
-    
+
+        #result_new = np.vstack((result_new, new_hlp)) if result_new.size else new_hlp
+        result_new_x = np.append(result_new_x, heating_volt_to_temp)
+        result_new_y = np.append(result_new_y, TUP)
+
+
     axvec[index].plot(t_down, color='k')
     result_down.append([temp_down[index][0], temp_down[index][1], t_down[0], t_down[-1]])
     
@@ -132,46 +141,70 @@ for index in listofindex:
     TDOWN = np.array([np.average(t_down[0:x]),np.average(t_down[x:2*x]),np.average(t_down[2*x:3*x]),np.average(t_down[3*x:4*x]),np.average(t_down[4*x:5*x])])
     cooling_volt_to_temp = temp_down[index][1] + (temp_down[index][0] - temp_down[index][1])/(t_down[0] - t_down[-1])  *  (TDOWN - t_down[-1])
     #cooling_volt_to_temp = temp_down[index][1] + (temp_down[index][0] - temp_down[index][1])/(t_down[0] - t_down[-1])  *  (t_down[ind_hlp] - t_down[-1])    
-    print(cooling_volt_to_temp)
-    
+    #print(cooling_volt_to_temp)
+        
+    result_down_y = np.append(result_down_y, TDOWN)
     
 
 result_up = np.array(result_up)
 
 result_down = np.array(result_down)
 
+from my_fits import *
 
+a,b,fit_result = linear_fit(result_new_x, result_new_y)
+
+
+
+plt.figure()
+plt.plot(result_new_x, result_new_y, 'or')
+plt.plot(np.append(0, result_new_x), a * np.append(0, result_new_x) + b, 'r-')
+
+# plot inverted function to determine the temperature from the up calibration
+plt.plot( (result_down_y - b)/a , result_down_y, 'ob')
+
+new_temperatures_down = (result_down_y - b)/a
+
+down_mean = []
+down_std = []
+for k in range(6):
+    down_mean.append( np.mean(new_temperatures_down[k*5:k*5+5]) )
+    down_std.append( np.std(new_temperatures_down[k*5:k*5+5]) )
+
+
+print(down_mean)
+print(down_std)
 
 plt.show()   
-lklklk
-
-UP
-DOWN (30 and 40C are bad)
-
-0
-[ 22.89999962  22.89999962  22.89999962  22.89999962  22.89999962]
-1
-index is
-1
-[ 30.24231529  30.43283653  30.54502869  30.61672211  30.67356873]
-[ 30.67066002  34.57613373  35.5042572   34.56672668  32.5168457 ]
-2
-index is
-2
-[ 39.62433624  39.77347946  39.86793518  39.93108368  39.97883606]
-[ 39.42526627  38.67329025  38.5286026   39.00093842  39.45114136]
-3
-index is
-3
-[ 50.28258896  50.85370255  51.2881012   51.61391068  51.85993195]
-[ 47.03316879  41.10401535  40.21371078  42.79360199  46.74985123]
-4
-index is
-4
-[ 59.79606628  59.98893356  60.12455368  60.27425385  60.38433838]
-[ 60.27148056  59.86600113  59.19314957  58.39229965  57.50851822]
-5
-index is
-5
-[ 69.90750122  70.30992889  70.62423706  70.83724213  71.00095367]
-[ 70.01960754  70.42518616  70.72190857  70.93533325  71.11050415]
+#lklklk
+#
+#UP
+#DOWN (30 and 40C are bad)
+#
+#0
+#[ 22.89999962  22.89999962  22.89999962  22.89999962  22.89999962]
+#1
+#index is
+#1
+#[ 30.24231529  30.43283653  30.54502869  30.61672211  30.67356873]
+#[ 30.67066002  34.57613373  35.5042572   34.56672668  32.5168457 ]
+#2
+#index is
+#2
+#[ 39.62433624  39.77347946  39.86793518  39.93108368  39.97883606]
+#[ 39.42526627  38.67329025  38.5286026   39.00093842  39.45114136]
+#3
+#index is
+#3
+#[ 50.28258896  50.85370255  51.2881012   51.61391068  51.85993195]
+#[ 47.03316879  41.10401535  40.21371078  42.79360199  46.74985123]
+#4
+#index is
+#4
+#[ 59.79606628  59.98893356  60.12455368  60.27425385  60.38433838]
+#[ 60.27148056  59.86600113  59.19314957  58.39229965  57.50851822]
+#5
+#index is
+#5
+#[ 69.90750122  70.30992889  70.62423706  70.83724213  71.00095367]
+#[ 70.01960754  70.42518616  70.72190857  70.93533325  71.11050415]
