@@ -68,6 +68,7 @@ let = ['Try1','Try2','Try3']
 
 #taken in the order above
 
+index = 0
 #for index in np.arange(0,len(nametr)):
 if True:
     
@@ -90,63 +91,71 @@ if True:
     gc.collect()
     #red1_dset0  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
     red2_dset0  = file3['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scan
+    
+    
+    
     redall = np.vstack((redall,red2_dset0[1:,:,:,cutiny:])) 
+    
+    
     del red2_dset0
     gc.collect()
     file3.close()
     gc.collect()
     print('2 done')
     
-    file4    = h5py.File(nametr[2] + '.hdf5', mmap_mode='r')  
-    gc.collect()
+    #file4    = h5py.File(nametr[2] + '.hdf5', mmap_mode='r')  
+    #gc.collect()
     #red1_dset0  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
-    red3_dset0  = file4['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 
+    #red3_dset0  = file4['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 
     
-    aux0 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
-    red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
-    gc.collect()
-    print('3 done')
-    aux1 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
-    red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
-    gc.collect()
-    print('4 done')
-    aux2 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
-    red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
-    gc.collect()
-    print('5 done')
-    aux3 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
-    red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
-    gc.collect()
-    print('6 done')
-    aux4 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
-    del red3_dset0
-    gc.collect()
-    file4.close()
-    gc.collect()
-    print('7 done')
+    #aux0 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
+    #red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
+    #gc.collect()
+    #print('3 done')
+    #aux1 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
+    #red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
+    #gc.collect()
+    #print('4 done')
+    #aux2 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
+    #red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
+    #gc.collect()
+    #print('5 done')
+    #aux3 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
+    #red3_dset0 = np.delete(red3_dset0, [0], axis = (0))
+    #gc.collect()
+    #print('6 done')
+    #aux4 = red3_dset0[0,:,:,cutiny:].reshape([1,red3_dset0.shape[1],red3_dset0.shape[2],redall.shape[3]])
+    #del red3_dset0
+    #gc.collect()
+    #file4.close()
+    #gc.collect()
+    #print('7 done')
    
-    redall = np.vstack((redall,aux0))
-    del aux0
-    gc.collect()
-    print('8 done')
-    redall = np.vstack((redall,aux1))
-    del aux1
-    gc.collect()
-    print('9 done')
-    redall = np.vstack((redall,aux2))
-    del aux2
-    gc.collect()
-    print('10 done')
-    redall = np.vstack((redall,aux3))
-    del aux3
-    gc.collect()
-    print('11 done')
-    redall = np.vstack((redall,aux4))
-    del aux4
-    print('12 done')
-    gc.collect()
-    print(redall.shape) 
+    #redall = np.vstack((redall,aux0))
+    #del aux0
+    #gc.collect()
+    #print('8 done')
+    #redall = np.vstack((redall,aux1))
+    #del aux1
+    #gc.collect()
+    #print('9 done')
+    #redall = np.vstack((redall,aux2))
+    #del aux2
+    #gc.collect()
+    #print('10 done')
+    #redall = np.vstack((redall,aux3))
+    #del aux3
+    #gc.collect()
+    #print('11 done')
+    #redall = np.vstack((redall,aux4))
+    #del aux4
+    #print('12 done')
+    #gc.collect()
+    #print(redall.shape) 
     
+
+
+
     file2    = h5py.File(nametr[0] + '.hdf5', mmap_mode='r')  
     se1_dset0   = file2['/data/Analog channel 1 : SE2/data'] 
     se1_dset2 = np.array(se1_dset0,dtype=np.float32) 
@@ -159,11 +168,11 @@ if True:
     del se2_dset0
     gc.collect()
     
-    file4    = h5py.File(nametr[2] + '.hdf5', mmap_mode='r')  
-    se3_dset0   = file4['/data/Analog channel 1 : SE2/data'] 
-    se3_dset2 = np.array(se3_dset0,dtype=np.float32) 
-    del se3_dset0
-    gc.collect()
+    #file4    = h5py.File(nametr[2] + '.hdf5', mmap_mode='r')  
+    #se3_dset0   = file4['/data/Analog channel 1 : SE2/data'] 
+    #se3_dset2 = np.array(se3_dset0,dtype=np.float32) 
+    #del se3_dset0
+    #gc.collect()
     
     seall = np.empty([])
     seall = se1_dset2[1:,:,:]
@@ -172,17 +181,17 @@ if True:
     seall = np.vstack((seall, se2_dset2[1:,:,:])) 
     del se2_dset2
     gc.collect()
-    seall = np.vstack((seall, se3_dset2)) 
-    del se3_dset2
-    gc.collect()
+    #seall = np.vstack((seall, se3_dset2)) 
+    #del se3_dset2
+    #gc.collect()
     print(seall.shape)
     
     file2.close()
     file3.close()
-    file4.close()
+    #file4.close()
     gc.collect() 
     
-    red1_dset =np.array(redall,dtype=np.float32)/1.0e3 #,dtype=np.float32)/1.0e3 #[0:No_experiments[index],:,:,:])/1.0e3 # np.array(red1_dset0,dtype=np.float32)/1.0e3
+    red1_dset = np.array(redall,dtype=np.float32)/1.0e3 #,dtype=np.float32)/1.0e3 #[0:No_experiments[index],:,:,:])/1.0e3 # np.array(red1_dset0,dtype=np.float32)/1.0e3
     del redall
     gc.collect()
 
@@ -192,8 +201,6 @@ if True:
     se1_dset_reg, red1_dset_reg, red1_dset_reg_all = reg_time_resolved_images_to_se(seall, red1_dset)
     gc.collect()
 
-    del se1_dset2, red1_dset  
-    gc.collect()
    
    
         

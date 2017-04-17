@@ -61,6 +61,9 @@ from uncertainties import unumpy
 
 from boe_segment import give_bolinha
 
+from calc_exp_hist import *
+
+
 #from skimage.morphology import black_tophat, skeletonize, convex_hull_image
 #from skimage import segmentation
 #from skimage.morphology import erosion, dilation, opening, closing, white_tophat
@@ -105,6 +108,11 @@ def pickvec(lab):
 def tor(area):
     
     return 2*np.sqrt(2.*area/(3.*np.sqrt(3)))
+    
+def moving_average(a,n=3):
+        ret = np.cumsum(a)
+        ret[n:] = ret[n:] - ret[:-n]
+        return ret[n-1:]/n
 
 sizex = 8
 sizey=6
@@ -143,6 +151,60 @@ axratiomag = plt.subplot2grid((nolines,noplots), (4,0), colspan=2, rowspan=2)
 axtaumag = plt.subplot2grid((nolines,noplots), (6,0), colspan=2, rowspan=2)
 axstdmag = plt.subplot2grid((nolines,noplots), (8,0), colspan=2, rowspan=2)
 
+axratiomag.set_xlim([0.5,4.5])
+axratiomag.set_xticks([1,2,3,4])
+axratiomag.set_xticklabels(['150','300','450','750'])
+movav = 200
+
+axratiomag.spines['right'].set_visible(False)
+axratiomag.spines['top'].set_visible(False)
+axratiomag.xaxis.set_ticks_position('bottom')
+axratiomag.yaxis.set_ticks_position('left')
+axratiomag.set_ylabel(r'Ratio',fontsize=fsizepl)
+axratiomag.set_xlabel('Magnification (kX)',fontsize=fsizepl)
+
+axtaumag.spines['right'].set_visible(False)
+axtaumag.spines['top'].set_visible(False)
+axtaumag.xaxis.set_ticks_position('bottom')
+axtaumag.yaxis.set_ticks_position('left')
+axtaumag.set_ylabel(r'$\tau$ ($\mu$s)',fontsize=fsizepl)
+axtaumag.set_xticks([500,1000])
+axtaumag.set_xticklabels([])
+
+axstdmag.spines['right'].set_visible(False)
+axstdmag.spines['top'].set_visible(False)
+axstdmag.xaxis.set_ticks_position('bottom')
+axstdmag.yaxis.set_ticks_position('left')
+axstdmag.set_ylabel(r'$\sigma_{\tau}$/$\tau$ ($\%$)',fontsize=fsizepl)
+axstdmag.set_xlabel('Transient cathodoluminescence \n acquisition time ($\mu$s)',fontsize=fsizepl)
+axstdmag.set_xticks([500,1000])
+axstdmag.set_xticklabels([500,1000])
+
+axhist150ratio = plt.subplot2grid((nolines,noplots), (0,2), colspan=2, rowspan=2)
+axexp150ratio = plt.subplot2grid((nolines,noplots), (0,4), colspan=2, rowspan=2)
+
+axhist150tau = plt.subplot2grid((nolines,noplots), (2,2), colspan=2, rowspan=2)
+axexp150tau = plt.subplot2grid((nolines,noplots), (2,4), colspan=2, rowspan=2)
+
+axhist150tau_blue = plt.subplot2grid((nolines,noplots), (4,2), colspan=2, rowspan=2)
+axexp150tau_blue = plt.subplot2grid((nolines,noplots), (4,4), colspan=2, rowspan=2)
+
+
+axhist300ratio = plt.subplot2grid((nolines,noplots), (0,6), colspan=2, rowspan=2)
+axexp300ratio = plt.subplot2grid((nolines,noplots), (0,8), colspan=2, rowspan=2)
+
+axhist300tau = plt.subplot2grid((nolines,noplots), (2,6), colspan=2, rowspan=2)
+axexp300tau = plt.subplot2grid((nolines,noplots), (2,8), colspan=2, rowspan=2)
+
+axhist300tau_blue = plt.subplot2grid((nolines,noplots), (4,6), colspan=2, rowspan=2)
+axexp300tau_blue = plt.subplot2grid((nolines,noplots), (4,8), colspan=2, rowspan=2)
+
+axhist600tau_blue = plt.subplot2grid((nolines,noplots), (4,6), colspan=2, rowspan=2)
+axexp600tau_blue = plt.subplot2grid((nolines,noplots), (4,8), colspan=2, rowspan=2)
+
+
+
+
 #scalebar
 length_scalebar = 100.0 #in nm 
 scalebar_legend = '100 nm'
@@ -154,8 +216,10 @@ step = 50
 initind = 10
    
 #### A
-do_A = True
-if do_A:
+do_150 = False
+if do_150:
+    
+    print('do 150')
     
     SEA= np.load('x150SEchannel.npz') #init shape (342, 315)
     xlen = SEA['data'].shape[0]
@@ -208,7 +272,7 @@ if do_A:
     
     Pixel_size = np.array([2.5]) 
     length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
-    sbar = sb.AnchoredScaleBar(ax00.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4, my_fontsize = fsizenb)
+    sbar = sb.AnchoredScaleBar(ax00.transData, length_scalebar_in_pixels, scalebar_legend, style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth= 2)
     ax00.add_artist(sbar)
     
     areas = np.array([])
@@ -241,144 +305,196 @@ if do_A:
     gc.collect()
     
         ####### load file that exists
-#    C = pickle.load( open( "150.p", "rb" ) )
-#    areas = C['areas']
-#    taured = C['taured']
-#    tauredstd = C['tauredstd']
-#    taublue = C['taublue']
-#    taubluestd = C['taubluestd']
-#    intens = C['intens']
-#    stdintens = C['intensstd']
-#    intensr = C['intensr']
-#    stdintensr = C['intensstdr']
-#    intensb = C['intensb']
-#    stdintensb = C['intensstdb']
-#    non_cut_k = C['non_cut_k']  
+    C = pickle.load( open( "150.p", "rb" ) )
+    areas = C['areas']
+    taured = C['taured']
+    tauredstd = C['tauredstd']
+    taublue = C['taublue']
+    taubluestd = C['taubluestd']
+    intens = C['intens']
+    stdintens = C['intensstd']
+    intensr = C['intensr']
+    stdintensr = C['intensstdr']
+    intensb = C['intensb']
+    stdintensb = C['intensstdb']
+    non_cut_k = C['non_cut_k']  
     
     
-    REDA = np.load('x150Redbright.npz')
-    reda = REDA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cuty:yfinal-cuty] #same no pixels than C, single
-    del REDA
-    gc.collect()
-    BLUEA = np.load('x150Bluebright.npz')
-    bluea = BLUEA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cuty:yfinal-cuty]#same no pixels than C, single
-    del BLUEA
-    gc.collect() 
+#    REDA = np.load('x150Redbright.npz')
+#    reda = REDA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cuty:yfinal-cuty] #same no pixels than C, single
+#    del REDA
+#    gc.collect()
+#    BLUEA = np.load('x150Bluebright.npz')
+#    bluea = BLUEA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cuty:yfinal-cuty]#same no pixels than C, single
+#    del BLUEA
+#    gc.collect() 
+#    
+#    no_avg = reda.shape[0]
+#    intens = np.empty([len(lab),no_avg])
+#    stdintens = np.empty([len(lab),no_avg])
+#    intensr = np.empty([len(lab),no_avg])
+#    stdintensr = np.empty([len(lab),no_avg])
+#    intensb = np.empty([len(lab),no_avg])
+#    stdintensb = np.empty([len(lab),no_avg])
+#    
+#    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
     
-    no_avg = reda.shape[0]
-    intens = np.empty([len(lab),no_avg])
-    stdintens = np.empty([len(lab),no_avg])
-    intensr = np.empty([len(lab),no_avg])
-    stdintensr = np.empty([len(lab),no_avg])
-    intensb = np.empty([len(lab),no_avg])
-    stdintensb = np.empty([len(lab),no_avg])
-    
-    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    
-    for k in non_cut_k:
+    #for k in non_cut_k:
+    import random
+    for k in random.sample(non_cut_k, 5):
      
-       print('indice150')
-       print(k)
+#       print('indice150')
+#       print(k)
+#       
+#       #Ratio
+#       print('Ratio')
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       hlp[cut_labels_ws != lab[k]] = np.nan
+#       ureda  =  reda[:,backgroundinit:initbin,:,:]
+#       ubluea =  bluea[:,backgroundinit:initbin,:,:]
+#                     
+#       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
+#       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
+#       
+#       vec = vecr/vecb
+#       
+#       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
+#              
+#       #import IPython
+#       #IPython.embed()
+#       
+#       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
+#       
+#       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
+#       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
+#       del ureda, ubluea
+#       gc.collect()
+#       intens[k,:] = vec
+#       stdintens[k,:] = vecstd
+#       intensr[k,:] = vecr
+#       stdintensr[k,:] = vecstdr
+#       intensb[k,:] = vecb
+#       stdintensb[k,:] = vecstdb
+#       print(vec)
+#       print(vecstd)
+#       del vec, vecstd
+#       gc.collect()
+#       
+#     
+#       
+#       print('Taus')
+#       #Taus as a function of time
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       Notr = np.sum(hlp.astype(np.float64))
+#       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
+#       taured[k,:,:] = unumpy.nominal_values(hr)
+#       tauredstd[k,:,:] = unumpy.std_devs(hr)
+#       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
+#       taublue[k,:,:] = unumpy.nominal_values(hb)
+#       taubluestd[k,:,:] = unumpy.std_devs(hb)
+#       sizered = 1398 
+#       del hr, hb, redd, blued
+#       gc.collect()
        
-       #Ratio
-       print('Ratio')
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       hlp[cut_labels_ws != lab[k]] = np.nan
-       ureda  =  reda[:,backgroundinit:initbin,:,:]
-       ubluea =  bluea[:,backgroundinit:initbin,:,:]
-                     
-       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
-       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
-       
-       vec = vecr/vecb
-       
-       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
-              
-       #import IPython
-       #IPython.embed()
-       
-       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
-       
-       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
-       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
-       del ureda, ubluea
-       gc.collect()
-       intens[k,:] = vec
-       stdintens[k,:] = vecstd
-       intensr[k,:] = vecr
-       stdintensr[k,:] = vecstdr
-       intensb[k,:] = vecb
-       stdintensb[k,:] = vecstdb
-       print(vec)
-       print(vecstd)
-       del vec, vecstd
-       gc.collect()
-       
-     
-       
-       print('Taus')
-       #Taus as a function of time
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       Notr = np.sum(hlp.astype(np.float64))
-       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
-       taured[k,:,:] = unumpy.nominal_values(hr)
-       tauredstd[k,:,:] = unumpy.std_devs(hr)
-       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
-       taublue[k,:,:] = unumpy.nominal_values(hb)
-       taubluestd[k,:,:] = unumpy.std_devs(hb)
-       sizered = 1398 
-       del hr, hb, redd, blued
-       gc.collect()
-       
+            pass
            #CONSIDER TAKING AVG OF NON ZERO ONES
 #           aux = np.copy(intens[k,:])
 #           aux[aux < 1.0e-12] = np.nan
-#           axratiomag.errorbar(2,np.nanmean(aux),yerr=np.nanstd(aux),marker='o', color='k', markersize=12) 
-#           axratiomag.set_xlim([0,10])
-#           axtaumag.plot(np.arange(0,1398),np.average(taured[k,:,:],axis=0),lw=1,color='r')
-#           axtaumag.plot(np.arange(0,1398),np.average(taublue[k,:,:],axis=0),lw=1,color='g')
-#           axstdmag.plot(np.arange(0,1398),np.std(taured[k,:,:],axis=0)/np.average(taured[k,:,:],axis=0),lw=1,color='r')
-#           axstdmag.plot(np.arange(0,1398),np.std(taublue[k,:,:],axis=0)/np.average(taublue[k,:,:],axis=0),lw=1,color='g')
+#           axratiomag.errorbar(1,np.nanmean(aux),yerr=np.nanstd(aux),marker='o', color='k', markersize=5) 
+#           axtaumag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.average(taured[k,:,:],axis=0),movav),lw=0.5,color='r')
+#           axtaumag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.average(taublue[k,:,:],axis=0),movav),lw=0.5,color='g')
+#           axstdmag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.std(taured[k,:,:],axis=0)/np.average(taured[k,:,:],axis=0),movav),lw=0.5,color='r')
+#           axstdmag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.std(taublue[k,:,:],axis=0)/np.average(taublue[k,:,:],axis=0),movav),lw=0.5,color='g')
     
-          
-    del reda, bluea
-    gc.collect()
-    
-    save_data = {}
-    save_data['areas'] = areas*Pixel_size**2 #in nm^2
-    save_data['taured'] = taured
-    save_data['tauredstd'] = tauredstd
-    save_data['taublue'] = taublue
-    save_data['taubluestd'] = taubluestd
-    save_data['intens'] = intens
-    save_data['intensstd'] = stdintens
-    save_data['intensr'] = intensr
-    save_data['intensstdr'] = stdintensr
-    save_data['intensb'] = intensb
-    save_data['intensstdb'] = stdintensb
-    save_data['non_cut_k'] = non_cut_k
-    
-    del taured, taublue
-    gc.collect()
-    
-    pickle.dump(save_data, open("150.p", "wb"))   
-    
-    print('radius found for C') #to check which of the found areas is background, which is signal
-#    print(tor(areas[non_cut_k])) #if used saved areas
-    print(tor(areas*Pixel_size**2))
-    print(non_cut_k)
 
-do_B = False #already ran, can just open files and read
-if do_B:
+    axratiomag.errorbar(1,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
+    axtaumag.plot(np.arange(0,1398),np.average(C['taured'][C['non_cut_k']],axis=(0,1)),lw=1,color='r')
+    axtaumag.plot(np.arange(0,1398),np.average(C['taublue'][C['non_cut_k']],axis=(0,1)),lw=1,color='g')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taured'][C['non_cut_k']],axis=(0,1))/np.average(C['taured'][C['non_cut_k']],axis=(0,1))*100.0,lw=1,color='r')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taublue'][C['non_cut_k']],axis=(0,1))/np.average(C['taublue'][C['non_cut_k']],axis=(0,1))*100.0,lw=1,color='g')
     
-    print('dob')
+    #import IPython
+    #IPython.embed()
+
+    plot_ratio_hist(
+            C['intens'][C['non_cut_k']],
+            axhist150ratio,
+            axexp150ratio,
+            no_of_bins = 30)
+ 
+    plot_tau_hist(
+            C['taured'][C['non_cut_k']],
+            axhist150tau,
+            axexp150tau,
+            which_taus = [250, 500, 1000],
+            no_of_bins = 30,
+            my_color = 'r')
+
+    plot_tau_hist(
+            C['taublue'][C['non_cut_k']],
+            axhist150tau_blue,
+            axexp150tau_blue,
+            which_taus = [250, 500, 1000],
+            no_of_bins = 30,
+            my_color = 'b')
+
+
+
+    from mpl_toolkits.mplot3d import Axes3D
+#    hist, xedges, yedges = np.histogram2d(np.average(C['taured'][C['non_cut_k']],axis=(0,1)),np.average(C['taured'][C['non_cut_k']],axis=(0,2)), bins=(4,4))
+#    xpos, ypos = np.meshgrid(xedges[:-1]+xedges[1:], yedges[:-1]+yedges[1:])
+#    
+#    xpos = xpos.flatten()/2.
+#    ypos = ypos.flatten()/2.
+#    zpos = np.zeros_like (xpos)
+#    
+#    dx = xedges [1] - xedges [0]
+#    dy = yedges [1] - yedges [0]
+#    dz = hist.flatten()
+#    
+#    axhist150tau.bar3d(xpos, ypos, zpos, dx, dy, dz, color='b', zsort='average')
+#    axhist150tau.set_xlabel("x")
+#    axhist150tau.set_ylabel("y")
+#    ntr, binstr, patchestr = axhist150tau.hist(np.nanmean(C['intens'][C['non_cut_k']],axis=(1)), 50, normed=1, facecolor='green', alpha=0.75)
+    
+#    del reda, bluea
+#    gc.collect()
+#    
+#    save_data = {}
+#    save_data['areas'] = areas*Pixel_size**2 #in nm^2
+#    save_data['taured'] = taured
+#    save_data['tauredstd'] = tauredstd
+#    save_data['taublue'] = taublue
+#    save_data['taubluestd'] = taubluestd
+#    save_data['intens'] = intens
+#    save_data['intensstd'] = stdintens
+#    save_data['intensr'] = intensr
+#    save_data['intensstdr'] = stdintensr
+#    save_data['intensb'] = intensb
+#    save_data['intensstdb'] = stdintensb
+#    save_data['non_cut_k'] = non_cut_k
+#    
+#    del taured, taublue
+#    gc.collect()
+#    
+#    pickle.dump(save_data, open("150.p", "wb"))   
+#    
+#    print('radius found for C') #to check which of the found areas is background, which is signal
+##    print(tor(areas[non_cut_k])) #if used saved areas
+#    print(tor(areas*Pixel_size**2))
+#    print(non_cut_k)
+
+do_300 = False #already ran, can just open files and read
+if do_300:
+    
+    print('do300')
     
     length_scalebar = 100.0
     Pixel_size = np.array([1.25]) 
@@ -392,6 +508,7 @@ if do_B:
     yfinal = -29
     se = SEA['data'][xinit:xfinal,yinit:yfinal]
     
+    
     new_pic = give_bolinha('x300SEchannel.npz', xinit, yinit, xfinal, yfinal, corr_threshold = 0.35, n = 30, r = 8, save_file = False, do_plot = False)
     cutx = 50
     cuty = 1
@@ -400,7 +517,7 @@ if do_B:
     ax001.imshow(se,cmap=cm.Greys_r)
     ax001.axis('off')
     
-    #new_pic = new_pic[cutx:-cutx, cuty:-cuty]
+    new_pic = new_pic[0:-cutx, cuty:-cuty]
     setr = new_pic
     #binary threshold
     se_data2 = np.copy(setr)
@@ -433,8 +550,7 @@ if do_B:
     labels_ws =  new_labels_ws
     
     length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
-    print(length_scalebar_in_pixels)
-    sbar = sb.AnchoredScaleBar(ax001.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb)
+    sbar = sb.AnchoredScaleBar(ax001.transData, length_scalebar_in_pixels, '', style = 'dark', loc = 4, my_fontsize = fsizenb, my_linewidth= 2)
     ax001.add_artist(sbar)
     
     areas = np.array([])
@@ -444,7 +560,7 @@ if do_B:
     cut_labels_ws = np.copy(labels_ws)
     non_cut_k = []  ###### change cut_k
     for k in range(len(lab)):
-        if (areas[k] < 10) or (areas[k] > 4000) or (k == 0): #k==o is modif!!! k==0 point is WEIRD
+        if (areas[k] < 10) or (areas[k] > 4000):
             cut_labels_ws[cut_labels_ws == lab[k]] = 0
             cut_k.append(k)
         else:
@@ -466,14 +582,185 @@ if do_B:
     del SEA, se
     gc.collect()
     
-   
+        ###### load file that exists
+    C = pickle.load( open( "300.p", "rb" ) )
+    areas = C['areas']
+    taured = C['taured']
+    tauredstd = C['tauredstd']
+    taublue = C['taublue']
+    taubluestd = C['taubluestd']
+    intens = C['intens']
+    stdintens = C['intensstd']
+    intensr = C['intensr']
+    stdintensr = C['intensstdr']
+    intensb = C['intensb']
+    stdintensb = C['intensstdb']
+    non_cut_k = C['non_cut_k']  
     
-   
+    
+#    REDA = np.load('x300Redbright.npz')
+#    reda = REDA['data'][:,:,xinit+0:xfinal-cutx,yinit+cuty:yfinal-cuty] #same no pixels than C, single
+#    del REDA
+#    gc.collect()
+#    BLUEA = np.load('x300Bluebright.npz')
+#    bluea = BLUEA['data'][:,:,xinit+0:xfinal-cutx,yinit+cuty:yfinal-cuty]#same no pixels than C, single
+#    del BLUEA
+#    gc.collect() 
+#    
+#    no_avg = reda.shape[0]
+#    intens = np.empty([len(lab),no_avg])
+#    stdintens = np.empty([len(lab),no_avg])
+#    intensr = np.empty([len(lab),no_avg])
+#    stdintensr = np.empty([len(lab),no_avg])
+#    intensb = np.empty([len(lab),no_avg])
+#    stdintensb = np.empty([len(lab),no_avg])
+#    
+#    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+    
+    for k in non_cut_k:
+     
+#       print('indice300')
+#       print(k)
+#       
+#       #Ratio
+#       print('Ratio')
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       hlp[cut_labels_ws != lab[k]] = np.nan
+#       ureda  =  reda[:,backgroundinit:initbin,:,:]
+#       ubluea =  bluea[:,backgroundinit:initbin,:,:]
+#                     
+#       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
+#       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
+#       
+#       vec = vecr/vecb
+#       
+#       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
+#              
+#       #import IPython
+#       #IPython.embed()
+#       
+#       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
+#       
+#       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
+#       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
+#       del ureda, ubluea
+#       gc.collect()
+#       intens[k,:] = vec
+#       stdintens[k,:] = vecstd
+#       intensr[k,:] = vecr
+#       stdintensr[k,:] = vecstdr
+#       intensb[k,:] = vecb
+#       stdintensb[k,:] = vecstdb
+#       print(vec)
+#       print(vecstd)
+#       del vec, vecstd, vecstdr, vecstdb, vecr, vecb
+#       gc.collect()
+#       
+#     
+#       
+#       print('Taus')
+#       #Taus as a function of time
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       Notr = np.sum(hlp.astype(np.float64))
+#       redd = np.zeros([reda.shape[0],1398])
+#       blued = np.zeros([reda.shape[0],1398])
+#       for jj in np.arange(0,reda.shape[0]):
+#           redd[jj,:] = np.sum(reda[jj,initbin:,:,:] * hlp, axis = (1,2))/Notr
+#           blued[jj,:] = np.sum(bluea[jj,initbin:,:,:] * hlp, axis = (1,2))/Notr
+#       #redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       #blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
+#       taured[k,:,:] = unumpy.nominal_values(hr)
+#       tauredstd[k,:,:] = unumpy.std_devs(hr)
+#       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
+#       taublue[k,:,:] = unumpy.nominal_values(hb)
+#       taubluestd[k,:,:] = unumpy.std_devs(hb)
+#       sizered = 1398 
+#       del hr, hb, redd, blued
+#       gc.collect()
+       
+#           CONSIDER TAKING AVG OF NON ZERO ONES
+            pass
+#           aux = np.copy(intens[k,:])
+#           aux[aux < 1.0e-12] = np.nan
+#           axratiomag.errorbar(4,np.nanmean(aux),yerr=np.nanstd(aux),marker='o', color='k', markersize=12) 
+#           axratiomag.set_xlim([0,10])
+#           movav = 50
+#           axtaumag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.average(taured[k,:,:],axis=0),movav),lw=1,color='r')
+#           axtaumag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.average(taublue[k,:,:],axis=0),movav),lw=1,color='g')
+#           axstdmag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.std(taured[k,:,:],axis=0)/np.average(taured[k,:,:],axis=0),movav),lw=1,color='r')
+#           axstdmag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.std(taublue[k,:,:],axis=0)/np.average(taublue[k,:,:],axis=0),movav),lw=1,color='g')
+    
+      
+    axratiomag.errorbar(2,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
+    axtaumag.plot(np.arange(0,1398),np.average(C['taured'][C['non_cut_k']],axis=(0,1)),lw=2,color='r')
+    axtaumag.plot(np.arange(0,1398),np.average(C['taublue'][C['non_cut_k']],axis=(0,1)),lw=2,color='g')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taured'][C['non_cut_k']],axis=(0,1))/np.average(C['taured'][C['non_cut_k']],axis=(0,1))*100.0,lw=2,color='r')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taublue'][C['non_cut_k']],axis=(0,1))/np.average(C['taublue'][C['non_cut_k']],axis=(0,1))*100.0,lw=2,color='g')
+    
+
+
+    # plotting histograms
+    plot_ratio_hist(
+            C['intens'][C['non_cut_k']],
+            axhist300ratio,
+            axexp300ratio,
+            no_of_bins = 30)
+ 
+    plot_tau_hist(
+            C['taured'][C['non_cut_k']],
+            axhist300tau,
+            axexp300tau,
+            which_taus = [250, 500, 1000],
+            no_of_bins = 30,
+            my_color = 'r')
+
+    plot_tau_hist(
+            C['taublue'][C['non_cut_k']],
+            axhist300tau_blue,
+            axexp300tau_blue,
+            which_taus = [250, 500, 1000],
+            no_of_bins = 30,
+            my_color = 'b')
+
+
+#    del reda, bluea
+#    gc.collect()
+#    
+#    save_data = {}
+#    save_data['areas'] = areas*Pixel_size**2 #in nm^2
+#    save_data['taured'] = taured
+#    save_data['tauredstd'] = tauredstd
+#    save_data['taublue'] = taublue
+#    save_data['taubluestd'] = taubluestd
+#    save_data['intens'] = intens
+#    save_data['intensstd'] = stdintens
+#    save_data['intensr'] = intensr
+#    save_data['intensstdr'] = stdintensr
+#    save_data['intensb'] = intensb
+#    save_data['intensstdb'] = stdintensb
+#    save_data['non_cut_k'] = non_cut_k
+#    
+#    del taured, taublue
+#    gc.collect()
+#    
+#    pickle.dump(save_data, open("300.p", "wb"))   
+#    
+#    print('radius found for C') #to check which of the found areas is background, which is signal
+##    print(tor(areas[non_cut_k])) #if used saved areas
+#    print(tor(areas*Pixel_size**2))
+#    print(non_cut_k)
+     
 #### C
 do_C = False #ran already - can just load data
 if do_C:
     
-    print('doc')
+    print('do 450')
     
     length_scalebar = 100.0
     Pixel_size = np.array([0.83]) 
@@ -559,10 +846,232 @@ if do_C:
 
     del SEA, se
     gc.collect()
+ 
+#### C
+do_600= True #ran already - can just load data
+if do_600:
     
+    print('do600')
+    
+    length_scalebar = 100.0
+    Pixel_size = np.array([1.48]) 
+    
+    SEA= np.load('x600SEchannel.npz') #init shape (342, 315)
+    xlen = SEA['data'].shape[0]
+    ylen = SEA['data'].shape[1]
+    
+    xinit = 100
+    xfinal = -100
+    yinit = 45
+    yfinal = -45
+    se = SEA['data'][xinit:xfinal,yinit:yfinal]
+    
+    new_pic = give_bolinha('x600SEchannel.npz', xinit, yinit, xfinal, yfinal, corr_threshold = 0.35, n = 30, r = 8, save_file = False, do_plot = False)
+#    cutx = 20
+#    cuty = 1
+    #se = se[0:-cutx, cuty:-cuty]
+
+    ax0022b.imshow(se,cmap=cm.Greys_r)
+    ax0022b.axis('off')
+    
+    #new_pic = new_pic[0:-cutx, cuty:-cuty]
+    setr = new_pic
+    #binary threshold
+    se_data2 = np.copy(setr)
+    
+    new_hlp = new_pic
+    I8 = (new_hlp * 255.9).astype(np.uint8)
+    bw = cv2.adaptiveThreshold(I8, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 0)
+    from scipy import ndimage
+    hlpse2 = bw 
+    hlpse2[hlpse2 > 1] = 1.0
+    hlpse2[hlpse2 < 1] = 0.0
+    distance = ndimage.distance_transform_edt(hlpse2)
+    
+    local_maxi = peak_local_max(
+        distance, 
+        num_peaks = 50, 
+        indices = False, 
+        footprint = np.ones((50,50)),
+        labels = hlpse2) #footprint = min dist between maxima to find #footprint was 25,25
+    markers = skimage.morphology.label(local_maxi)
+    labels_ws = watershed(-distance, markers, mask=hlpse2)
+    lab = np.unique(labels_ws)
+    
+    # Make random colors, not degrade
+    rand_ind = np.random.permutation(lab)
+    new_labels_ws = np.copy(labels_ws)
+    for k in range(new_labels_ws.shape[0]):
+        for j in range(new_labels_ws.shape[1]):
+            new_labels_ws[k, j] = rand_ind[labels_ws[k, j]]
+    labels_ws =  new_labels_ws
+    
+    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
+    sbar = sb.AnchoredScaleBar(ax0022b.transData, length_scalebar_in_pixels, "", style = 'bright', loc = 8, my_fontsize = fsizenb, my_linewidth= 2)
+    ax0022b.add_artist(sbar)
+    
+    areas = np.array([])
+    for k in lab:
+        areas = np.append(areas, len( labels_ws[labels_ws == k] ))
+    cut_k = []
+    cut_labels_ws = np.copy(labels_ws)
+    non_cut_k = []  ###### change cut_k
+    for k in range(len(lab)):
+        if (areas[k] < 10) or (areas[k] > 4000):# or (k == 0): 
+            cut_labels_ws[cut_labels_ws == lab[k]] = 0
+            cut_k.append(k)
+        else:
+            non_cut_k.append(k)  ###change cut_k
+    
+    axpicb.imshow(cut_labels_ws, cmap = cm.Greys_r) #or 'OrRd'
+    axpicb.axis('off')
+    
+#    plt.show()
+#    
+#    import IPython
+#    IPython.embed()
+    
+    del SEA, se
+    gc.collect()
+    
+    ####### load file that exists
+    C = pickle.load( open( "600.p", "rb" ) )
+    areas = C['areas']
+    taured = C['taured']
+    tauredstd = C['tauredstd']
+    taublue = C['taublue']
+    taubluestd = C['taubluestd']
+    intens = C['intens']
+    stdintens = C['intensstd']
+    intensr = C['intensr']
+    stdintensr = C['intensstdr']
+    intensb = C['intensb']
+    stdintensb = C['intensstdb']
+    non_cut_k = C['non_cut_k']  
+    
+    
+#    REDA = np.load('x600Redbright.npz')
+#    reda = REDA['data'][:,:,xinit:xfinal,yinit:yfinal] #same no pixels than C, single
+#    del REDA
+#    gc.collect()
+#    BLUEA = np.load('x600Bluebright.npz')
+#    bluea = BLUEA['data'][:,:,xinit:xfinal,yinit:yfinal]#same no pixels than C, single
+#    del BLUEA
+#    gc.collect() 
+#    
+#    no_avg = reda.shape[0]
+#    intens = np.empty([len(lab),no_avg])
+#    stdintens = np.empty([len(lab),no_avg])
+#    intensr = np.empty([len(lab),no_avg])
+#    stdintensr = np.empty([len(lab),no_avg])
+#    intensb = np.empty([len(lab),no_avg])
+#    stdintensb = np.empty([len(lab),no_avg])
+#    
+#    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+    
+    for k in non_cut_k:
+        pass
+    
+#       print('indice600')
+#       print(k)
+#       
+#       #Ratio
+#       print('Ratio')
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       hlp[cut_labels_ws != lab[k]] = np.nan
+#       ureda  =  reda[:,backgroundinit:initbin,:,:]
+#       ubluea =  bluea[:,backgroundinit:initbin,:,:]
+#                     
+#       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
+#       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
+#       
+#       vec = vecr/vecb
+#       
+#       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
+#              
+#       #import IPython
+#       #IPython.embed()
+#       
+#       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
+#       
+#       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
+#       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
+#       del ureda, ubluea
+#       gc.collect()
+#       intens[k,:] = vec
+#       stdintens[k,:] = vecstd
+#       intensr[k,:] = vecr
+#       stdintensr[k,:] = vecstdr
+#       intensb[k,:] = vecb
+#       stdintensb[k,:] = vecstdb
+#       print(vec)
+#       print(vecstd)
+#       del vec, vecstd
+#       gc.collect()
+#       
+#     
+#       
+#       print('Taus')
+#       #Taus as a function of time
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       Notr = np.sum(hlp.astype(np.float64))
+#       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
+#       taured[k,:,:] = unumpy.nominal_values(hr)
+#       tauredstd[k,:,:] = unumpy.std_devs(hr)
+#       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
+#       taublue[k,:,:] = unumpy.nominal_values(hb)
+#       taubluestd[k,:,:] = unumpy.std_devs(hb)
+#       sizered = 1398 
+#       del hr, hb, redd, blued
+#       gc.collect()
+   
+     
+    axratiomag.errorbar(3,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
+    axtaumag.plot(np.arange(0,1398),np.average(C['taured'][C['non_cut_k']],axis=(0,1)),lw=3,color='r')
+    axtaumag.plot(np.arange(0,1398),np.average(C['taublue'][C['non_cut_k']],axis=(0,1)),lw=3,color='g')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taured'][C['non_cut_k']],axis=(0,1))/np.average(C['taured'][C['non_cut_k']],axis=(0,1))*100.0,lw=3,color='r')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taublue'][C['non_cut_k']],axis=(0,1))/np.average(C['taublue'][C['non_cut_k']],axis=(0,1))*100.0,lw=3,color='g')      
+
+    plt.figure()
+    plt.hist(C['taublue'][C['non_cut_k']][:, 0, -1].flatten())
+#    del reda, bluea
+#    gc.collect()
+    
+#    save_data = {}
+#    save_data['areas'] = areas*Pixel_size**2 #in nm^2
+#    save_data['taured'] = taured
+#    save_data['tauredstd'] = tauredstd
+#    save_data['taublue'] = taublue
+#    save_data['taubluestd'] = taubluestd
+#    save_data['intens'] = intens
+#    save_data['intensstd'] = stdintens
+#    save_data['intensr'] = intensr
+#    save_data['intensstdr'] = stdintensr
+#    save_data['intensb'] = intensb
+#    save_data['intensstdb'] = stdintensb
+#    save_data['non_cut_k'] = non_cut_k
+#    
+#    del taured, taublue
+#    gc.collect()
+#    
+#    pickle.dump(save_data, open("600.p", "wb"))   
+#    
+#    print('radius found for C') #to check which of the found areas is background, which is signal
+##    print(tor(areas[non_cut_k])) #if used saved areas
+#    print(tor(areas*Pixel_size**2))
+#    print(non_cut_k)
+
+   
     
 #### C
-do_750= True #ran already - can just load data
+do_750= False #ran already - can just load data
 if do_750:
     
     print('do750')
@@ -620,7 +1129,7 @@ if do_750:
     labels_ws =  new_labels_ws
     
     length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
-    sbar = sb.AnchoredScaleBar(ax0022b.transData, length_scalebar_in_pixels, "", style = 'bright', loc = 8, my_fontsize = fsizenb)
+    sbar = sb.AnchoredScaleBar(ax0022b.transData, length_scalebar_in_pixels, "", style = 'bright', loc = 8, my_fontsize = fsizenb, my_linewidth= 2)
     ax0022b.add_artist(sbar)
     
     areas = np.array([])
@@ -648,103 +1157,104 @@ if do_750:
     gc.collect()
     
     ####### load file that exists
-#    C = pickle.load( open( "750.p", "rb" ) )
-#    areas = C['areas']
-#    taured = C['taured']
-#    tauredstd = C['tauredstd']
-#    taublue = C['taublue']
-#    taubluestd = C['taubluestd']
-#    intens = C['intens']
-#    stdintens = C['intensstd']
-#    intensr = C['intensr']
-#    stdintensr = C['intensstdr']
-#    intensb = C['intensb']
-#    stdintensb = C['intensstdb']
-#    non_cut_k = C['non_cut_k']  
+    C = pickle.load( open( "750.p", "rb" ) )
+    areas = C['areas']
+    taured = C['taured']
+    tauredstd = C['tauredstd']
+    taublue = C['taublue']
+    taubluestd = C['taubluestd']
+    intens = C['intens']
+    stdintens = C['intensstd']
+    intensr = C['intensr']
+    stdintensr = C['intensstdr']
+    intensb = C['intensb']
+    stdintensb = C['intensstdb']
+    non_cut_k = C['non_cut_k']  
     
     
-    REDA = np.load('x750Redbright.npz')
-    reda = REDA['data'][:,:,xinit:xfinal,yinit:yfinal] #same no pixels than C, single
-    del REDA
-    gc.collect()
-    BLUEA = np.load('x750Bluebright.npz')
-    bluea = BLUEA['data'][:,:,xinit:xfinal,yinit:yfinal]#same no pixels than C, single
-    del BLUEA
-    gc.collect() 
-    
-    no_avg = reda.shape[0]
-    intens = np.empty([len(lab),no_avg])
-    stdintens = np.empty([len(lab),no_avg])
-    intensr = np.empty([len(lab),no_avg])
-    stdintensr = np.empty([len(lab),no_avg])
-    intensb = np.empty([len(lab),no_avg])
-    stdintensb = np.empty([len(lab),no_avg])
-    
-    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    REDA = np.load('x750Redbright.npz')
+#    reda = REDA['data'][:,:,xinit:xfinal,yinit:yfinal] #same no pixels than C, single
+#    del REDA
+#    gc.collect()
+#    BLUEA = np.load('x750Bluebright.npz')
+#    bluea = BLUEA['data'][:,:,xinit:xfinal,yinit:yfinal]#same no pixels than C, single
+#    del BLUEA
+#    gc.collect() 
+#    
+#    no_avg = reda.shape[0]
+#    intens = np.empty([len(lab),no_avg])
+#    stdintens = np.empty([len(lab),no_avg])
+#    intensr = np.empty([len(lab),no_avg])
+#    stdintensr = np.empty([len(lab),no_avg])
+#    intensb = np.empty([len(lab),no_avg])
+#    stdintensb = np.empty([len(lab),no_avg])
+#    
+#    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
     
     for k in non_cut_k:
      
-       print('indice750')
-       print(k)
+#       print('indice750')
+#       print(k)
+#       
+#       #Ratio
+#       print('Ratio')
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       hlp[cut_labels_ws != lab[k]] = np.nan
+#       ureda  =  reda[:,backgroundinit:initbin,:,:]
+#       ubluea =  bluea[:,backgroundinit:initbin,:,:]
+#                     
+#       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
+#       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
+#       
+#       vec = vecr/vecb
+#       
+#       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
+#              
+#       #import IPython
+#       #IPython.embed()
+#       
+#       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
+#       
+#       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
+#       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
+#       del ureda, ubluea
+#       gc.collect()
+#       intens[k,:] = vec
+#       stdintens[k,:] = vecstd
+#       intensr[k,:] = vecr
+#       stdintensr[k,:] = vecstdr
+#       intensb[k,:] = vecb
+#       stdintensb[k,:] = vecstdb
+#       print(vec)
+#       print(vecstd)
+#       del vec, vecstd
+#       gc.collect()
+#       
+#     
+#       
+#       print('Taus')
+#       #Taus as a function of time
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       Notr = np.sum(hlp.astype(np.float64))
+#       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
+#       taured[k,:,:] = unumpy.nominal_values(hr)
+#       tauredstd[k,:,:] = unumpy.std_devs(hr)
+#       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
+#       taublue[k,:,:] = unumpy.nominal_values(hb)
+#       taubluestd[k,:,:] = unumpy.std_devs(hb)
+#       sizered = 1398 
+#       del hr, hb, redd, blued
+#       gc.collect()
        
-       #Ratio
-       print('Ratio')
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       hlp[cut_labels_ws != lab[k]] = np.nan
-       ureda  =  reda[:,backgroundinit:initbin,:,:]
-       ubluea =  bluea[:,backgroundinit:initbin,:,:]
-                     
-       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
-       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
-       
-       vec = vecr/vecb
-       
-       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
-              
-       #import IPython
-       #IPython.embed()
-       
-       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
-       
-       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
-       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
-       del ureda, ubluea
-       gc.collect()
-       intens[k,:] = vec
-       stdintens[k,:] = vecstd
-       intensr[k,:] = vecr
-       stdintensr[k,:] = vecstdr
-       intensb[k,:] = vecb
-       stdintensb[k,:] = vecstdb
-       print(vec)
-       print(vecstd)
-       del vec, vecstd
-       gc.collect()
-       
-     
-       
-       print('Taus')
-       #Taus as a function of time
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       Notr = np.sum(hlp.astype(np.float64))
-       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
-       taured[k,:,:] = unumpy.nominal_values(hr)
-       tauredstd[k,:,:] = unumpy.std_devs(hr)
-       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
-       taublue[k,:,:] = unumpy.nominal_values(hb)
-       taubluestd[k,:,:] = unumpy.std_devs(hb)
-       sizered = 1398 
-       del hr, hb, redd, blued
-       gc.collect()
-       
-#           #CONSIDER TAKING AVG OF NON ZERO ONES
+           #CONSIDER TAKING AVG OF NON ZERO ONES
+           pass
 #           aux = np.copy(intens[k,:])
 #           aux[aux < 1.0e-12] = np.nan
 #           axratiomag.errorbar(1,np.nanmean(aux),yerr=np.nanstd(aux),marker='o', color='k', markersize=12) 
@@ -754,38 +1264,42 @@ if do_750:
 #           axstdmag.plot(np.arange(0,1398),np.std(taured[k,:,:],axis=0)/np.average(taured[k,:,:],axis=0),lw=1,color='r')
 #           axstdmag.plot(np.arange(0,1398),np.std(taublue[k,:,:],axis=0)/np.average(taublue[k,:,:],axis=0),lw=1,color='g')
     
+     
+    axratiomag.errorbar(4,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
+    axtaumag.plot(np.arange(0,1398),np.average(C['taured'][C['non_cut_k']],axis=(0,1)),lw=4,color='r')
+    axtaumag.plot(np.arange(0,1398),np.average(C['taublue'][C['non_cut_k']],axis=(0,1)),lw=4,color='g')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taured'][C['non_cut_k']],axis=(0,1))/np.average(C['taured'][C['non_cut_k']],axis=(0,1))*100.0,lw=4,color='r')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taublue'][C['non_cut_k']],axis=(0,1))/np.average(C['taublue'][C['non_cut_k']],axis=(0,1))*100.0,lw=4,color='g')      
           
-    del reda, bluea
-    gc.collect()
-    
-    save_data = {}
-    save_data['areas'] = areas*Pixel_size**2 #in nm^2
-    save_data['taured'] = taured
-    save_data['tauredstd'] = tauredstd
-    save_data['taublue'] = taublue
-    save_data['taubluestd'] = taubluestd
-    save_data['intens'] = intens
-    save_data['intensstd'] = stdintens
-    save_data['intensr'] = intensr
-    save_data['intensstdr'] = stdintensr
-    save_data['intensb'] = intensb
-    save_data['intensstdb'] = stdintensb
-    save_data['non_cut_k'] = non_cut_k
-    
-    del taured, taublue
-    gc.collect()
-    
-    pickle.dump(save_data, open("750.p", "wb"))   
-    
-    print('radius found for C') #to check which of the found areas is background, which is signal
-#    print(tor(areas[non_cut_k])) #if used saved areas
-    print(tor(areas*Pixel_size**2))
-    print(non_cut_k)
+#    del reda, bluea
+#    gc.collect()
+#    
+#    save_data = {}
+#    save_data['areas'] = areas*Pixel_size**2 #in nm^2
+#    save_data['taured'] = taured
+#    save_data['tauredstd'] = tauredstd
+#    save_data['taublue'] = taublue
+#    save_data['taubluestd'] = taubluestd
+#    save_data['intens'] = intens
+#    save_data['intensstd'] = stdintens
+#    save_data['intensr'] = intensr
+#    save_data['intensstdr'] = stdintensr
+#    save_data['intensb'] = intensb
+#    save_data['intensstdb'] = stdintensb
+#    save_data['non_cut_k'] = non_cut_k
+#    
+#    del taured, taublue
+#    gc.collect()
+#    
+#    pickle.dump(save_data, open("750.p", "wb"))   
+#    
+#    print('radius found for C') #to check which of the found areas is background, which is signal
+##    print(tor(areas[non_cut_k])) #if used saved areas
+#    print(tor(areas*Pixel_size**2))
+#    print(non_cut_k)
 
-plt.show()
-lklk
           
-do_750BG= True #ran already - can just load data
+do_750BG= False#ran already - can just load data
 if do_750BG:
     
     print('do750BG')
@@ -839,9 +1353,6 @@ if do_750BG:
             new_labels_ws[k, j] = rand_ind[labels_ws[k, j]]
     labels_ws =  new_labels_ws
     
-    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
-    sbar = sb.AnchoredScaleBar(ax0022b.transData, length_scalebar_in_pixels, "", style = 'bright', loc = 8, my_fontsize = fsizenb)
-    ax0022b.add_artist(sbar)
     
     areas = np.array([])
     for k in lab:
@@ -860,101 +1371,102 @@ if do_750BG:
     gc.collect()
     
     ####### load file that exists
-#    C = pickle.load( open( "750BG.p", "rb" ) )
-#    areas = C['areas']
-#    taured = C['taured']
-#    tauredstd = C['tauredstd']
-#    taublue = C['taublue']
-#    taubluestd = C['taubluestd']
-#    intens = C['intens']
-#    stdintens = C['intensstd']
-#    intensr = C['intensr']
-#    stdintensr = C['intensstdr']
-#    intensb = C['intensb']
-#    stdintensb = C['intensstdb']
-#    non_cut_k = C['non_cut_k']  
+    C = pickle.load( open( "750BG.p", "rb" ) )
+    areas = C['areas']
+    taured = C['taured']
+    tauredstd = C['tauredstd']
+    taublue = C['taublue']
+    taubluestd = C['taubluestd']
+    intens = C['intens']
+    stdintens = C['intensstd']
+    intensr = C['intensr']
+    stdintensr = C['intensstdr']
+    intensb = C['intensb']
+    stdintensb = C['intensstdb']
+    non_cut_k = C['non_cut_k']  
+    
+    
+#    REDA = np.load('x750Redbright.npz')
+#    reda = REDA['data'][:,:,xinit:xfinal,yinit:yfinal] #same no pixels than C, single
+#    del REDA
+#    gc.collect()
+#    BLUEA = np.load('x750Bluebright.npz')
+#    bluea = BLUEA['data'][:,:,xinit:xfinal,yinit:yfinal]#same no pixels than C, single
+#    del BLUEA
+#    gc.collect() 
 #    
+#    no_avg = reda.shape[0]
+#    intens = np.empty([len(lab),no_avg])
+#    stdintens = np.empty([len(lab),no_avg])
+#    intensr = np.empty([len(lab),no_avg])
+#    stdintensr = np.empty([len(lab),no_avg])
+#    intensb = np.empty([len(lab),no_avg])
+#    stdintensb = np.empty([len(lab),no_avg])
 #    
-    REDA = np.load('x750Redbright.npz')
-    reda = REDA['data'][:,:,xinit:xfinal,yinit:yfinal] #same no pixels than C, single
-    del REDA
-    gc.collect()
-    BLUEA = np.load('x750Bluebright.npz')
-    bluea = BLUEA['data'][:,:,xinit:xfinal,yinit:yfinal]#same no pixels than C, single
-    del BLUEA
-    gc.collect() 
-    
-    no_avg = reda.shape[0]
-    intens = np.empty([len(lab),no_avg])
-    stdintens = np.empty([len(lab),no_avg])
-    intensr = np.empty([len(lab),no_avg])
-    stdintensr = np.empty([len(lab),no_avg])
-    intensb = np.empty([len(lab),no_avg])
-    stdintensb = np.empty([len(lab),no_avg])
-    
-    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    
+#    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    
     for k in non_cut_k:
      
-       print('indice750')
-       print(k)
+#       print('indice750')
+#       print(k)
+#       
+##Ratio
+#       print('Ratio')
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       hlp[cut_labels_ws != lab[k]] = np.nan
+#       ureda  =  reda[:,backgroundinit:initbin,:,:]
+#       ubluea =  bluea[:,backgroundinit:initbin,:,:]
+#                     
+#       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
+#       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
+#       
+#       vec = vecr/vecb
+#       
+#       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
+#              
+#       #import IPython
+#       #IPython.embed()
+#       
+#       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
+#       
+#       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
+#       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
+#       del ureda, ubluea
+#       gc.collect()
+#       intens[k,:] = vec
+#       stdintens[k,:] = vecstd
+#       intensr[k,:] = vecr
+#       stdintensr[k,:] = vecstdr
+#       intensb[k,:] = vecb
+#       stdintensb[k,:] = vecstdb
+#       print(vec)
+#       print(vecstd)
+#       del vec, vecstd
+#       gc.collect()
+#       
+#       print('Taus')
+#       #Taus as a function of time
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       Notr = np.sum(hlp.astype(np.float64))
+#       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
+#       taured[k,:,:] = unumpy.nominal_values(hr)
+#       tauredstd[k,:,:] = unumpy.std_devs(hr)
+#       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
+#       taublue[k,:,:] = unumpy.nominal_values(hb)
+#       taubluestd[k,:,:] = unumpy.std_devs(hb)
+#       sizered = 1398 
+#       del hr, hb, redd, blued
+#       gc.collect()
        
-#Ratio
-       print('Ratio')
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       hlp[cut_labels_ws != lab[k]] = np.nan
-       ureda  =  reda[:,backgroundinit:initbin,:,:]
-       ubluea =  bluea[:,backgroundinit:initbin,:,:]
-                     
-       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
-       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
-       
-       vec = vecr/vecb
-       
-       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
-              
-       #import IPython
-       #IPython.embed()
-       
-       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
-       
-       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
-       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
-       del ureda, ubluea
-       gc.collect()
-       intens[k,:] = vec
-       stdintens[k,:] = vecstd
-       intensr[k,:] = vecr
-       stdintensr[k,:] = vecstdr
-       intensb[k,:] = vecb
-       stdintensb[k,:] = vecstdb
-       print(vec)
-       print(vecstd)
-       del vec, vecstd
-       gc.collect()
-       
-       print('Taus')
-       #Taus as a function of time
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       Notr = np.sum(hlp.astype(np.float64))
-       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
-       taured[k,:,:] = unumpy.nominal_values(hr)
-       tauredstd[k,:,:] = unumpy.std_devs(hr)
-       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
-       taublue[k,:,:] = unumpy.nominal_values(hb)
-       taubluestd[k,:,:] = unumpy.std_devs(hb)
-       sizered = 1398 
-       del hr, hb, redd, blued
-       gc.collect()
-       
-#           #CONSIDER TAKING AVG OF NON ZERO ONES
+           #CONSIDER TAKING AVG OF NON ZERO ONES
+           pass
 #           aux = np.copy(intens[k,:])
 #           aux[aux < 1.0e-12] = np.nan
 #           axratiomag.errorbar(1,np.nanmean(aux),yerr=np.nanstd(aux),marker='x', color='k', markersize=12) 
@@ -964,33 +1476,38 @@ if do_750BG:
 #           axstdmag.plot(np.arange(0,1398),np.std(taured[k,:,:],axis=0)/np.average(taured[k,:,:],axis=0),lw=1,color='DarkRed')
 #           axstdmag.plot(np.arange(0,1398),np.std(taublue[k,:,:],axis=0)/np.average(taublue[k,:,:],axis=0),lw=1,color='DarkGreen')
     
+    axratiomag.errorbar(4,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='x', color='k', markersize=12) 
+    axtaumag.plot(np.arange(0,1398),np.average(C['taured'][C['non_cut_k']],axis=(0,1)),lw=4,color='DarkRed')
+    axtaumag.plot(np.arange(0,1398),np.average(C['taublue'][C['non_cut_k']],axis=(0,1)),lw=4,color='DarkGreen')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taured'][C['non_cut_k']],axis=(0,1))/np.average(C['taured'][C['non_cut_k']],axis=(0,1))*100.0,lw=4,color='DarkRed')
+    axstdmag.plot(np.arange(0,1398),np.std(C['taublue'][C['non_cut_k']],axis=(0,1))/np.average(C['taublue'][C['non_cut_k']],axis=(0,1))*100.0,lw=4,color='DarkGreen')  
           
-    del reda, bluea
-    gc.collect()
-    
-    save_data = {}
-    save_data['areas'] = areas*Pixel_size**2 #in nm^2
-    save_data['taured'] = taured
-    save_data['tauredstd'] = tauredstd
-    save_data['taublue'] = taublue
-    save_data['taubluestd'] = taubluestd
-    save_data['intens'] = intens
-    save_data['intensstd'] = stdintens
-    save_data['intensr'] = intensr
-    save_data['intensstdr'] = stdintensr
-    save_data['intensb'] = intensb
-    save_data['intensstdb'] = stdintensb
-    save_data['non_cut_k'] = non_cut_k
-    
-    del taured, taublue
-    gc.collect()
-    
-    pickle.dump(save_data, open("750BG.p", "wb"))   
-    
-    print('radius found for C') #to check which of the found areas is background, which is signal
-#    print(tor(areas[non_cut_k])) #if used saved areas
-    print(tor(areas*Pixel_size**2))
-    print(non_cut_k)
+#    del reda, bluea
+#    gc.collect()
+#    
+#    save_data = {}
+#    save_data['areas'] = areas*Pixel_size**2 #in nm^2
+#    save_data['taured'] = taured
+#    save_data['tauredstd'] = tauredstd
+#    save_data['taublue'] = taublue
+#    save_data['taubluestd'] = taubluestd
+#    save_data['intens'] = intens
+#    save_data['intensstd'] = stdintens
+#    save_data['intensr'] = intensr
+#    save_data['intensstdr'] = stdintensr
+#    save_data['intensb'] = intensb
+#    save_data['intensstdb'] = stdintensb
+#    save_data['non_cut_k'] = non_cut_k
+#    
+#    del taured, taublue
+#    gc.collect()
+#    
+#    pickle.dump(save_data, open("750BG.p", "wb"))   
+#    
+#    print('radius found for C') #to check which of the found areas is background, which is signal
+##    print(tor(areas[non_cut_k])) #if used saved areas
+#    print(tor(areas*Pixel_size**2))
+#    print(non_cut_k)
     
 ##### Plot single and hexagon
 #   print('radius found for C')

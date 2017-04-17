@@ -357,6 +357,7 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
 #    ax1.set_title('Registered')
 #    plt.imshow(np.average(offset_images_corr, axis=0))
     
+    gc.collect()
     if toberegistered1 is not None:
         
         if toberegistered2 is None:
