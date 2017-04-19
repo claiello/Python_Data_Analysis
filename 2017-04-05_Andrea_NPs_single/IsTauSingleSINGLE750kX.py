@@ -199,7 +199,13 @@ if do_plottau:
     red = red['data']
     blue = blue['data']
     bgred = bgred['data']
-    bgblue = bgblue['data']      
+    bgblue = bgblue['data']   
+    
+    print('value r sig bg blue sig bg')
+    print(red)
+    print(bgred)
+    print(blue)
+    print(bgblue)
 
     plt.figure()
 
@@ -210,4 +216,20 @@ if do_plottau:
     plt.plot([2],[2.32637486/0.47494326],marker='o',color='k',markersize=16)
     plt.plot([2],[2.04040113/0.33649939],marker='x',color='k',markersize=16)
     plt.show()
+
+    blue = np.load('Blue_std_arrayPixel.npz',mmap_mode='r')     
+    red = np.load('Red_std_arrayPixel.npz',mmap_mode='r')
+    bgblue = np.load('bgBlue_std_arrayPixel.npz',mmap_mode='r')     
+    bgred = np.load('bgRed_std_arrayPixel.npz',mmap_mode='r') 
+    
+    red = red['data']
+    blue = blue['data']
+    bgred = bgred['data']
+    bgblue = bgblue['data']      
+    
+    print('std r sig bg')
+    print(red)
+    print(bgred)
+    print(blue)
+    print(bgblue)
 

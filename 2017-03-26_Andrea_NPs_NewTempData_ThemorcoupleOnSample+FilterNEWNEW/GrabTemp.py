@@ -175,6 +175,17 @@ for k in range(6):
 print(down_mean)
 print(down_std)
 
+new_temperatures_up = (result_new_y - b)/a
+
+up_mean = []
+up_std = []
+for k in range(5):
+    up_mean.append( np.mean(new_temperatures_up[k*5:k*5+5]) )
+    up_std.append( np.std(new_temperatures_up[k*5:k*5+5]) )
+
+print(up_mean)
+print(up_std)
+
 plt.show()   
 #lklklk
 #

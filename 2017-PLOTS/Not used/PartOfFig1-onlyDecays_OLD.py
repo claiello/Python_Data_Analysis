@@ -100,24 +100,24 @@ nolines = 8
 
 ################################################################################
 index=0
-Time_bin = 1000#in ns; 
-let = ['ns40']
-sys.path.append("../2017-04-05_Andrea_NPs_Different_excitation_times/") # necessary 
+Time_bin = 2000#in ns; 
+let = ['x400littlebunch']
+sys.path.append("../2017-04-05_Andrea_NPs_single/") # necessary 
 #se = np.load('../2017-04-05_Andrea_NPs_single/'+ str(let[index]) +'SEchannel.npz') 
 #red = np.load('../2017-04-05_Andrea_NPs_single/'+ str(let[index]) +'Redbright.npz') 
 #blue = np.load('../2017-04-05_Andrea_NPs_single/' + str(let[index]) +'Bluebright.npz') 
 
-bluedecay = np.load('../2017-04-05_Andrea_NPs_Different_excitation_times/'+'Blue_decay_arrayPixel.npz',mmap_mode='r')     
-reddecay = np.load('../2017-04-05_Andrea_NPs_Different_excitation_times/'+'Red_decay_arrayPixel.npz',mmap_mode='r')
-bgbluedecay = np.load('../2017-04-05_Andrea_NPs_Different_excitation_times/'+'bgBlue_decay_arrayPixel.npz',mmap_mode='r')     
-bgreddecay = np.load('../2017-04-05_Andrea_NPs_Different_excitation_times/'+'bgRed_decay_arrayPixel.npz',mmap_mode='r') 
+bluedecay = np.load('../2017-04-05_Andrea_NPs_single/'+'Blue_decay_arrayLITTLEBUNCH.npz',mmap_mode='r')     
+reddecay = np.load('../2017-04-05_Andrea_NPs_single/'+'Red_decay_arrayLITTLEBUNCH.npz',mmap_mode='r')
+bgbluedecay = np.load('../2017-04-05_Andrea_NPs_single/'+'bgBlue_decay_arrayLITTLEBUNCH.npz',mmap_mode='r')     
+bgreddecay = np.load('../2017-04-05_Andrea_NPs_single/'+'bgRed_decay_arrayLITTLEBUNCH.npz',mmap_mode='r') 
 
 ######### DECAY PLOT 
 ax3 = plt.subplot2grid((2,2), (0,0), colspan=1, rowspan=1)
-ax3.semilogy(np.arange(0,498),reddecay['data'].reshape([498])/np.max(reddecay['data'].reshape([498])),'o',color='r',markersize=6, markeredgewidth=0.0,label='Red band signal')  
-ax3.semilogy(np.arange(0,498),bluedecay['data'].reshape([498])/np.max(bluedecay['data'].reshape([498])),'o',color='g',markersize=6, markeredgewidth=0.0,label='Green band signal')  
-ax3.semilogy(np.arange(0,498),bgreddecay['data'].reshape([498])/np.max(bgreddecay['data'].reshape([498])),'o',color='DarkRed',markersize=4,markeredgewidth=0.0,label='Red band background')  
-ax3.semilogy(np.arange(0,498),bgbluedecay['data'].reshape([498])/np.max(bgbluedecay['data'].reshape([498])),'o',color='DarkGreen',markersize=4, markeredgewidth=0.0,label='Green band background')  
+ax3.semilogy(np.arange(0,1398),reddecay['data'].reshape([1398])/np.max(reddecay['data'].reshape([1398])),'o',color='r',markersize=6, markeredgewidth=0.0,label='Red band signal')  
+ax3.semilogy(np.arange(0,1398),bluedecay['data'].reshape([1398])/np.max(bluedecay['data'].reshape([1398])),'o',color='g',markersize=6, markeredgewidth=0.0,label='Green band signal')  
+ax3.semilogy(np.arange(0,1398),bgreddecay['data'].reshape([1398])/np.max(bgreddecay['data'].reshape([1398])),'o',color='DarkRed',markersize=4,markeredgewidth=0.0,label='Red band background')  
+ax3.semilogy(np.arange(0,1398),bgbluedecay['data'].reshape([1398])/np.max(bgbluedecay['data'].reshape([1398])),'o',color='DarkGreen',markersize=4, markeredgewidth=0.0,label='Green band background')  
 ax3.legend(loc='best',fontsize=fsizenb,frameon=False)
 ax3.set_ylabel("Norm. cathodoluminescence (a.u.)",fontsize=fsizepl)
 ax3.set_xlabel('Transient cathodoluminescence \n acquisition time ($\mu$s)',  fontsize=fsizepl)
@@ -132,7 +132,7 @@ ax3.yaxis.set_ticks_position('left')
 #ax3.set_yticks([0.01,0.1,1])
 #ax3.set_yticklabels(['0.01','0.1','1'])
 ax3.tick_params(labelsize=fsizenb)
-ax3.set_xlim([0,498])
+ax3.set_xlim([0,50])
 
 ###### TAU PLOT
 
@@ -150,10 +150,10 @@ ax112.yaxis.set_label_position('right')
 redtau, bluetau = tauestimate(reddecay['data'],np.std(reddecay['data'])/2000,bluedecay['data'],np.std(bluedecay['data'])/2000)
 redtaubg, bluetaubg = tauestimate(bgreddecay['data'],np.std(bgreddecay['data'])/2000,bgbluedecay['data'],np.std(bgbluedecay['data'])/2000)
 
-redtau = redtau.reshape([498])
-bluetau= bluetau.reshape([498])
-redtaubg = redtaubg.reshape([498])
-bluetaubg =bluetaubg.reshape([498])
+redtau = redtau.reshape([1398])
+bluetau= bluetau.reshape([1398])
+redtaubg = redtaubg.reshape([1398])
+bluetaubg =bluetaubg.reshape([1398])
 
 #this shows that first bin is poisson
 #vecforhist = (datared[initbin,:,:]*hlp)*2.0e-6*1000.0 ####IN COUNTS, IE, COUNT RATE * DELTA T; *1000 IS FROM KHZ TO HZ #was initbin:
@@ -163,15 +163,15 @@ bluetaubg =bluetaubg.reshape([498])
 #plt.show()
 #oioioi
 
-ax112.plot(np.arange(0,498),unumpy.nominal_values(redtau),color='r',ls='--',lw=2)  
-ax112.plot(np.arange(0,498),unumpy.nominal_values(bluetau),color='g',ls='--',lw=2)  
+ax112.plot(np.arange(0,1398),unumpy.nominal_values(redtau),color='r',ls='--',lw=2)  
+ax112.plot(np.arange(0,1398),unumpy.nominal_values(bluetau),color='g',ls='--',lw=2)  
 ax112.set_ylabel(r"$\tau$ ($\mu$s)",fontsize=fsizepl)
 ax112.set_xlabel('Transient cathodoluminescence \n acquisition time ($\mu$s)',  fontsize=fsizepl)
 #ax112.set_xlim(xmax=1000.0) #2000
 #Plot whole of background decay
-ax112.plot(np.arange(0,498),unumpy.nominal_values(redtaubg),color='DarkRed',ls='--',lw=2)   
-ax112.plot(np.arange(0,498),unumpy.nominal_values(bluetaubg),color='DarkGreen',ls='--',lw=2) 
-ax112.plot(np.arange(0,498),np.arange(0,498)/2.0,color='k',ls='--',lw=2)  
+ax112.plot(np.arange(0,1398),unumpy.nominal_values(redtaubg),color='DarkRed',ls='--',lw=2)   
+ax112.plot(np.arange(0,1398),unumpy.nominal_values(bluetaubg),color='DarkGreen',ls='--',lw=2) 
+ax112.plot(np.arange(0,1398),np.arange(0,1398)/2.0,color='k',ls='--',lw=2)  
 
 print(unumpy.std_devs(redtau))
 
@@ -212,7 +212,7 @@ print(unumpy.std_devs(redtau))
 #ax112.set_xlim([6,1000])
 #ax112.set_ylim([0.02,15])
 ax112.tick_params(labelsize=fsizenb)
-ax112.set_xticks([250, 400]) 
+ax112.set_xticks([250, 500,750]) 
 #ax112.set_yticks([0.1,1,10]) 
 #ax112.set_yticklabels(['0.1','1','10'])
 

@@ -245,6 +245,8 @@ if do_fig_taus:
             xt = [2,2.5,3,3.5]
         elif ct == 3:
             xvec = np.array([70.5, 58.8, 49.75,39.9, 30.5, 25.0 ] )
+            #using temp CALIBRATED WITH SCALE
+            xvec = np.array([29.767038939801189, 32.989664557794143, 41.60740810742837, 50.690450376594001, 59.078831716569162, 71.049952240480138])[::-1]
             my_ax = [ax00,ax10,ax20,ax40,ax10b] 
             loadprefix = '../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/'
             xlab = 'Temperature \n' + r'at sample ($^{\circ}$C)'
@@ -254,8 +256,8 @@ if do_fig_taus:
             blue = blue0['data']
             del red0, blue0
             gc.collect()
-            xl = [20,75]
-            xt = [25,30,40,50,60,70]
+            xl = [25,75]
+            xt = [30,40,50,60,70]
             
         for my_ind in my_ax:
             my_ind.xaxis.set_ticks_position('bottom')
@@ -295,7 +297,7 @@ if do_fig_taus:
         
         hlp3hlp3 = np.empty([taured.shape[0],taured.shape[1]])
         for jjj in np.arange(0,taured.shape[1]):
-            hlp3hlp3[:,jjj] = -(unumpy.nominal_vTruealues(taured[:,jjj])-unumpy.nominal_values(taublue[:,jjj]))/(unumpy.nominal_values(taured[:,jjj])+unumpy.nominal_values(taublue[:,jjj]))        
+            hlp3hlp3[:,jjj] = -(unumpy.nominal_values(taured[:,jjj])-unumpy.nominal_values(taublue[:,jjj]))/(unumpy.nominal_values(taured[:,jjj])+unumpy.nominal_values(taublue[:,jjj]))        
         hlp3hlp3 = (1 - (np.max(hlp3hlp3)-hlp3hlp3)/(np.max(hlp3hlp3)))   * 100.0   
         
         hlp3hlp3ratio = np.empty([taured.shape[0],taured.shape[1]])
@@ -601,7 +603,7 @@ if do_hbar:
     plt.show()  
     multipage_longer('SI-Correlation.pdf',dpi=80)
     
-do_plottau = True
+do_plottau = False
 if do_plottau:
     
     fig1= plt.figure(figsize=(sizex, sizey), dpi=dpi_no)
@@ -939,14 +941,28 @@ if do_fig_ints:
             xl = [1.66,3.92]
             xt = [2,2.5,3,3.5]
         elif ct == 3:
-            xvec = np.array([70.5, 58.8, 49.75,39.9, 30.5, 25.0 ] )
+            # GOING DOWN
+##           xvec = np.array([70.5, 58.8, 49.75,39.9, 30.5, 25.0 ] )
+#            #using temp CALIBRATED WITH SCALE
+#            xvec = np.array([29.767038939801189, 32.989664557794143, 41.60740810742837, 50.690450376594001, 59.078831716569162, 71.049952240480138])[::-1]
+#            my_ax = [ax00,ax10,ax20,ax40]#,ax10b] 
+#            loadprefix = '../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/'
+#            xlab = 'Temperature \n' + r'at sample ($^{\circ}$C)'
+#            red0 = np.load(loadprefix + 'Red_int_arrayGOINGDOWN.npz',mmap_mode='r')  
+#            red = red0['data']
+#            blue0 = np.load(loadprefix + 'Blue_int_arrayGOINGDOWN.npz',mmap_mode='r')  
+#            blue = blue0['data']
+            
+            #WILL USE GONG UP INSTEAD
+            xvec = np.array([24.9, 30.786938036466221, 39.654901901625777, 50.851799349638029, 60.220330334198266, 70.652507581440247])
             my_ax = [ax00,ax10,ax20,ax40]#,ax10b] 
             loadprefix = '../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/'
             xlab = 'Temperature \n' + r'at sample ($^{\circ}$C)'
-            red0 = np.load(loadprefix + 'Red_int_arrayGOINGDOWN.npz',mmap_mode='r')  
+            red0 = np.load(loadprefix + 'Red_int_array.npz',mmap_mode='r')  
             red = red0['data']
-            blue0 = np.load(loadprefix + 'Blue_int_arrayGOINGDOWN.npz',mmap_mode='r')  
+            blue0 = np.load(loadprefix + 'Blue_int_array.npz',mmap_mode='r')  
             blue = blue0['data']
+            
             del red0, blue0
             gc.collect()
             xl = [20,75]

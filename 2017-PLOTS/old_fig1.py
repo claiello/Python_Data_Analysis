@@ -113,25 +113,10 @@ plt.rc('font', serif='Palatino')
 noplots = 8
 nolines = 8
 
-
-
-import matplotlib.gridspec as gridspec
-import matplotlib as mpl
-
-
-gs = mpl.gridspec.GridSpec(6, 6)
-#gs.update(wspace=0.1, hspace=-0.5, left=0.115, right=0.5, bottom=0.1, top=0.99) 
-#gs.update(wspace=0.1, hspace=-0.5, left=0.115, right=1.0, bottom=0.1, top=0.99) 
-
-gs.update(wspace=0.05, hspace=-0.25, left=0.115, right=0.975, bottom=0.1, top=0.99) 
-
-
 plot_spec= True
 if plot_spec:
 
-    ax0 = plt.subplot(gs[3,0:3])
-    #ax0 = plt.subplot2grid((nolines,noplots), (0,0), colspan=4, rowspan=3)
-    
+    ax0 = plt.subplot2grid((nolines,noplots), (4,0), colspan=4, rowspan=3)
     ax0.spines['right'].set_visible(False)
     ax0.spines['top'].set_visible(False)
     ax0.xaxis.set_ticks_position('bottom')
@@ -180,7 +165,7 @@ if plot_spec:
 #    ax0.set_xticklabels([str("{0:.1f}".format(aux_x[f])),str("{0:.1f}".format(aux_xx[g]))])
     
     ax0.set_xticks([534,566,540.5 ,623,677,wl])
-    ax0.set_xticklabels(['534','566','540.5','623','677',wlt])
+    ax0.set_xticklabels(['534','566','540.5','623.0','677',wlt])
     ax0.get_xaxis().majorTicks[0].label1.set_horizontalalignment('right')
     ax0.get_xaxis().majorTicks[2].label1.set_horizontalalignment('left')
     #ax0.plot(wavel,spec_to_plot/np.max(spec_to_plot), lw=2, color='k')    
@@ -199,9 +184,6 @@ if plot_spec:
     # Exact DeltaE = 0.39839eV
 
 sys.path.append("../2016-12-19_Andrea_BigNPs_5DiffTemps/") # necessary 
-
-
-
 ###############################################################################
 index = 0
 Pixel_size = [2.2] #nmsys.path.append('/usr/lib/python2.7/dist-packages')
@@ -232,25 +214,21 @@ sizey = 6
 dpi_no = 80
 
 
-#axA = plt.subplot2grid((nolines,noplots), (0,0), colspan=2, rowspan=3)
-axA = plt.subplot(gs[0, 0])
+import matplotlib.gridspec as gridspec
+import matplotlib as mpl
+
+axA = plt.subplot2grid((nolines,noplots), (0,0), colspan=2, rowspan=3)
 axA.text(-0.625, 1.0, 'a', transform=axA.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
 axA.axis('off')
 import matplotlib.image as mpimg
 
-
-#axB = plt.subplot2grid((nolines,noplots), (0,3), colspan=2, rowspan=3)
-axB = plt.subplot(gs[0, 3])
-
+axB = plt.subplot2grid((nolines,noplots), (0,3), colspan=2, rowspan=3)
 axB.text(-1.5, 1.0, 'b', transform=axB.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
 axB.axis('off')
 
-#inset200 = plt.subplot2grid((nolines,noplots), (0,6), colspan=2, rowspan=3)
-inset200 = plt.subplot(gs[0:2,5:])
-
-
+inset200 = plt.subplot2grid((nolines,noplots), (0,6), colspan=2, rowspan=3)
 inset200.text(-0.55, 1.0, 'd', transform=inset200.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
 
@@ -281,19 +259,12 @@ inset200.set_yticks([0.001, 0.01, 0.1, 1]) #, minslopered,minslopegreen])
 inset200.set_yticklabels(['0.001','0.01','0.1','1']) #,'0.021','0.048'])
 inset200.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
 
-
-
 ###############################################################################
 
+gs = mpl.gridspec.GridSpec(8, 3)
+gs.update(wspace=0.1, hspace=-0.5, left=0.115, right=0.5, bottom=0.1, top=0.99) 
 
-
-#gs = mpl.gridspec.GridSpec(8, 3)
-#gs.update(wspace=0.1, hspace=-0.5, left=0.115, right=0.5, bottom=0.1, top=0.99) 
-
-#gs.update(wspace=0.1, hspace=-0.5, left=0.115, right=0.5, bottom=0.1, top=0.99) 
-
-
-ax11 = plt.subplot(gs[5,0])
+ax11 = plt.subplot(gs[7,0])
 
 ax11.text(-0.7, 1.20, 'c', transform=ax11.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5}) #was 1.0 not 1.2
@@ -310,14 +281,14 @@ import matplotlib.font_manager as fm
 #plt.axis('off')
 
 
-ax1 = plt.subplot(gs[5,1])
+ax1 = plt.subplot(gs[7,1])
 ax1.set_title('Gradient',fontsize=fsizepl)
 #plotb = np.average(blue['data'],axis = (0,1))
 #plotb = plotb
 #im = plt.imshow(plotb,cmap=cm.Greens,norm=colors.PowerNorm(0.5))#, vmin=plotb.min(), vmax=plotb.max())) #or 'OrRd'
 #plt.axis('off')
 
-ax2 = plt.subplot(gs[5,2])
+ax2 = plt.subplot(gs[7,2])
 #ax2 = plt.subplot2grid((nolines,noplots), (4, 2), colspan=1, rowspan=1)
 ax2.set_title('Segmentation',fontsize=fsizepl)
 #plotr = np.average(red['data'],axis = (0,1))#hlpse = np.copy(segmm['bright'])
@@ -349,15 +320,11 @@ ax2.set_title('Segmentation',fontsize=fsizepl)
 
 #fig1.subplots_adjust(wspace=-0.1, hspace=-0.1)
 
-#plt.show()
 
 #
 #
 #==============================================================================
 # ################################################################################
-
-
-
 sys.path.append("../2017-04-05_Andrea_NPs_Different_excitation_times/")
 blue = np.load('../2017-04-05_Andrea_NPs_Different_excitation_times/'+'ns500Bluebright.npz',mmap_mode='r')     
 red = np.load('../2017-04-05_Andrea_NPs_Different_excitation_times/'+'ns500Redbright.npz',mmap_mode='r')
@@ -368,9 +335,7 @@ blue = np.array(blue['data'])
 red = np.average(red,axis=(0,2,3))
 blue = np.average(blue,axis=(0,2,3))
 
-#ax112 = plt.subplot2grid((nolines,noplots), (3,4), colspan=4, rowspan=5)
-ax112 = plt.subplot(gs[3:,4:])
-
+ax112 = plt.subplot2grid((nolines,noplots), (3,4), colspan=4, rowspan=5)
 ax112.text(-0.2, 1.0, 'e', transform=ax112.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
       bbox={'facecolor':'None', 'pad':5})
 ax112.spines['right'].set_visible(False)
@@ -388,9 +353,9 @@ ax112.set_xlim(xmax=1010.0) #2000
 # #to show time detail
 ajuda=xx_array/1e-6
 ajuda2=np.nanmean(blue)
-ax112.vlines(750, 0.035, 0.08, colors='k', linestyles='dashed',lw=2,zorder=5000)
-ax112.vlines(760, 0.035, 0.08, colors='k', linestyles='dashed',lw=2,zorder=6000)
-ax112.text(755, 0.1, '1 $\mu$s', fontsize=fsizenb, va='center',ha='center')
+ax112.vlines(750, 0.3, 0.4, colors='k', linestyles='dashed',lw=2,zorder=5000)
+ax112.vlines(760, 0.3, 0.4, colors='k', linestyles='dashed',lw=2,zorder=6000)
+ax112.text(755, 0.5, '1 $\mu$s', fontsize=fsizenb)
 # 
 ax112.set_xlim([10,1010])
 ax112.set_ylim([0.0009,1.2])
@@ -400,12 +365,9 @@ ax112.set_yticks([0.001, 0.01, 0.1,1])
 ax112.set_yticklabels(['0.001', '0.01', '0.1','1'])
 ax112.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
 
-ax112.axvspan(12.0,502.0,alpha=0.25,color='yellow')
-ax112.text(250, 0.04, 'e-beam on', fontsize=fsizenb, va='center',ha='center') 
-
-
-
-
+ax112.axvspan(12.0,500.0,alpha=0.25,color='yellow')
+ax112.text(250, 0, 'e-beam on', fontsize=fsizenb, va='center',ha='center') 
+# 
 # se = np.load('../2016-11-07_Andrea_small_long_and_short_LTs/'+'ISEchannel.npz') 
 # segmm = np.load('../2016-11-07_Andrea_small_long_and_short_LTs/'+'ISEchannelGMM.npz') 
 # 
@@ -588,7 +550,7 @@ if do_B:
 
 
 
-#plt.tight_layout()
+plt.tight_layout()
 
 multipage_longer('Fig1.pdf',dpi=900)
 

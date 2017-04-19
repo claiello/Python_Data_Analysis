@@ -46,12 +46,15 @@ def do_pic(ax3,fig1):
     fsizepl = 24
     fsizenb = 20
     
+
     ######## MEDIUM ZOOM
     # WL stands for WHOLE LIGHT
     Il_data3 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Il_data.npz')
-    il_data3 = Il_data3['data']  
+    #il_data3 = Il_data3['data'] 
+    il_data3 = np.array([24.9, 30.786938036466221, 39.654901901625777, 50.851799349638029, 60.220330334198266, 70.652507581440247])
     Il_data_std3 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Il_data_std.npz')
-    il_data_std3 = Il_data_std3['data']  
+#    il_data_std3 = Il_data_std3['data']  
+    il_data_std3 = np.array([0.1, 1.0338612506806335, 0.70564570081038591, 1.0125697282883677, 0.5736063546274861, 0.64491532738933377])
     
     Red_int_array3 = np.load('../2017-03-26_Andrea_NPs_NewTempData_ThemorcoupleOnSample+FilterNEWNEW/Red_int_array.npz') 
     red_int_array3 = Red_int_array3['data']
@@ -199,14 +202,27 @@ def do_pic(ax3,fig1):
         #axinset1.spines['top'].set_visible(False)
         axinset1.xaxis.set_ticks_position('bottom')
         axinset1.yaxis.set_ticks_position('right')
-        axinset1.set_ylabel(r'$\Delta$ = 0.1',fontsize=fsizepl)
-        axinset1.set_xlabel('$\Delta = 2 ^{\circ}$C',fontsize=fsizepl)
+        axinset1.set_ylabel(r'$\Delta$S = 0.1',fontsize=fsizepl)
+        axinset1.set_xlabel(r'$\Delta$T $=$ 2 $^{\circ}$C',fontsize=fsizepl)
+        
+        label = axinset1.xaxis.get_label()
+        x_lab_pos, y_lab_pos = label.get_position()
+        label.set_position([0.0, y_lab_pos])
+        label.set_horizontalalignment('left')
+        axinset1.xaxis.set_label(label)
+        
+        labely = axinset1.yaxis.get_label()
+        x_lab_posy, y_lab_posy = labely.get_position()
+        labely.set_position([0.0,0.73])
+        labely.set_verticalalignment('baseline')
+        axinset1.yaxis.set_label(labely)
+        
         axinset1.tick_params(labelsize=fsizenb)
         axinset1.set_ylim([1.24,1.34])
         axinset1.set_xlim([50.1, 52.1])
         axinset1.set_xticks([])
         axinset1.set_yticks([])
-        ax3.annotate('', xy=(51.5,1.25), xytext=(58,1.13),
+        ax3.annotate('', xy=(52,1.25), xytext=(58,1.13),
                 arrowprops=dict(facecolor='black', shrink=0.05))  
         
         left, bottom, width, height = [0.48, 0.625, 0.05,0.05]
@@ -216,8 +232,17 @@ def do_pic(ax3,fig1):
         #axinset11.spines['top'].set_visible(False)
         axinset11.xaxis.set_ticks_position('bottom')
         axinset11.yaxis.set_ticks_position('left')
-        #axinset11.set_ylabel('Signal',fontsize=fsizepl)
-        #axinset11.set_xlabel('$^{\circ}$C',fontsize=fsizepl)
+        axinset11.set_ylabel(r'$\Delta$S',fontsize=fsizepl)
+        
+        labely = axinset11.yaxis.get_label()
+        x_lab_posy, y_lab_posy = labely.get_position()
+        labely.set_position([0.0,0.5])
+        labely.set_verticalalignment('baseline')
+        axinset11.yaxis.set_label(labely)
+        
+        
+        
+        axinset11.set_xlabel('$\Delta$T',fontsize=fsizepl)
         axinset11.tick_params(labelsize=fsizenb)
         axinset11.set_yticks([])
         axinset11.set_xlim([69.5, 71.5])

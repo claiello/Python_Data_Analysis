@@ -409,7 +409,7 @@ if do_B:
     
     Pixel_size = np.array([0.89]) 
     
-    SEA= np.load('V0SEchannelB.npz')
+    SEA= np.load('../2017-02-13_SingleAnalysis/V0SEchannelB.npz')
     xlen = SEA['data'].shape[0]
     ylen = SEA['data'].shape[1]
     delx = 0#+28
@@ -492,7 +492,15 @@ if do_B:
     
     #new code to make black white
     #cut_labels_ws[cut_labels_ws > 1] = 1.0
-    ax011.imshow(cut_labels_ws, cmap = cm.Greys_r) #or 'OrRd'
+#    ax011.imshow(cut_labels_ws, cmap = cm.Greys_r) #or 'OrRd'
+    
+#    ax011.axis('off')
+#    ax1.imshow(bw,cmap=cm.Greys_r) #or 'OrRd'
+#    ax1.axis('off')
+#    ax2.imshow(new_pic_grad,cmap=cm.Greys_r) #or 'OrRd'
+#    ax2.axis('off')
+    
+     ax011.imshow(cut_labels_ws, cmap = cm.Greys_r) #or 'OrRd'
     
     ax011.axis('off')
     ax0111.imshow(bw,cmap=cm.Greys_r) #or 'OrRd'
