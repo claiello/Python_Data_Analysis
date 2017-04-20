@@ -315,6 +315,8 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
     
         # pixel precision first
         shift, error, diffphase = register_translation(image0, offset_images[k,:,:])
+        for nnn in range(len(shift)):
+            shift[nnn] = int(round(shift[nnn]))
         shift_vec[k] = shift
         #determine max and min shifts; in order to know max padding needed
         if shift_vec[k][0] > oyp:
@@ -336,7 +338,19 @@ def reg_time_resolved_images_to_se(images,toberegistered1=None,toberegistered2=N
         #print("Detected subpixel offset (y, x):")
         #print(shift)
         
-    offset_images_corr = np.zeros([images.shape[0],images.shape[1]+oyp-oym,images.shape[2]+oxp-oxm])
+    oyp = int(round(oyp))
+    oym = int(round(oym))
+    oxm = int(round(oxm))
+    oxp = int(round(oxp))
+    
+    print(oyp)
+    print(oym)
+    print(oxm)
+    print(oxp)
+    
+    shift_vec = shift_vec.astype(int)
+        
+    offset_images_corr = np.zeros([images.shape[0],images.shape[1]+int(oyp)-int(oym),images.shape[2]+int(oxp)-int(oxm)])
     #gc.collect()
     
     offset_images_corr[0,-oym:images.shape[1]-oym,-oxm:images.shape[2]-oxm] = image0

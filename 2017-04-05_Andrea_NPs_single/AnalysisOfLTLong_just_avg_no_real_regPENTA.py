@@ -74,13 +74,17 @@ if True:
     
     ###### put all dsets together
     redall = np.empty([])
-    cutiny = 0
+    
     
     file2    = h5py.File(nametr[0] + '.hdf5', mmap_mode='r')  
     gc.collect()
-    red1_dset0  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
-#    red1_dset0  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#
-    redall = red1_dset0[1:,:,:,cutiny:]
+    #red1_dset0  = file2['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
+    red1_dset0  = file2['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#
+    
+    #    cutiny = 0
+    #redall = red1_dset0[1:,:,:,cutiny:]
+    
+    redall = red1_dset0[1:,:,:,:]
     del red1_dset0
     gc.collect()
     file2.close()
@@ -89,12 +93,15 @@ if True:
     
     file3    = h5py.File(nametr[1] + '.hdf5', mmap_mode='r')  
     gc.collect()
-    red2_dset0  = file3['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
-#    red2_dset0  = file3['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scan
+    #red2_dset0  = file3['/data/Counter channel 1 : PMT red/PMT red time-resolved/data']#10 Scany points X10 frames x 150 tr pts x250 x 250 pixels
+    red2_dset0  = file3['/data/Counter channel 2 : PMT blue/PMT blue time-resolved/data']#10 Scan
     
     
+#    cutiny = 0
+#    redall = np.vstack((redall,red2_dset0[1:,:,:,cutiny:])) 
     
-    redall = np.vstack((redall,red2_dset0[1:,:,:,cutiny:])) 
+    
+    redall = np.vstack((redall,red2_dset0[1:,:,:,:])) 
     
     
     del red2_dset0
@@ -212,14 +219,14 @@ if True:
     del se1_dset_reg  , red1_dset_reg, red1_dset
     gc.collect()        
     
-#    mycode = str(let[index]) + 'Bluebright = tempfile.NamedTemporaryFile(delete=False)'
-#    exec(mycode)
-#    np.savez(str(let[index]) +'Bluebright', data = red1_dset_reg_all)
-
-
-    mycode = str(let[index]) + 'Redbright = tempfile.NamedTemporaryFile(delete=False)'
+    mycode = str(let[index]) + 'Bluebright = tempfile.NamedTemporaryFile(delete=False)'
     exec(mycode)
-    np.savez(str(let[index]) +'Redbright', data = red1_dset_reg_all)
+    np.savez(str(let[index]) +'Bluebright', data = red1_dset_reg_all)
+
+
+#    mycode = str(let[index]) + 'Redbright = tempfile.NamedTemporaryFile(delete=False)'
+#    exec(mycode)
+#    np.savez(str(let[index]) +'Redbright', data = red1_dset_reg_all)
         
     
 klklkl
