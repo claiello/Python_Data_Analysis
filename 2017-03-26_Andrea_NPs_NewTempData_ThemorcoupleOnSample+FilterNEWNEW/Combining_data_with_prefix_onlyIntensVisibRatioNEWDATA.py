@@ -498,6 +498,15 @@ def do_pic(ax3,fig1):
         
         #######################################################################
 
+        #### Arrows explaining temp um and down
+        ax3.annotate('', xy=(47,1.175), xytext=(41,1.1),
+                arrowprops=dict(facecolor='red', shrink=0.05,edgecolor ='None'))  
+        ax3.text(40, 1.05, 'ramping up', fontsize=fsizenb, va='center',ha='center',color='r') 
+        
+        ax3.annotate('', xy=(38,1.375), xytext=(44,1.45),
+                arrowprops=dict(facecolor='blue', shrink=0.05,edgecolor ='None'))  
+        ax3.text(45, 1.5, 'ramping down', fontsize=fsizenb, va='center',ha='center',color='b') 
+
     
         ###REAL!!!!!
         #return result2, result

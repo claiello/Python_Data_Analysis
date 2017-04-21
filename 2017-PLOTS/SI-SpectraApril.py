@@ -238,6 +238,9 @@ cumuvisib50nmw_no_correction = np.zeros(len(vector)) #516-566 for green, 634-684
 uratio = np.zeros(len(vector)) #516-566 for green, 634-684 for red
 ucumuvisib = np.zeros(len(vector)) #516-566 for green, 634-684 for red
 
+greenintensity =  np.zeros(len(vector))
+redintensity =  np.zeros(len(vector))
+
 indice = 0
 for spec in vector:
     
@@ -273,6 +276,8 @@ for spec in vector:
     ratio50nmw_no_correction[indice] = (np.average(spec_to_plot_red_no_correction))/( np.average(spec_to_plot_green_no_correction))
     cumuvisib50nmw_no_correction[indice] = (np.sum(spec_to_plot_green_no_correction) - np.sum(spec_to_plot_red_no_correction))/( np.sum(spec_to_plot_green_no_correction) + np.sum(spec_to_plot_red_no_correction))
 
+    greenintensity[indice] = ( np.average(spec_to_plot_green))
+    redintensity[indice] = (np.average(spec_to_plot_red))
 
     indice = indice + 1
     
@@ -304,6 +309,10 @@ normto = 0
 
 ax30.errorbar(vectemp,ratio50nmw_no_correction/ratio50nmw_no_correction[normto], xerr=vectempstd,lw=2, color='k',ls='None',marker='d',markersize=12,markeredgecolor='gray',label='Ratio of intensities')
 ax30.errorbar(vectemp,cumuvisib50nmw_no_correction/cumuvisib50nmw_no_correction[normto], xerr=vectempstd,lw=2, color='k',ls='None', marker='o',markersize=12,markeredgecolor='gray',label='Visibility of intensitites')
+
+#ax30.plot(vectemp,greenintensity/greenintensity[normto],'g')
+#ax30.plot(vectemp,redintensity/redintensity[normto],'r')
+
 
 ax30.legend(loc='best', frameon=False, fontsize=fsizenb)
 
@@ -395,7 +404,11 @@ print('b=' + str(result.params['b'].value))
 #             linewidth=0.0)
 #         
 print(d_visibparab(vectemp[:-1],a,b,1.0))
-ax30.plot(vectemp[:-1],d_visibparab(vectemp[:-1],a,b,1.0),color='k',lw=2)         
+ax30.plot(vectemp[:-1],d_visibparab(vectemp[:-1],a,b,1.0),color='k',lw=2)   
+
+simuint = genfromtxt('MathematicaSimuIntensity.txt', delimiter='')   
+ax30.plot(simuint[:,0],simuint[:,1],'m',lw=2)   
+ax30.axhline(1.12)
          
 plt.show()
 lllll 

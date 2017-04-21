@@ -503,10 +503,11 @@ if do_PENTA:
     yinit = 53
     yfinal = -53
     se = SEA['data'][xinit:xfinal,yinit:yfinal]
-    
+
+    #PLAY A LITTLE BIT WITH THOSE     
     new_pic = give_bolinha('Try1SEchannel.npz', xinit, yinit, xfinal, yfinal, corr_threshold = 0.35, n = 30, r = 5, save_file = False, do_plot = False)
     cutx = 1 #
-    cutyinit = 20
+    cutyinit = 1 #20  #### A lot of background to the left - keep as much as possible as I need to get good bg statistics
     cuty = 1
     se = se[cutx:-cutx, cutyinit:-cuty]
 
@@ -579,6 +580,9 @@ if do_PENTA:
     del SEA, se
     gc.collect()
     
+    #plt.show()    
+    #end of registration code
+    
          ####### load file that exists
 #    C = pickle.load( open( "PENTA.p", "rb" ) )
 #    areas = C['areas']
@@ -595,11 +599,17 @@ if do_PENTA:
 #    non_cut_k = C['non_cut_k']  
     
     
-    REDA = np.load('Try1Redbright.npz')
+    #REDA = np.load('Try1Redbright.npz')
+    REDA = np.load('Try1Redbright.npz', mmap_mode = 'r')
     reda = REDA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cutyinit:yfinal-cuty] #same no pixels than C, single
+
+    import IPython
+    IPython.embed()
+
     del REDA
     gc.collect()
-    BLUEA = np.load('Try1Bluebright.npz')
+    #BLUEA = np.load('Try1Bluebright.npz')
+    BLUEA = np.load('Try1Bluebright.npz', mmap_mode = 'r')
     bluea = BLUEA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cutyinit:yfinal-cuty]#same no pixels than C, single
     del BLUEA
     gc.collect() 
@@ -709,6 +719,9 @@ if do_PENTA:
     print(non_cut_k)
    # print('mean area of NP')
     #print(np.nanmean(C['areas'][C['non_cut_k']])/Pixel_size**2)
+    
+    #run until here
+    klklklk
 
 do_300 = True #already ran, can just open files and read
 if do_300:
