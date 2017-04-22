@@ -27,14 +27,17 @@ def plot_ratio_hist(my_hist, ax1, ax2, no_of_bins = 20,my_color='grey',index=0):
             edgecolor = 'None'
             )
             
+    print('average of stdbar')
+    print(np.average(stdbar/np.average(my_hist, axis = (0,1)) * 100.0))
+            
     if index == 0:
-       ax1.text(0.05*31,0.9*5,r'$\sigma$ $\sim$ 15.5 $\%$',fontsize=fsizepl)
+       ax1.text(0.05*31,0.9*5,r'$\overline{\Sigma}$ $\sim$ 15.5 $\%$',fontsize=fsizepl)
        ax1.set_ylim([0,5])
        ax1.set_yticks([5])
        ax1.set_xlim([0,31])
        ax1.set_xticks([10,20,30])
     elif index == 1:
-       ax1.text(0.05*17,0.9*2,r'$\sigma$ $\sim$ 7.9 $\%$',fontsize=fsizepl)
+       ax1.text(0.05*17,0.9*2,r'$\overline{\Sigma}$ $\sim$ 7.9 $\%$',fontsize=fsizepl)
        ax1.set_ylim([0,2])
        ax1.set_yticks([2])
        ax1.set_xlim([0,17])
@@ -56,7 +59,11 @@ def plot_ratio_hist(my_hist, ax1, ax2, no_of_bins = 20,my_color='grey',index=0):
     ax2.set_ylabel('Ratio of int. (a.u.)',fontsize=fsizepl)
     ax2.set_xticks([1,7])
     
-    ax1.set_xlabel(r'Std. per NP / mean$_{\overline{\tiny\textrm{NP}}\tiny, \overline{\tiny\textrm{Exp.}}}$ ($\%$)',fontsize=fsizepl) #mean is over everything
+    if index == 0:
+        ax1.set_xlabel(r'$\Sigma$ $\equiv$ stdev. per NP / mean$_{\overline{\tiny\textrm{NP}}\tiny, \overline{\tiny\textrm{Exp.}}}$ ($\%$)',fontsize=fsizepl) #mean is over everything
+    else:
+        ax1.set_xlabel(r'$\Sigma$ ($\%$)',fontsize=fsizepl) #mean is over everything
+
     ax1.set_ylabel('$\#$ of NP',fontsize=fsizepl)
     
     ax1.spines['right'].set_visible(False)

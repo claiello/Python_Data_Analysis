@@ -160,6 +160,12 @@ for index in listofindex:
     del segmm
     gc.collect()
     
+#    print('stats')
+#    print(np.sum(np.isfinite(hlp))) #SIGNAL pixels 17908
+#    print(np.sum(np.isfinite(hlpd))) #BG 27692
+#    print(red.shape)
+#    kkkkkc
+    
     print('red')
     red_int_array[index] = np.nanmean(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
     gc.collect()

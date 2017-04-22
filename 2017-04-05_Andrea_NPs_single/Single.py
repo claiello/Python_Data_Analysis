@@ -167,6 +167,11 @@ ax00 = plt.subplot2grid((nolines,noplots), (0,0), colspan=2, rowspan=2)
 ax03 = plt.subplot2grid((nolines,noplots), (0,2), colspan=2, rowspan=2)
 ax00.text(-0.125, 1.0, 'a', transform=ax00.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
+         
+ax00.hlines(y=80, xmin=70, xmax=216, color = 'k',lw=2)
+ax00.hlines(y=186, xmin=70, xmax=216, color = 'k',lw=2)
+ax00.vlines(x=72, ymin=78, ymax=300, color = 'k',lw=2)
+ax00.vlines(x=214, ymin=78, ymax=300, color = 'k',lw=2)
 
 ax001 = plt.subplot2grid((nolines,noplots), (3,0), colspan=2, rowspan=2)
 ax011 = plt.subplot2grid((nolines,noplots), (3,2), colspan=2, rowspan=2)
@@ -194,7 +199,7 @@ axratiomag.spines['top'].set_visible(False)
 axratiomag.xaxis.set_ticks_position('bottom')
 axratiomag.yaxis.set_ticks_position('left')
 axratiomag.set_ylabel(r'Ratio of int. (a.u.)',fontsize=fsizepl)
-axratiomag.set_xlabel('Avg. pixels per NP (a.u.)',fontsize=fsizepl)
+axratiomag.set_xlabel('Avg. datapoints per NP (a.u.)',fontsize=fsizepl)
 axratiomag.tick_params(labelsize=fsizenb)
 
 axtaumag.spines['right'].set_visible(False)
@@ -434,7 +439,7 @@ if do_150:
 #    print(np.nanmean(C['areas'][C['non_cut_k']])/Pixel_size**2)
 #    klklklk
              
-    axratiomag.errorbar(172,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
+    axratiomag.errorbar(172*7,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
 
     plot_ratio_hist(
             C['intens'][C['non_cut_k']],
@@ -487,7 +492,7 @@ if do_150:
 #    print(tor(areas*Pixel_size**2))
 #    print(non_cut_k)
 
-do_PENTA = True
+do_PENTA = False
 if do_PENTA:
     
     print('do PENTA')
@@ -722,6 +727,8 @@ if do_PENTA:
     
     #run until here
     klklklk
+    
+    ######8 avgs for penta
 
 do_300 = True #already ran, can just open files and read
 if do_300:
@@ -929,7 +936,7 @@ if do_300:
 #           axstdmag.plot(moving_average(np.arange(0,1398),movav),moving_average(np.std(taublue[k,:,:],axis=0)/np.average(taublue[k,:,:],axis=0),movav),lw=1,color='g')
     
       
-    axratiomag.errorbar(631,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
+    axratiomag.errorbar(631*7,np.nanmean(C['intens'][C['non_cut_k']],axis=(0,1)),yerr=np.nanstd(C['intens'][C['non_cut_k']],axis=(0,1)),marker='o', color='k', markersize=12) 
 #    axtaumag.plot(np.arange(0,1398),np.average(C['taured'][C['non_cut_k']],axis=(0,1)),lw=2,color='r')
 #    axtaumag.plot(np.arange(0,1398),np.average(C['taublue'][C['non_cut_k']],axis=(0,1)),lw=2,color='g')
 #    axstdmag.plot(np.arange(0,1398),np.std(C['taured'][C['non_cut_k']],axis=(0,1))/np.average(C['taured'][C['non_cut_k']],axis=(0,1))*100.0,lw=2,color='r')
@@ -994,100 +1001,7 @@ if do_300:
 #    print(tor(areas*Pixel_size**2))
 #    print(non_cut_k)
      
-#### C
-do_C = False #ran already - can just load data
-if do_C:
-    
-    print('do 450')
-    
-    length_scalebar = 100.0
-    Pixel_size = np.array([0.83]) 
-    
-    SEA= np.load('x450SEchannel.npz') #init shape (342, 315)
-    xlen = SEA['data'].shape[0]
-    ylen = SEA['data'].shape[1]
-    xinit = 200
-    xfinal = -200
-    yinit = 41
-    yfinal = -41
-    se = SEA['data'][xinit:xfinal,yinit:yfinal]
-    
-    new_pic = give_bolinha('x450SEchannel.npz', xinit, yinit, xfinal, yfinal, corr_threshold = 0.35, n = 30, r = 8, save_file = False, do_plot = False)
-#    cutx = 50
-#    cuty = 1
-#    se = se[0:-cutx, cuty:-cuty]
 
-    ax0022.imshow(se,cmap=cm.Greys_r)
-    ax0022.axis('off')
-    
-    #new_pic = new_pic[cutx:-cutx, cuty:-cuty]
-    setr = new_pic
-    #binary threshold
-    se_data2 = np.copy(setr)
-    
-    new_hlp = new_pic
-    I8 = (new_hlp * 255.9).astype(np.uint8)
-    bw = cv2.adaptiveThreshold(I8, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 0)
-    from scipy import ndimage
-    hlpse2 = bw 
-    hlpse2[hlpse2 > 1] = 1.0
-    hlpse2[hlpse2 < 1] = 0.0
-    distance = ndimage.distance_transform_edt(hlpse2)
-    
-    local_maxi = peak_local_max(
-        distance, 
-        num_peaks = 50, 
-        indices = False, 
-        footprint = np.ones((50,50)),
-        labels = hlpse2) #footprint = min dist between maxima to find #footprint was 25,25
-    markers = skimage.morphology.label(local_maxi)
-    labels_ws = watershed(-distance, markers, mask=hlpse2)
-    lab = np.unique(labels_ws)
-    
-    # Make random colors, not degrade
-    rand_ind = np.random.permutation(lab)
-    new_labels_ws = np.copy(labels_ws)
-    for k in range(new_labels_ws.shape[0]):
-        for j in range(new_labels_ws.shape[1]):
-            new_labels_ws[k, j] = rand_ind[labels_ws[k, j]]
-    labels_ws =  new_labels_ws
-    
-    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
-    sbar = sb.AnchoredScaleBar(ax0022.transData, length_scalebar_in_pixels, '', style = 'bright', loc = 4, my_fontsize = fsizenb)
-    ax0022.add_artist(sbar)
-    
-    areas = np.array([])
-    for k in lab:
-        areas = np.append(areas, len( labels_ws[labels_ws == k] ))
-    cut_k = []
-    cut_labels_ws = np.copy(labels_ws)
-    non_cut_k = []  ###### change cut_k
-    for k in range(len(lab)):
-        if (areas[k] < 10) or (areas[k] > 20000): # or (k == 0): #k==o is modif!!! k==0 point is WEIRD
-            cut_labels_ws[cut_labels_ws == lab[k]] = 0
-            cut_k.append(k)
-        else:
-            non_cut_k.append(k)  ###change cut_k
-    
-    #print(len(lab))
-    #print(len(non_cut_k))
-    #ax01.imshow(new_pic_grad,cmap=cm.Greys_r) #or 'OrRd'
-    #ax01.axis('off')
-    #ax02.imshow(masklarge,cmap=cm.Greys_r) #or 'OrRd'
-    #ax02.axis('off')
-   
-    #code to make all black - this will crash if running to save data
-    #cut_labels_ws[cut_labels_ws > 1] = 1.0
-    
-    axpic.imshow(cut_labels_ws, cmap = cm.Greys_r) #or 'OrRd'
-    axpic.axis('off')
-
-    del SEA, se
-    gc.collect()
- 
-#### C
-
-    
 #### C
 do_750= True #ran already - can just load data
 if do_750:
@@ -1583,14 +1497,16 @@ red = np.load('../2017-04-05_Andrea_NPs_single/Red_int_arrayPixel.npz',mmap_mode
 bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_int_arrayPixel.npz',mmap_mode='r')     
 bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_int_arrayPixel.npz',mmap_mode='r') 
 
-axratiomag.plot(1693,red['data']/blue['data'],marker='o', color='k', markersize=12) 
-axratiomag.plot(1693,bgred['data']/bgblue['data'],marker='x', color='k', markersize=12) 
+###50 averages
+axratiomag.plot(1693*50,red['data']/blue['data'],marker='o', color='k', markersize=12) 
+axratiomag.plot(1693*50,bgred['data']/bgblue['data'],marker='x', color='k', markersize=12) #should in reality be 4469 pix * 50 avgs for background
+axratiomag.set_xscale("log", nonposx='clip')
 
 error_red = np.sqrt(red['data'])/np.sqrt(50*nopix)
 error_blue = np.sqrt(blue['data'])/np.sqrt(50*nopix)
 
-axratiomag.set_xlim([0,2000])
-axratiomag.set_xticks([500,1000,1500])
+#axratiomag.set_xlim([901,199999])
+#axratiomag.set_xticks([1000,5000,100000])
 axratiomag.set_ylim([1.7,6.3])
 axratiomag.set_yticks([2,4,6])
 
@@ -1603,6 +1519,129 @@ axtaumag.set_yticks([250,500])
 axtaumag.set_xticks([500,1000])
 
 ###### 750kx SINGLE END
+
+###### LITTLE BUNCH START
+
+blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_decay_arrayLITTLEBUNCH.npz',mmap_mode='r')     
+red = np.load('../2017-04-05_Andrea_NPs_single/Red_decay_arrayLITTLEBUNCH.npz',mmap_mode='r')
+bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_decay_arrayLITTLEBUNCH.npz',mmap_mode='r')     
+bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_decay_arrayLITTLEBUNCH.npz',mmap_mode='r') 
+
+red = red['data']
+blue = blue['data']
+bgred = bgred['data']
+bgblue = bgblue['data']  
+
+nopix = 17908.0/10.0 #mean number of pixels per NP
+nopixbg = 27692.0/10.0 #mean number of pixels per NP
+
+#10 averages
+error_red = np.sqrt(red)/np.sqrt(10.0*nopix)
+error_blue = np.sqrt(blue)/np.sqrt(10.0*nopix)
+
+error_redbg = np.sqrt(bgred)/np.sqrt(10*nopixbg)
+error_bluebg = np.sqrt(bgblue)/np.sqrt(10*nopixbg)
+
+taured, taublue = tauestimate2(red,error_red,blue,error_blue)
+bgtaured, bgtaublue = tauestimate2(bgred,error_redbg,bgblue,error_bluebg)
+
+plotinho(axtaumag, taured,'m',my_edgecolor='#ff3232', my_facecolor='#ff6666')
+plotinho(axtaumag, taublue,'c',my_edgecolor='#74C365', my_facecolor='#74C365')
+
+plotinho(axtaumag, bgtaured,'yellow',my_edgecolor='#801515', my_facecolor='#801515')
+plotinho(axtaumag, bgtaublue,'blue',my_edgecolor='#003D1B', my_facecolor='#003D1B')
+
+hlpplot_1 = unumpy.std_devs(taured)/unumpy.nominal_values(taured)
+hlpplot_2 = unumpy.std_devs(taublue)/unumpy.nominal_values(taublue)
+
+hlpplot_1 = hlpplot_1[0]
+hlpplot_2 = hlpplot_2[0]
+
+axstdmag.plot(hlpplot_1*100.0,'m',linewidth=2)
+axstdmag.plot(hlpplot_2*100.0,'c',linewidth=2)
+
+####### INTENSITY
+
+blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_int_arrayLITTLEBUNCH.npz',mmap_mode='r')     
+red = np.load('../2017-04-05_Andrea_NPs_single/Red_int_arrayLITTLEBUNCH.npz',mmap_mode='r')
+bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_int_arrayLITTLEBUNCH.npz',mmap_mode='r')     
+bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_int_arrayLITTLEBUNCH.npz',mmap_mode='r') 
+
+###50 averages
+axratiomag.plot(17908*10.0/10.0,red['data']/blue['data'],marker='o', color='k', markersize=12) 
+axratiomag.plot(17908*10.0/10.0,bgred['data']/bgblue['data'],marker='x', color='k', markersize=12) #should in reality be  27692.0/10.0*10.0 for background
+axratiomag.set_xscale("log", nonposx='clip')
+
+error_red = np.sqrt(red['data'])/np.sqrt(10.0*nopix)
+error_blue = np.sqrt(blue['data'])/np.sqrt(10.0*nopix)
+print('lill bunch error')
+print(error_red)
+print(error_blue)
+
+###### LITTLE BUNCH END
+
+###### PENTA START
+    
+###### TAUS
+#    
+#blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_decay_arrayPENTA.npz',mmap_mode='r')     
+#red = np.load('../2017-04-05_Andrea_NPs_single/Red_decay_arrayPENTA.npz',mmap_mode='r')
+#bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_decay_arrayPENTA.npz',mmap_mode='r')     
+#bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_decay_arrayPENTA.npz',mmap_mode='r') 
+#
+#red = red['data']
+#blue = blue['data']
+#bgred = bgred['data']
+#bgblue = bgblue['data']  
+#
+#nopix = 23719.0/5.0 #no pixels per nanoparticle
+#nopixbg = 33091.0
+#
+##8 avgs
+#error_red = np.sqrt(red)/np.sqrt(8*nopix)
+#error_blue = np.sqrt(blue)/np.sqrt(8*nopix)
+#
+#error_redbg = np.sqrt(bgred)/np.sqrt(8*nopixbg)
+#error_bluebg = np.sqrt(bgblue)/np.sqrt(8*nopixbg)
+#
+#taured, taublue = tauestimate2(red,error_red,blue,error_blue)
+#bgtaured, bgtaublue = tauestimate2(bgred,error_redbg,bgblue,error_bluebg)
+#
+#plotinho(axtaumag, taured,'grey',my_edgecolor='#ff3232', my_facecolor='#ff6666')
+#plotinho(axtaumag, taublue,'black',my_edgecolor='#74C365', my_facecolor='#74C365')
+#
+#plotinho(axtaumag, bgtaured,'DarkRed',my_edgecolor='#801515', my_facecolor='#801515')
+#plotinho(axtaumag, bgtaublue,'#003100',my_edgecolor='#003D1B', my_facecolor='#003D1B')
+#
+#hlpplot_1 = unumpy.std_devs(taured)/unumpy.nominal_values(taured)
+#hlpplot_2 = unumpy.std_devs(taublue)/unumpy.nominal_values(taublue)
+#
+#hlpplot_1 = hlpplot_1[0]
+#hlpplot_2 = hlpplot_2[0]
+#
+#axstdmag.plot(hlpplot_1*100.0,'grey',linewidth=2)
+#axstdmag.plot(hlpplot_2*100.0,'black',linewidth=2)
+#
+######## INTENSITY
+#
+#blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_int_arrayPENTA.npz',mmap_mode='r')     
+#red = np.load('../2017-04-05_Andrea_NPs_single/Red_int_arrayPENTA.npz',mmap_mode='r')
+#bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_int_arrayPENTA.npz',mmap_mode='r')     
+#bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_int_arrayPENTA.npz',mmap_mode='r') 
+#
+####50 averages
+#axratiomag.plot(23719.0/5.0*8.0,red['data']/blue['data'],marker='o', color='r', markersize=12) 
+#axratiomag.plot(23719.0/5.0*8.0,bgred['data']/bgblue['data'],marker='x', color='r', markersize=12) #should in reality be 4469 pix * 50 avgs for background
+#axratiomag.set_xscale("log", nonposx='clip')
+#
+#error_red = np.sqrt(red['data'])/np.sqrt(8*nopix)
+#error_blue = np.sqrt(blue['data'])/np.sqrt(8*nopix)
+#print('penta erros')
+#print(error_red)
+#print(error_blue)
+
+###### PENTA END
+
 #plt.tight_layout()
 multipage_longer('Single.pdf',dpi=80)  
 
@@ -1611,5 +1650,3 @@ plt.show()
 
 lklklk
 
-
-multipage_longer('Single.pdf',dpi=80)  
