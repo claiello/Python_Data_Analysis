@@ -173,23 +173,30 @@ ax00.hlines(y=186, xmin=70, xmax=216, color = 'k',lw=2)
 ax00.vlines(x=72, ymin=78, ymax=300, color = 'k',lw=2)
 ax00.vlines(x=214, ymin=78, ymax=300, color = 'k',lw=2)
 
-ax001 = plt.subplot2grid((nolines,noplots), (3,0), colspan=2, rowspan=2)
-ax011 = plt.subplot2grid((nolines,noplots), (3,2), colspan=2, rowspan=2)
+ax001 = plt.subplot2grid((nolines,noplots), (2,0), colspan=2, rowspan=2)
+ax011 = plt.subplot2grid((nolines,noplots), (2,2), colspan=2, rowspan=2)
 ax001.text(-0.1, 1.0, 'b', transform=ax001.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
+         bbox={'facecolor':'None', 'pad':5})
+         
+
+axlittlebunch = plt.subplot2grid((nolines,noplots), (4,0), colspan=2, rowspan=2)
+axlittlebunch2 = plt.subplot2grid((nolines,noplots), (4,2), colspan=2, rowspan=2)
+axlittlebunch.text(-0.1, 1.0, 'c', transform=axlittlebunch.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
 
 ax0022 = plt.subplot2grid((nolines,noplots), (6,0), colspan=2, rowspan=2)
 axpic = plt.subplot2grid((nolines,noplots), (6,2), colspan=2, rowspan=2)
-ax0022.text(-0.1, 1.0, 'c', transform=ax0022.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
+ax0022.text(-0.1, 1.0, 'd', transform=ax0022.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
 ax0022.axis('off')
 axpic.axis('off')
+
          
-ax0022b = plt.subplot2grid((nolines,noplots), (9,0), colspan=2, rowspan=2)
-axpicb = plt.subplot2grid((nolines,noplots), (9,2), colspan=2, rowspan=2)
-ax0022b.text(-0.1, 1.0, 'd', transform=ax0022b.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
+ax0022b = plt.subplot2grid((nolines,noplots), (8,0), colspan=2, rowspan=2)
+axpicb = plt.subplot2grid((nolines,noplots), (8,2), colspan=2, rowspan=2)
+ax0022b.text(-0.1, 1.0, 'e', transform=ax0022b.transAxes,fontsize=fsizepl, fontweight='bold', va='top', ha='right', 
          bbox={'facecolor':'None', 'pad':5})
-         
+            
 axratiomag = plt.subplot2grid((nolines,noplots), (0,5), colspan=4, rowspan=3)
 axtaumag = plt.subplot2grid((nolines,noplots), (4,5), colspan=4, rowspan=3)
 axstdmag = plt.subplot2grid((nolines,noplots), (8,5), colspan=4, rowspan=3)
@@ -492,7 +499,7 @@ if do_150:
 #    print(tor(areas*Pixel_size**2))
 #    print(non_cut_k)
 
-do_PENTA = False
+do_PENTA = True
 if do_PENTA:
     
     print('do PENTA')
@@ -604,129 +611,129 @@ if do_PENTA:
 #    non_cut_k = C['non_cut_k']  
     
     
-    #REDA = np.load('Try1Redbright.npz')
-    REDA = np.load('Try1Redbright.npz', mmap_mode = 'r')
-    reda = REDA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cutyinit:yfinal-cuty] #same no pixels than C, single
-
-    import IPython
-    IPython.embed()
-
-    del REDA
-    gc.collect()
-    #BLUEA = np.load('Try1Bluebright.npz')
-    BLUEA = np.load('Try1Bluebright.npz', mmap_mode = 'r')
-    bluea = BLUEA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cutyinit:yfinal-cuty]#same no pixels than C, single
-    del BLUEA
-    gc.collect() 
-    
-    no_avg = reda.shape[0]
-    intens = np.empty([len(lab),no_avg])
-    stdintens = np.empty([len(lab),no_avg])
-    intensr = np.empty([len(lab),no_avg])
-    stdintensr = np.empty([len(lab),no_avg])
-    intensb = np.empty([len(lab),no_avg])
-    stdintensb = np.empty([len(lab),no_avg])
-    
-    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
-    
-    for k in non_cut_k:
-#    import random
-#    for k in random.sample(non_cut_k, 5):
-     
-       print('indicePENTA')
-       print(k)
-       
-       #Ratio
-       print('Ratio')
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       hlp[cut_labels_ws != lab[k]] = np.nan
-       ureda  =  reda[:,backgroundinit:initbin,:,:]
-       ubluea =  bluea[:,backgroundinit:initbin,:,:]
-                     
-       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
-       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
-       del ureda, ubluea
-       gc.collect()
-       
-       vec = vecr/vecb
-       
-       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
-              
-       #import IPython
-       #IPython.embed()
-       
-       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
-       
-       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
-       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
-       
-       intens[k,:] = vec
-       stdintens[k,:] = vecstd
-       intensr[k,:] = vecr
-       stdintensr[k,:] = vecstdr
-       intensb[k,:] = vecb
-       stdintensb[k,:] = vecstdb
-       print(vec)
-       print(vecstd)
-       del vec, vecstd
-       gc.collect()
-       
-     
-       
-       print('Taus')
-       #Taus as a function of time
-       hlp = np.zeros(cut_labels_ws.shape)
-       hlp[cut_labels_ws == lab[k]] = 1.0
-       Notr = np.sum(hlp.astype(np.float64))
-       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
-       taured[k,:,:] = unumpy.nominal_values(hr)
-       tauredstd[k,:,:] = unumpy.std_devs(hr)
-       del hr, redd
-       gc.collect()
-       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
-       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
-       taublue[k,:,:] = unumpy.nominal_values(hb)
-       taubluestd[k,:,:] = unumpy.std_devs(hb)
-       del hb, blued
-       gc.collect()
-         #pass
-       
-       
-    del reda, bluea
-    gc.collect()
-    
-    save_data = {}
-    save_data['areas'] = areas*Pixel_size**2 #in nm^2
-    save_data['taured'] = taured
-    save_data['tauredstd'] = tauredstd
-    save_data['taublue'] = taublue
-    save_data['taubluestd'] = taubluestd
-    save_data['intens'] = intens
-    save_data['intensstd'] = stdintens
-    save_data['intensr'] = intensr
-    save_data['intensstdr'] = stdintensr
-    save_data['intensb'] = intensb
-    save_data['intensstdb'] = stdintensb
-    save_data['non_cut_k'] = non_cut_k
-    
-    del taured, taublue
-    gc.collect()
-    
-    pickle.dump(save_data, open("PENTA.p", "wb"))   
-    
-    print('radius found for C') #to check which of the found areas is background, which is signal
-    print(tor(areas*Pixel_size**2))
-    print(non_cut_k)
-   # print('mean area of NP')
-    #print(np.nanmean(C['areas'][C['non_cut_k']])/Pixel_size**2)
-    
-    #run until here
-    klklklk
+#    #REDA = np.load('Try1Redbright.npz')
+#    REDA = np.load('Try1Redbright.npz', mmap_mode = 'r')
+#    reda = REDA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cutyinit:yfinal-cuty] #same no pixels than C, single
+#
+#    import IPython
+#    IPython.embed()
+#
+#    del REDA
+#    gc.collect()
+#    #BLUEA = np.load('Try1Bluebright.npz')
+#    BLUEA = np.load('Try1Bluebright.npz', mmap_mode = 'r')
+#    bluea = BLUEA['data'][:,:,xinit+cutx:xfinal-cutx,yinit+cutyinit:yfinal-cuty]#same no pixels than C, single
+#    del BLUEA
+#    gc.collect() 
+#    
+#    no_avg = reda.shape[0]
+#    intens = np.empty([len(lab),no_avg])
+#    stdintens = np.empty([len(lab),no_avg])
+#    intensr = np.empty([len(lab),no_avg])
+#    stdintensr = np.empty([len(lab),no_avg])
+#    intensb = np.empty([len(lab),no_avg])
+#    stdintensb = np.empty([len(lab),no_avg])
+#    
+#    taured = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taublue = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    tauredstd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    taubluestd = np.empty([len(lab),no_avg,reda.shape[1]-initbin])
+#    
+#    for k in non_cut_k:
+##    import random
+##    for k in random.sample(non_cut_k, 5):
+#     
+#       print('indicePENTA')
+#       print(k)
+#       
+#       #Ratio
+#       print('Ratio')
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       hlp[cut_labels_ws != lab[k]] = np.nan
+#       ureda  =  reda[:,backgroundinit:initbin,:,:]
+#       ubluea =  bluea[:,backgroundinit:initbin,:,:]
+#                     
+#       vecr = np.nanmean(ureda * hlp, axis = (1,2,3))
+#       vecb = np.nanmean(ubluea * hlp, axis = (1,2,3))
+#       del ureda, ubluea
+#       gc.collect()
+#       
+#       vec = vecr/vecb
+#       
+#       No = np.nansum(hlp.astype(np.float64))*reda[:,backgroundinit:initbin,:,:].shape[1]
+#              
+#       #import IPython
+#       #IPython.embed()
+#       
+#       vecstd = vec * np.sqrt( 1.0/vecr/No + 1.0/vecb/No )
+#       
+#       vecstdr = 1.0/np.sqrt(No) * np.sqrt(vecr) 
+#       vecstdb = 1.0/np.sqrt(No) * np.sqrt(vecb) 
+#       
+#       intens[k,:] = vec
+#       stdintens[k,:] = vecstd
+#       intensr[k,:] = vecr
+#       stdintensr[k,:] = vecstdr
+#       intensb[k,:] = vecb
+#       stdintensb[k,:] = vecstdb
+#       print(vec)
+#       print(vecstd)
+#       del vec, vecstd
+#       gc.collect()
+#       
+#     
+#       
+#       print('Taus')
+#       #Taus as a function of time
+#       hlp = np.zeros(cut_labels_ws.shape)
+#       hlp[cut_labels_ws == lab[k]] = 1.0
+#       Notr = np.sum(hlp.astype(np.float64))
+#       redd = np.sum(reda[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hr = tauestimate(redd,np.sqrt(redd)/np.sqrt(Notr))
+#       taured[k,:,:] = unumpy.nominal_values(hr)
+#       tauredstd[k,:,:] = unumpy.std_devs(hr)
+#       del hr, redd
+#       gc.collect()
+#       blued = np.sum(bluea[:,initbin:,:,:] * hlp, axis = (2,3))/Notr
+#       hb = tauestimate(blued,np.sqrt(blued)/np.sqrt(Notr))
+#       taublue[k,:,:] = unumpy.nominal_values(hb)
+#       taubluestd[k,:,:] = unumpy.std_devs(hb)
+#       del hb, blued
+#       gc.collect()
+#         #pass
+#       
+#       
+#    del reda, bluea
+#    gc.collect()
+#    
+#    save_data = {}
+#    save_data['areas'] = areas*Pixel_size**2 #in nm^2
+#    save_data['taured'] = taured
+#    save_data['tauredstd'] = tauredstd
+#    save_data['taublue'] = taublue
+#    save_data['taubluestd'] = taubluestd
+#    save_data['intens'] = intens
+#    save_data['intensstd'] = stdintens
+#    save_data['intensr'] = intensr
+#    save_data['intensstdr'] = stdintensr
+#    save_data['intensb'] = intensb
+#    save_data['intensstdb'] = stdintensb
+#    save_data['non_cut_k'] = non_cut_k
+#    
+#    del taured, taublue
+#    gc.collect()
+#    
+#    pickle.dump(save_data, open("PENTA.p", "wb"))   
+#    
+#    print('radius found for C') #to check which of the found areas is background, which is signal
+#    print(tor(areas*Pixel_size**2))
+#    print(non_cut_k)
+#   # print('mean area of NP')
+#    #print(np.nanmean(C['areas'][C['non_cut_k']])/Pixel_size**2)
+#    
+#    #run until here
+#    klklklk
     
     ######8 avgs for penta
 
@@ -1444,6 +1451,85 @@ if do_750BG:
 #    axpic.axis('off')
 #    axpic2.axis('off')
     
+    
+#### C
+do_lilbunch= True #ran already - can just load data
+if do_lilbunch:
+    
+    print('dolilbunch')
+    
+    length_scalebar = 100.0
+    Pixel_size = np.array([1.11]) 
+    
+    SEA= np.load('x400littlebunchSEchannel.npz') #init shape (342, 315)
+    xlen = SEA['data'].shape[0]
+    ylen = SEA['data'].shape[1]
+    xinit = 50
+    xfinal = -50
+    yinit = 22
+    yfinal = -22
+    se = SEA['data'][xinit:xfinal,yinit:yfinal]
+    
+    new_pic = give_bolinha('x400littlebunchSEchannel.npz', xinit, yinit, xfinal, yfinal, corr_threshold = 0.35, n = 30, r = 8, save_file = False, do_plot = False)
+#    cutx = 20
+#    cuty = 1
+    #se = se[0:-cutx, cuty:-cuty]
+
+    axlittlebunch.imshow(se,cmap=cm.Greys_r)
+    axlittlebunch.axis('off')
+    
+    #new_pic = new_pic[0:-cutx, cuty:-cuty]
+    setr = new_pic
+    #binary threshold
+    se_data2 = np.copy(setr)
+    
+    new_hlp = new_pic
+    I8 = (new_hlp * 255.9).astype(np.uint8)
+    bw = cv2.adaptiveThreshold(I8, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 0)
+    from scipy import ndimage
+    hlpse2 = bw 
+    hlpse2[hlpse2 > 1] = 1.0
+    hlpse2[hlpse2 < 1] = 0.0
+    distance = ndimage.distance_transform_edt(hlpse2)
+    
+    local_maxi = peak_local_max(
+        distance, 
+        num_peaks = 8, 
+        indices = False, 
+        footprint = np.ones((50,50)),
+        labels = hlpse2) #footprint = min dist between maxima to find #footprint was 25,25
+    markers = skimage.morphology.label(local_maxi)
+    labels_ws = watershed(-distance, markers, mask=hlpse2)
+    lab = np.unique(labels_ws)
+    
+    # Make random colors, not degrade
+    rand_ind = np.random.permutation(lab)
+    new_labels_ws = np.copy(labels_ws)
+    for k in range(new_labels_ws.shape[0]):
+        for j in range(new_labels_ws.shape[1]):
+            new_labels_ws[k, j] = rand_ind[labels_ws[k, j]]
+    labels_ws =  new_labels_ws
+    
+    length_scalebar_in_pixels = np.ceil(length_scalebar/(Pixel_size[0]))
+    sbar = sb.AnchoredScaleBar(axlittlebunch.transData, length_scalebar_in_pixels, "", style = 'bright', loc = 8, my_fontsize = fsizenb, my_linewidth= 2)
+    axlittlebunch.add_artist(sbar)
+    
+    areas = np.array([])
+    for k in lab:
+        areas = np.append(areas, len( labels_ws[labels_ws == k] ))
+    cut_k = []
+    cut_labels_ws = np.copy(labels_ws)
+    non_cut_k = []  ###### change cut_k
+    for k in range(len(lab)):
+        if (areas[k] < 10) or (areas[k] > 4000):# or (k == 0): 
+            cut_labels_ws[cut_labels_ws == lab[k]] = 0
+            cut_k.append(k)
+        else:
+            non_cut_k.append(k)  ###change cut_k
+    
+    axlittlebunch2.imshow(cut_labels_ws, cmap = cm.Greys_r) #or 'OrRd'
+    axlittlebunch2.axis('off')
+    
 ###### 750kx SINGLE
     
 ##### TAUS
@@ -1507,7 +1593,7 @@ error_blue = np.sqrt(blue['data'])/np.sqrt(50*nopix)
 
 #axratiomag.set_xlim([901,199999])
 #axratiomag.set_xticks([1000,5000,100000])
-axratiomag.set_ylim([1.7,6.3])
+#axratiomag.set_ylim([1.7,6.3])
 axratiomag.set_yticks([2,4,6])
 
 axhist150tau_blue.set_ylim([0,75])
@@ -1583,65 +1669,66 @@ print(error_blue)
 ###### PENTA START
     
 ###### TAUS
-#    
-#blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_decay_arrayPENTA.npz',mmap_mode='r')     
-#red = np.load('../2017-04-05_Andrea_NPs_single/Red_decay_arrayPENTA.npz',mmap_mode='r')
-#bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_decay_arrayPENTA.npz',mmap_mode='r')     
-#bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_decay_arrayPENTA.npz',mmap_mode='r') 
-#
-#red = red['data']
-#blue = blue['data']
-#bgred = bgred['data']
-#bgblue = bgblue['data']  
-#
-#nopix = 23719.0/5.0 #no pixels per nanoparticle
-#nopixbg = 33091.0
-#
-##8 avgs
-#error_red = np.sqrt(red)/np.sqrt(8*nopix)
-#error_blue = np.sqrt(blue)/np.sqrt(8*nopix)
-#
-#error_redbg = np.sqrt(bgred)/np.sqrt(8*nopixbg)
-#error_bluebg = np.sqrt(bgblue)/np.sqrt(8*nopixbg)
-#
-#taured, taublue = tauestimate2(red,error_red,blue,error_blue)
-#bgtaured, bgtaublue = tauestimate2(bgred,error_redbg,bgblue,error_bluebg)
-#
-#plotinho(axtaumag, taured,'grey',my_edgecolor='#ff3232', my_facecolor='#ff6666')
-#plotinho(axtaumag, taublue,'black',my_edgecolor='#74C365', my_facecolor='#74C365')
-#
-#plotinho(axtaumag, bgtaured,'DarkRed',my_edgecolor='#801515', my_facecolor='#801515')
-#plotinho(axtaumag, bgtaublue,'#003100',my_edgecolor='#003D1B', my_facecolor='#003D1B')
-#
-#hlpplot_1 = unumpy.std_devs(taured)/unumpy.nominal_values(taured)
-#hlpplot_2 = unumpy.std_devs(taublue)/unumpy.nominal_values(taublue)
-#
-#hlpplot_1 = hlpplot_1[0]
-#hlpplot_2 = hlpplot_2[0]
-#
-#axstdmag.plot(hlpplot_1*100.0,'grey',linewidth=2)
-#axstdmag.plot(hlpplot_2*100.0,'black',linewidth=2)
-#
-######## INTENSITY
-#
-#blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_int_arrayPENTA.npz',mmap_mode='r')     
-#red = np.load('../2017-04-05_Andrea_NPs_single/Red_int_arrayPENTA.npz',mmap_mode='r')
-#bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_int_arrayPENTA.npz',mmap_mode='r')     
-#bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_int_arrayPENTA.npz',mmap_mode='r') 
-#
-####50 averages
-#axratiomag.plot(23719.0/5.0*8.0,red['data']/blue['data'],marker='o', color='r', markersize=12) 
-#axratiomag.plot(23719.0/5.0*8.0,bgred['data']/bgblue['data'],marker='x', color='r', markersize=12) #should in reality be 4469 pix * 50 avgs for background
-#axratiomag.set_xscale("log", nonposx='clip')
-#
-#error_red = np.sqrt(red['data'])/np.sqrt(8*nopix)
-#error_blue = np.sqrt(blue['data'])/np.sqrt(8*nopix)
-#print('penta erros')
-#print(error_red)
-#print(error_blue)
+    
+blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_decay_arrayPENTA.npz',mmap_mode='r')     
+red = np.load('../2017-04-05_Andrea_NPs_single/Red_decay_arrayPENTA.npz',mmap_mode='r')
+bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_decay_arrayPENTA.npz',mmap_mode='r')     
+bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_decay_arrayPENTA.npz',mmap_mode='r') 
+
+red = red['data']
+blue = blue['data']
+bgred = bgred['data']
+bgblue = bgblue['data']  
+
+nopix = 23719.0/5.0 #no pixels per nanoparticle
+nopixbg = 33091.0
+
+#8 avgs
+error_red = np.sqrt(red)/np.sqrt(8*nopix)
+error_blue = np.sqrt(blue)/np.sqrt(8*nopix)
+
+error_redbg = np.sqrt(bgred)/np.sqrt(8*nopixbg)
+error_bluebg = np.sqrt(bgblue)/np.sqrt(8*nopixbg)
+
+taured, taublue = tauestimate2(red,error_red,blue,error_blue)
+bgtaured, bgtaublue = tauestimate2(bgred,error_redbg,bgblue,error_bluebg)
+
+plotinho(axtaumag, taured,'yellow',my_edgecolor='#ff3232', my_facecolor='#ff6666')
+plotinho(axtaumag, taublue,'black',my_edgecolor='#74C365', my_facecolor='#74C365')
+
+plotinho(axtaumag, bgtaured,'DarkRed',my_edgecolor='#801515', my_facecolor='#801515')
+plotinho(axtaumag, bgtaublue,'#003100',my_edgecolor='#003D1B', my_facecolor='#003D1B')
+
+hlpplot_1 = unumpy.std_devs(taured)/unumpy.nominal_values(taured)
+hlpplot_2 = unumpy.std_devs(taublue)/unumpy.nominal_values(taublue)
+
+hlpplot_1 = hlpplot_1[0]
+hlpplot_2 = hlpplot_2[0]
+
+axstdmag.plot(hlpplot_1*100.0,'yellow',linewidth=2)
+axstdmag.plot(hlpplot_2*100.0,'black',linewidth=2)
+
+####### INTENSITY
+
+blue = np.load('../2017-04-05_Andrea_NPs_single/Blue_int_arrayPENTA.npz',mmap_mode='r')     
+red = np.load('../2017-04-05_Andrea_NPs_single/Red_int_arrayPENTA.npz',mmap_mode='r')
+bgblue = np.load('../2017-04-05_Andrea_NPs_single/bgBlue_int_arrayPENTA.npz',mmap_mode='r')     
+bgred = np.load('../2017-04-05_Andrea_NPs_single/bgRed_int_arrayPENTA.npz',mmap_mode='r') 
+
+###50 averages
+axratiomag.plot(23719.0/5.0*8.0,red['data']/blue['data'],marker='o', color='r', markersize=12) 
+axratiomag.plot(23719.0/5.0*8.0,bgred['data']/bgblue['data'],marker='x', color='r', markersize=12) #should in reality be 4469 pix * 50 avgs for background
+axratiomag.set_xscale("log", nonposx='clip')
+
+error_red = np.sqrt(red['data'])/np.sqrt(8*nopix)
+error_blue = np.sqrt(blue['data'])/np.sqrt(8*nopix)
+print('penta erros')
+print(error_red)
+print(error_blue)
 
 ###### PENTA END
 
+# NEED TO PROPAGATE ERRORS FOR RATIO IN AXRATIOMAG
 #plt.tight_layout()
 multipage_longer('Single.pdf',dpi=80)  
 

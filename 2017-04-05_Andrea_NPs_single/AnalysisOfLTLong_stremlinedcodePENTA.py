@@ -102,15 +102,15 @@ listofindex =np.arange(0,len(nametr))
 #do_signal = True
 #do_red = True
 
-do_signal = True
-do_red = False
+#do_signal = True
+#do_red = False
 
 #
 #do_signal = False
 #do_red = True
 
-#do_signal = False
-#do_red = False
+do_signal = False
+do_red = False
 
 for index in listofindex:
     
@@ -188,26 +188,53 @@ for index in listofindex:
 #    print(red.shape)
 #    kkkkkc
     
-    print('red')
-    if (do_signal == True) & (do_red == True):
-        #red_int_array[index] = np.nanmean(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
-        red_int_array[index] = np.nansum(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) / np.sum(np.isfinite(hlp))
-        gc.collect()
-        #red_decay_array[index,:] = np.nanmean(red[:,initbin:,:,:]*hlp,axis=(0,2,3))
-        red_decay_array[index,:] = np.sum(red[:,initbin:,:,:]*hlp,axis=(0,2,3))/ np.sum(np.isfinite(hlp))
-        gc.collect()
-        #red_std_array[index] = np.nanstd(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
-        #gc.collect()
-        #bgred_int_array[index] = np.nanmean(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) 
+    #1
+#    red_int_array[index] = np.nansum(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) / np.sum(np.isfinite(hlp))
+#    gc.collect()
+#    #2
+#    red_decay_array[index,:] = np.sum(red[:,initbin:,:,:]*hlp,axis=(0,2,3))/ np.sum(np.isfinite(hlp))
+#    gc.collect()
+    #3
+#    bgred_int_array[index] = np.nansum(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3))  / np.sum(np.isfinite(hlpd))
+#    gc.collect()
+    #4
+#    soma = np.sum(np.isfinite(hlpd))
+#    hlpd[np.isnan(hlpd)] = 0.0
+#    fonction = red[:,initbin:,:,:]*hlpd
+#    del hlp, hlpd
+#    a = np.sum(fonction, axis = 3)
+#    del fonction
+#    gc.collect()
+#    b = np.sum(a, axis = 2)
+#    del a
+#    gc.collect()
+#    c = np.sum(b, axis = 0)
+#    del b
+#    gc.collect()
+#    bgred_decay_array[index,:] = c  / soma
+#    gc.collect()
+#    
     
-    if (do_signal == False) & (do_red == True):
-        bgred_int_array[index] = np.nansum(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3))  / np.sum(np.isfinite(hlpd))
-        gc.collect()
-        #bgred_decay_array[index,:] = np.nanmean(red[:,initbin:,:,:]*hlpd,axis=(0,2,3))
-        bgred_decay_array[index,:] = np.nansum(red[:,initbin:,:,:]*hlpd,axis=(0,2,3))  / np.sum(np.isfinite(hlpd))
-        gc.collect()
-        #bgred_std_array[index] = np.nanstd(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3))
-        #gc.collect()
+#    print('red')
+#    if (do_signal == True) & (do_red == True):
+#        #red_int_array[index] = np.nanmean(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
+#        red_int_array[index] = np.nansum(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) / np.sum(np.isfinite(hlp))
+#        gc.collect()
+#        #red_decay_array[index,:] = np.nanmean(red[:,initbin:,:,:]*hlp,axis=(0,2,3))
+#        red_decay_array[index,:] = np.sum(red[:,initbin:,:,:]*hlp,axis=(0,2,3))/ np.sum(np.isfinite(hlp))
+#        gc.collect()
+#        #red_std_array[index] = np.nanstd(red[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
+#        #gc.collect()
+#        #bgred_int_array[index] = np.nanmean(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) 
+#    
+#    if (do_signal == False) & (do_red == True):
+#        bgred_int_array[index] = np.nansum(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3))  / np.sum(np.isfinite(hlpd))
+#        gc.collect()
+#        #bgred_decay_array[index,:] = np.nanmean(red[:,initbin:,:,:]*hlpd,axis=(0,2,3))
+#        bgred_decay_array[index,:] = np.nansum(red[:,initbin:,:,:]*hlpd,axis=(0,2,3))  / np.sum(np.isfinite(hlpd))
+#        gc.collect()
+#        #bgred_std_array[index] = np.nanstd(red[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3))
+#        #gc.collect()
     
     if do_red == True:
         del red
@@ -223,25 +250,42 @@ for index in listofindex:
     
     print('blue')
     
-    if  (do_signal == True) & (do_red == False):
-        #blue_int_array[index] = np.nanmean(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
-        blue_int_array[index] = np.nansum(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) / np.sum(np.isfinite(hlp))
-        gc.collect()
-        #blue_decay_array[index,:] = np.nanmean(blue[:,initbin:,:,:]*hlp,axis=(0,2,3))
-        blue_decay_array[index,:] = np.nansum(blue[:,initbin:,:,:]*hlp,axis=(0,2,3)) / np.sum(np.isfinite(hlp))
-        gc.collect()
-    #    blue_std_array[index] = np.nanstd(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
-    #    gc.collect()
-        #bgblue_int_array[index] = np.nanmean(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) 
-        
-    if (do_signal == False) & (do_red == False):
-        bgblue_int_array[index] = np.nansum(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) / np.sum(np.isfinite(hlpd))
-        gc.collect()
-        #bgblue_decay_array[index,:] = np.nanmean(blue[:,initbin:,:,:]*hlpd,axis=(0,2,3))
-        bgblue_decay_array[index,:] = np.nansum(blue[:,initbin:,:,:]*hlpd,axis=(0,2,3))/ np.sum(np.isfinite(hlpd))
-        gc.collect()
-    #    bgblue_std_array[index] = np.nanstd(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) 
-    #    gc.collect()
+    #1
+#    blue_int_array[index] = np.nansum(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) / np.sum(np.isfinite(hlp))
+#    gc.collect()
+    #2
+#    soma = np.sum(np.isfinite(hlp))
+#    hlp[np.isnan(hlp)] = 0.0
+#    blue_decay_array[index,:] = np.sum(blue[:,initbin:,:,:]*hlp,axis=(0,2,3)) / soma
+#    gc.collect()
+    #3
+#    bgblue_int_array[index] = np.nansum(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) / np.sum(np.isfinite(hlpd))
+#    gc.collect()
+    #4
+    soma =  np.sum(np.isfinite(hlpd))
+    hlpd[np.isnan(hlpd)] = 0.0
+    bgblue_decay_array[index,:] = np.sum(blue[:,initbin:,:,:]*hlpd,axis=(0,2,3))/ soma
+    gc.collect()
+    
+#    if  (do_signal == True) & (do_red == False):
+#        #blue_int_array[index] = np.nanmean(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
+#        blue_int_array[index] = np.nansum(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) / np.sum(np.isfinite(hlp))
+#        gc.collect()
+#        #blue_decay_array[index,:] = np.nanmean(blue[:,initbin:,:,:]*hlp,axis=(0,2,3))
+#        blue_decay_array[index,:] = np.nansum(blue[:,initbin:,:,:]*hlp,axis=(0,2,3)) / np.sum(np.isfinite(hlp))
+#        gc.collect()
+#    #    blue_std_array[index] = np.nanstd(blue[:,backgdinit:initbin,:,:]*hlp,axis=(0,1,2,3)) 
+#    #    gc.collect()
+#        #bgblue_int_array[index] = np.nanmean(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) 
+#        
+#    if (do_signal == False) & (do_red == False):
+#        bgblue_int_array[index] = np.nansum(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) / np.sum(np.isfinite(hlpd))
+#        gc.collect()
+#        #bgblue_decay_array[index,:] = np.nanmean(blue[:,initbin:,:,:]*hlpd,axis=(0,2,3))
+#        bgblue_decay_array[index,:] = np.nansum(blue[:,initbin:,:,:]*hlpd,axis=(0,2,3))/ np.sum(np.isfinite(hlpd))
+#        gc.collect()
+#    #    bgblue_std_array[index] = np.nanstd(blue[:,backgdinit:initbin,:,:]*hlpd,axis=(0,1,2,3)) 
+#    #    gc.collect()
 
     if do_red == False:
         del blue
@@ -258,24 +302,30 @@ for index in listofindex:
 #np.savez('Blue_std_arrayPENTA', data = blue_std_array)
   
 if do_signal == True:
+    pass
  
-    if do_red == True:
-        mycode = 'Red_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('Red_int_arrayPENTA', data = red_int_array)
+#    if do_red == True:
+        #1
+#        mycode = 'Red_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('Red_int_arrayPENTA', data = red_int_array)
          
-        mycode = 'Red_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('Red_decay_arrayPENTA', data = red_decay_array)
+        #2
+#        mycode = 'Red_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('Red_decay_arrayPENTA', data = red_decay_array)
     
-    if do_red == False:
-        mycode = 'Blue_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('Blue_int_arrayPENTA', data = blue_int_array)
+#    if do_red == False:
+    
+        #3
+#        mycode = 'Blue_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('Blue_int_arrayPENTA', data = blue_int_array)
         
-        mycode = 'Blue_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('Blue_decay_arrayPENTA', data = blue_decay_array)
+        #4
+#        mycode = 'Blue_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('Blue_decay_arrayPENTA', data = blue_decay_array)
 
 ###background
 
@@ -288,22 +338,27 @@ if do_signal == True:
 #np.savez('bgBlue_std_arrayPENTA', data = bgblue_std_array)
 
 if do_signal == False:
+#    pass
     
-    if do_red == True:
+#    if do_red == True:
  
-        mycode = 'bgRed_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('bgRed_int_arrayPENTA', data = bgred_int_array)
+        #1
+#        mycode = 'bgRed_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('bgRed_int_arrayPENTA', data = bgred_int_array)
         
-        mycode = 'bgRed_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('bgRed_decay_arrayPENTA', data =bgred_decay_array)
-    
-    if do_red == False:
-        mycode = 'bgBlue_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
-        exec(mycode)
-        np.savez('bgBlue_int_arrayPENTA', data = bgblue_int_array)
+        #2
+#        mycode = 'bgRed_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('bgRed_decay_arrayPENTA', data =bgred_decay_array)
+#    
+#    if do_red == False:
+        #3
+#        mycode = 'bgBlue_int_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
+#        exec(mycode)
+#        np.savez('bgBlue_int_arrayPENTA', data = bgblue_int_array)
         
+        #4
         mycode = 'bgBlue_decay_arrayPENTA = tempfile.NamedTemporaryFile(delete=False)'
         exec(mycode)
         np.savez('bgBlue_decay_arrayPENTA', data = bgblue_decay_array)
